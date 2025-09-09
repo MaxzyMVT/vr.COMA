@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	// State
 	let currentTheme = null; // Holds the last generated theme data
+	let savedThemesCache = [];
 
 	// --- Event Listeners ---
 	generateButton.addEventListener("click", () => handleThemeGeneration(false));
@@ -136,45 +137,54 @@ document.addEventListener("DOMContentLoaded", () => {
 		try {
 			const response = await fetch(`${BACKEND_URL}/api/themes`);
 			const themes = await response.json();
+			
+			savedThemesCache = themes; // <-- 1. Store the fetched themes in our cache
 
-			savedThemesList.innerHTML = ""; // Clear current list
-			themes.forEach((theme) => {
-				const themeItem = document.createElement("div");
-				themeItem.className = "saved-theme-item";
+			savedThemesList.innerHTML = ''; // Clear current list
+			themes.forEach(theme => {
+				const themeItem = document.createElement('div');
+				themeItem.className = 'saved-theme-item';
+
+				// 2. VITAL CHANGE: Use data-id for BOTH buttons. Remove data-theme.
 				themeItem.innerHTML = `
-                    <span>${theme.themeName}</span>
-                    <div>
-                        <button class="load-btn" data-theme='${JSON.stringify(
-													theme
-												)}'>Load</button>
-                        <button class="delete-btn" data-id="${
-													theme._id
-												}">Delete</button>
-                    </div>`;
+					<span>${theme.themeName}</span>
+					<div>
+						<button class="load-btn" data-id="${theme._id}">Load</button>
+						<button class="delete-btn" data-id="${theme._id}">Delete</button>
+					</div>`;
 				savedThemesList.appendChild(themeItem);
 			});
 		} catch (error) {
-			console.error("Error loading themes:", error);
+			console.error('Error loading themes:', error);
 		}
 	};
 
-	savedThemesList.addEventListener("click", async (e) => {
-		if (e.target.classList.contains("load-btn")) {
-			const themeData = JSON.parse(e.target.dataset.theme);
-			currentTheme = themeData;
-			applyTheme(themeData);
-			displayThemeOutput(themeData);
-		}
-		if (e.target.classList.contains("delete-btn")) {
+	// Use event delegation for load/delete buttons
+	savedThemesList.addEventListener('click', async (e) => {
+		// --- START: Replace the 'load-btn' logic with this ---
+		if (e.target.classList.contains('load-btn')) {
 			const themeId = e.target.dataset.id;
-			if (confirm("Are you sure you want to delete this theme?")) {
+			
+			// Find the full theme object in our cache using its ID
+			const themeToLoad = savedThemesCache.find(theme => theme._id === themeId);
+
+			if (themeToLoad) {
+				currentTheme = themeToLoad;
+				applyTheme(themeToLoad);
+				displayThemeOutput(themeToLoad);
+			} else {
+				console.error('Could not find theme in cache with id:', themeId);
+			}
+		}
+		// --- END: Replacement ---
+		if (e.target.classList.contains('delete-btn')) {
+			const themeId = e.target.dataset.id;
+			if (confirm('Are you sure you want to delete this theme?')) {
 				try {
-					await fetch(`${BACKEND_URL}/api/themes/${themeId}`, {
-						method: "DELETE",
-					});
-					loadSavedThemes();
+					await fetch(`${BACKEND_URL}/api/themes/${themeId}`, { method: 'DELETE' });
+					loadSavedThemes(); // Refresh list after deletion
 				} catch (error) {
-					console.error("Error deleting theme:", error);
+					console.error('Error deleting theme:', error);
 				}
 			}
 		}
