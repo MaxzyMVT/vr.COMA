@@ -38,16 +38,29 @@ document.addEventListener("DOMContentLoaded", () => {
 				body: JSON.stringify({ prompt: fullPrompt }),
 			});
 
-			if (!response.ok)
-				throw new Error("Failed to get a response from the server.");
+			if (!response.ok) {
+				const errorData = await response.json();
+				throw new Error(
+					errorData.error || "Failed to get a response from the server."
+				);
+			}
 
 			const themeData = await response.json();
-			currentTheme = themeData; // Save the latest theme
-			applyTheme(themeData);
-			displayThemeOutput(themeData);
+
+			if (themeData && themeData.colors && themeData.themeName) {
+				currentTheme = themeData;
+				applyTheme(themeData);
+				displayThemeOutput(themeData);
+			} else {
+				// The data from the server was not a valid theme
+				console.error("Received invalid theme data:", themeData);
+				throw new Error(
+					"The generated theme was incomplete. Please try a different prompt."
+				);
+			}
 		} catch (error) {
 			console.error("Theme generation error:", error);
-			outputContent.innerHTML = `<p class="error">Error: Could not generate theme. Please try again.</p>`;
+			outputContent.innerHTML = `<p class="error" style="color: red;">Error: ${error.message}</p>`;
 		} finally {
 			setLoadingState(false);
 		}

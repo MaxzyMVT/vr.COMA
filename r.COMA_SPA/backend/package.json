@@ -15,6 +15,6 @@
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "mongodb": "^6.19.0",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^2.7.0"
   }
 }
