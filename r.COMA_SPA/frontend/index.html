@@ -1,0 +1,88 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>r.COMA - AI Theme Designer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <!-- LEFT PANEL: CONTROLS & OUTPUT -->
+        <div class="control-panel">
+            <header class="app-header">
+                <h1>r.COMA</h1>
+                <p class="punchline">Waking up your creative ideas.</p>
+                <p class="description">Responsive Chromatic Orchestration & Mood Analyzer</p>
+            </header>
+
+            <section class="input-section">
+                <h2>1. Describe Your Theme</h2>
+                <textarea id="text-input"
+                    placeholder="e.g., 'a serene forest at dawn' or 'a vibrant 80s arcade'"></textarea>
+                <div class="button-group">
+                    <button id="generate-button">Generate</button>
+                    <button id="revise-button" disabled>Revise</button>
+                </div>
+            </section>
+
+            <section class="output-section" id="output-section">
+                <h2>2. Generated Theme</h2>
+                <div id="output-content">
+                    <p class="placeholder">Your generated theme details will appear here...</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- RIGHT PANEL: PREVIEW & MANAGEMENT -->
+        <div class="preview-panel">
+
+            <!-- The "Gimmick" Preview Area -->
+            <div class="theme-preview-container" id="theme-preview">
+                <header class="preview-header">
+                    <h3 id="preview-theme-name">Theme Preview</h3>
+                </header>
+                <div class="preview-content">
+                    <h4>Sample Content</h4>
+                    <p class="sample-text-primary">This is the primary text color. It should be easily readable.</p>
+                    <p class="sample-text-secondary">This secondary text is for less important details.</p>
+                    <div class="sample-buttons">
+                        <button class="preview-button">Sample Button</button>
+                        <a href="#" class="preview-accent-link">Accent Link</a>
+                    </div>
+                </div>
+            </div>
+
+            <section class="management-section">
+                <h2>Saved Themes</h2>
+                <div id="saved-themes-list">
+                    <!-- Saved themes will be dynamically inserted here -->
+                </div>
+            </section>
+        </div>
+
+    </div>
+
+    <script type="module" src="scripts/scripts.js"></script>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
