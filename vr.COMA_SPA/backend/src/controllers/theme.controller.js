@@ -1,44 +1,33 @@
-const express = require("express");
-const router = express.Router();
 const https = require("https");
-const mongoose = require("mongoose");
+const Theme = require("../models/theme.model");
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-// --- Mongoose Schema and Model ---
-const themeSchema = new mongoose.Schema({
-	themeName: String,
-	advice: String,
-	colors: mongoose.Schema.Types.Mixed, // Allows for a flexible object structure
-});
-
-const Theme = mongoose.model("Theme", themeSchema, "saved_themes"); // 3rd arg specifies the collection name
-
-// --- API ROUTES ---
-router.post("/generate-theme", (req, res) => {
+// --- Logic for Generating a Theme ---
+const generateTheme = (req, res) => {
 	const { prompt } = req.body;
 	if (!prompt)
 		return res.status(400).json({ error: "Text prompt is required." });
 
 	const systemPrompt = `You are a creative assistant for a design application that generates color themes. Your task is to respond with a single, clean JSON object and nothing else. The JSON object must contain "themeName", "advice", and a "colors" object. The "colors" object must use these exact keys: "primaryBackground", "canvasBackground", "primaryText", "secondaryText", "accent", "interactiveBackground", "interactiveText", "surfaceBackground", "outlineSeparators".
 
-	Example Response:
-	{
-	"themeName": "Forest",
-	"advice": "This theme evokes a sense of calm and nature, ideal for wellness or environmental brands. The high-contrast text ensures readability on the light surface backgrounds.",
-	"colors": {
-		"primaryBackground": "#2F4F4F",
-		"canvasBackground": "#F0F8FF",
-		"primaryText": "#2F4F4F",
-		"secondaryText": "#696969",
-		"accent": "#556B2F",
-		"interactiveBackground": "#556B2F",
-		"interactiveText": "#FFFFFF",
-		"surfaceBackground": "#FFFFFF",
-		"outlineSeparators": "#D3D3D3"
-	}
-	}
-	REMINDER: Only return the raw JSON object. Do not use markdown like \`\`\`json.`;
+    Example Response:
+    {
+    "themeName": "Forest",
+    "advice": "This theme evokes a sense of calm and nature, ideal for wellness or environmental brands. The high-contrast text ensures readability on the light surface backgrounds.",
+    "colors": {
+        "primaryBackground": "#2F4F4F",
+        "canvasBackground": "#F0F8FF",
+        "primaryText": "#2F4F4F",
+        "secondaryText": "#696969",
+        "accent": "#556B2F",
+        "interactiveBackground": "#556B2F",
+        "interactiveText": "#FFFFFF",
+        "surfaceBackground": "#FFFFFF",
+        "outlineSeparators": "#D3D3D3"
+    }
+    }
+    REMINDER: Only return the raw JSON object. Do not use markdown like \`\`\`json.`;
 
 	const payload = JSON.stringify({
 		contents: [{ parts: [{ text: prompt }] }],
@@ -85,9 +74,10 @@ router.post("/generate-theme", (req, res) => {
 
 	apiRequest.write(payload);
 	apiRequest.end();
-});
+};
 
-router.post("/themes", async (req, res) => {
+// --- Logic for CRUD Operations ---
+const saveTheme = async (req, res) => {
 	try {
 		const newTheme = new Theme(req.body);
 		await newTheme.save();
@@ -95,18 +85,20 @@ router.post("/themes", async (req, res) => {
 	} catch (error) {
 		res.status(500).json({ error: "Failed to save theme." });
 	}
-});
+};
 
-router.get("/themes", async (req, res) => {
+const getAllThemes = async (req, res) => {
+	console.log(Theme);
 	try {
 		const themes = await Theme.find();
 		res.json(themes);
 	} catch (error) {
+		console.error("Error in getAllThemes:", error);
 		res.status(500).json({ error: "Failed to fetch themes." });
 	}
-});
+};
 
-router.delete("/themes/:id", async (req, res) => {
+const deleteTheme = async (req, res) => {
 	const { id } = req.params;
 	if (!mongoose.Types.ObjectId.isValid(id))
 		return res.status(400).json({ error: "Invalid ID" });
@@ -117,6 +109,12 @@ router.delete("/themes/:id", async (req, res) => {
 	} catch (error) {
 		res.status(500).json({ error: "Failed to delete theme." });
 	}
-});
+};
 
-module.exports = router;
+// Export all the functions
+module.exports = {
+	generateTheme,
+	saveTheme,
+	getAllThemes,
+	deleteTheme,
+};
