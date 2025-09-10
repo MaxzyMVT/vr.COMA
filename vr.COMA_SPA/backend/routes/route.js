@@ -13,7 +13,7 @@ const themeSchema = new mongoose.Schema({
 const Theme = mongoose.model("Theme", themeSchema, "saved_themes"); // 3rd arg specifies the collection name
 
 // --- API ROUTES ---
-router.post("/api/generate-theme", (req, res) => {
+router.post("/generate-theme", (req, res) => {
 	const { prompt } = req.body;
 	if (!prompt)
 		return res.status(400).json({ error: "Text prompt is required." });
@@ -75,7 +75,7 @@ router.post("/api/generate-theme", (req, res) => {
 	apiRequest.end();
 });
 
-router.post("/api/themes", async (req, res) => {
+router.post("/themes", async (req, res) => {
 	try {
 		const newTheme = new Theme(req.body);
 		await newTheme.save();
@@ -85,7 +85,7 @@ router.post("/api/themes", async (req, res) => {
 	}
 });
 
-router.get("/api/themes", async (req, res) => {
+router.get("/themes", async (req, res) => {
 	try {
 		const themes = await Theme.find();
 		res.json(themes);
@@ -94,7 +94,7 @@ router.get("/api/themes", async (req, res) => {
 	}
 });
 
-router.delete("/api/themes/:id", async (req, res) => {
+router.delete("/themes/:id", async (req, res) => {
 	const { id } = req.params;
 	if (!mongoose.Types.ObjectId.isValid(id))
 		return res.status(400).json({ error: "Invalid ID" });
