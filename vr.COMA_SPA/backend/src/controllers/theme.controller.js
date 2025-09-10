@@ -4,6 +4,11 @@ const mongoose = require("mongoose");
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
+// Helper function to escape special characters for use in a regular expression
+function escapeRegex(text) {
+	return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}
+
 // --- Logic for Generating a Theme ---
 const generateTheme = (req, res) => {
 	const { prompt } = req.body;
@@ -80,10 +85,36 @@ const generateTheme = (req, res) => {
 // --- Logic for CRUD Operations ---
 const saveTheme = async (req, res) => {
 	try {
-		const newTheme = new Theme(req.body);
-		await newTheme.save();
-		res.status(201).json(newTheme);
+		const themeData = req.body;
+		const originalName = themeData.themeName;
+		let newName = originalName;
+		let counter = 2;
+		let saved = false;
+
+		// Keep trying to save until it succeeds
+		while (!saved) {
+			try {
+				themeData.themeName = newName;
+
+				const newTheme = new Theme(themeData);
+				await newTheme.save();
+
+				// If save() succeeds, exit the loop and send the response
+				saved = true;
+				res.status(201).json(newTheme);
+			} catch (error) {
+				// Check if the error is the specific "duplicate key" error (code 11000)
+				if (error.code === 11000) {
+					// If it is, generate a new name and the loop will try again
+					newName = `${originalName} (${counter})`;
+					counter++;
+				} else {
+					throw error;
+				}
+			}
+		}
 	} catch (error) {
+		console.error("Failed to save theme due to an unexpected error:", error);
 		res.status(500).json({ error: "Failed to save theme." });
 	}
 };
@@ -111,35 +142,36 @@ const deleteTheme = async (req, res) => {
 };
 
 const updateThemeName = async (req, res) => {
-    const { id } = req.params;
-    const { themeName } = req.body;
+	const { id } = req.params;
+	const { themeName } = req.body;
 
-    // Use Mongoose's ObjectId validator
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ error: "Invalid ID" });
-    }
-    if (!themeName || themeName.trim() === '') {
-        return res.status(400).json({ error: 'Theme name cannot be empty.' });
-    }
+	// Use Mongoose's ObjectId validator
+	if (!mongoose.Types.ObjectId.isValid(id)) {
+		return res.status(400).json({ error: "Invalid ID" });
+	}
+	if (!themeName || themeName.trim() === "") {
+		return res.status(400).json({ error: "Theme name cannot be empty." });
+	}
 
-    try {
-        // Use the Mongoose Model 'Theme' to perform the update
-        const result = await Theme.updateOne(
-            { _id: id },
-            { $set: { themeName: themeName.trim() } }
-        );
+	try {
+		// Use the Mongoose Model 'Theme' to perform the update
+		const result = await Theme.updateOne(
+			{ _id: id },
+			{ $set: { themeName: themeName.trim() } }
+		);
 
-        if (result.modifiedCount === 0) {
-            return res.status(404).json({ error: 'Theme not found or name is unchanged.' });
-        }
+		if (result.modifiedCount === 0) {
+			return res
+				.status(404)
+				.json({ error: "Theme not found or name is unchanged." });
+		}
 
-        res.status(200).json({ message: "Theme name updated successfully." });
-
-    } catch (error) {
-        console.error("Error updating theme name:", error);
-        res.status(500).json({ error: "Failed to update theme name." });
-    }
-}
+		res.status(200).json({ message: "Theme name updated successfully." });
+	} catch (error) {
+		console.error("Error updating theme name:", error);
+		res.status(500).json({ error: "Failed to update theme name." });
+	}
+};
 
 // Export all the functions
 module.exports = {
