@@ -3,6 +3,8 @@ const router = express.Router();
 const https = require("https");
 const mongoose = require("mongoose");
 
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+
 // --- Mongoose Schema and Model ---
 const themeSchema = new mongoose.Schema({
 	themeName: String,
@@ -18,15 +20,25 @@ router.post("/generate-theme", (req, res) => {
 	if (!prompt)
 		return res.status(400).json({ error: "Text prompt is required." });
 
-	const systemPrompt = `You are a creative assistant for a web application that generates color themes. Your task is to respond with a single, clean JSON object and nothing else. The JSON object must contain "themeName", "advice", and "colors" object with all the specified keys. Example:
-    {
-      "themeName": "Serenity",
-      "advice": "This theme creates a calm and peaceful atmosphere, ideal for wellness or minimalist websites. The soft backgrounds ensure readability, while the gentle accent color can be used for subtle highlights and links.",
-      "colors": {
-        "headerBackground": "#A2B29F", "mainBackground": "#F7F3F1", "primaryText": "#333333", "secondaryText": "#6a6a6a", "accent": "#798777", "buttonBackground": "#A2B29F", "buttonText": "#FFFFFF", "containerBackground": "#FFFFFF", "borderColor": "#E0E0E0"
-      }
-    }
-    REMINDER: Only return the raw JSON object. Do not use markdown like \`\`\`json.`;
+	const systemPrompt = `You are a creative assistant for a design application that generates color themes. Your task is to respond with a single, clean JSON object and nothing else. The JSON object must contain "themeName", "advice", and a "colors" object. The "colors" object must use these exact keys: "primaryBackground", "canvasBackground", "primaryText", "secondaryText", "accent", "interactiveBackground", "interactiveText", "surfaceBackground", "outlineSeparators".
+
+	Example Response:
+	{
+	"themeName": "Forest",
+	"advice": "This theme evokes a sense of calm and nature, ideal for wellness or environmental brands. The high-contrast text ensures readability on the light surface backgrounds.",
+	"colors": {
+		"primaryBackground": "#2F4F4F",
+		"canvasBackground": "#F0F8FF",
+		"primaryText": "#2F4F4F",
+		"secondaryText": "#696969",
+		"accent": "#556B2F",
+		"interactiveBackground": "#556B2F",
+		"interactiveText": "#FFFFFF",
+		"surfaceBackground": "#FFFFFF",
+		"outlineSeparators": "#D3D3D3"
+	}
+	}
+	REMINDER: Only return the raw JSON object. Do not use markdown like \`\`\`json.`;
 
 	const payload = JSON.stringify({
 		contents: [{ parts: [{ text: prompt }] }],
