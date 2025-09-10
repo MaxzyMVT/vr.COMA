@@ -1,23 +1,24 @@
-// File: r.COMA/frontend/scripts/ui.js
-
 function applyTheme(theme, previewThemeName) {
 	if (!theme || !theme.colors) return;
 	const root = document.documentElement;
 	// Map colors from themeData to CSS variables
 	const colorMap = {
-		"--header-bg": theme.colors.headerBackground,
-		"--main-bg": theme.colors.mainBackground,
+		"--header-bg": theme.colors.primaryBackground,
+		"--main-bg": theme.colors.canvasBackground,
 		"--primary-text": theme.colors.primaryText,
 		"--secondary-text": theme.colors.secondaryText,
 		"--accent": theme.colors.accent,
-		"--btn-bg": theme.colors.buttonBackground,
-		"--btn-text": theme.colors.buttonText,
-		"--container-bg": theme.colors.containerBackground,
-		"--border-color": theme.colors.borderColor,
+		"--btn-bg": theme.colors.interactiveBackground,
+		"--btn-text": theme.colors.interactiveText,
+		"--container-bg": theme.colors.surfaceBackground,
+		"--border-color": theme.colors.outlineSeparators,
 	};
 
 	for (const [variable, color] of Object.entries(colorMap)) {
-		root.style.setProperty(variable, color);
+		if (color) {
+			// Safety check in case a color is missing
+			root.style.setProperty(variable, color);
+		}
 	}
 
 	if (previewThemeName) {
@@ -28,26 +29,41 @@ function applyTheme(theme, previewThemeName) {
 function displayThemeOutput(theme, outputContent) {
 	if (!outputContent) return;
 
+	// This is a mapping from the JSON key to the display name
+	const friendlyNames = {
+		primaryBackground: "Primary Background",
+		canvasBackground: "Canvas Background",
+		primaryText: "Primary Text",
+		secondaryText: "Secondary Text",
+		accent: "Accent / Highlight",
+		interactiveBackground: "Interactive Background",
+		interactiveText: "Interactive Text",
+		surfaceBackground: "Surface Background",
+		outlineSeparators: "Outline & Separators",
+	};
+
 	let colorChipsHTML = "";
-	for (const [name, color] of Object.entries(theme.colors)) {
+	// Use Object.entries to loop through the received colors
+	for (const [key, color] of Object.entries(theme.colors)) {
+		// Look up the friendly name, or use the key as a fallback
+		const displayName = friendlyNames[key] || key;
+
 		colorChipsHTML += `
             <div class="color-chip" title="Click to copy" onclick="copyToClipboard('${color}')">
                 <div class="color-swatch" style="background-color: ${color};"></div>
                 <div class="color-info">
-                    <span class="color-name">${name
-											.replace(/([A-Z])/g, " $1")
-											.trim()}</span>
+                    <span class="color-name">${displayName}</span>
                     <span>${color}</span>
                 </div>
             </div>`;
 	}
 
 	outputContent.innerHTML = `
-            <h3>${theme.themeName}</h3>
-            <p>${theme.advice}</p>
-            <div class="color-palette">${colorChipsHTML}</div>
-            <button id="save-theme-button">Save Theme</button>
-        `;
+        <h3>${theme.themeName}</h3>
+        <p>${theme.advice}</p>
+        <div class="color-palette">${colorChipsHTML}</div>
+        <button id="save-theme-button">Save Theme</button>
+    `;
 }
 
 function displaySavedThemes(themes) {
