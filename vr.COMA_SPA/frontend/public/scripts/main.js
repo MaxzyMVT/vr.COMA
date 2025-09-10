@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	// --- State ---
 	let currentTheme = null;
 	let savedThemesCache = [];
+	let themeIdToEdit = null
 
 	// Defualt theme to apply on initial load
 	const defaultTheme = {
@@ -31,6 +32,13 @@ document.addEventListener("DOMContentLoaded", () => {
 	const outputSection = document.getElementById("output-section");
 	const previewThemeName = document.getElementById("preview-theme-name");
 	const outputContent = document.getElementById("output-content");
+
+	// --- Modals ---
+
+	const editModal = document.getElementById('edit-modal');
+    const modalInputName = document.getElementById('modal-input-name');
+    const modalSaveBtn = document.getElementById('modal-save-btn');
+    const modalCancelBtn = document.getElementById('modal-cancel-btn');
 
 	// --- Event Handlers ---
 	async function handleGenerateTheme() {
@@ -138,6 +146,21 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	}
 
+	async function handleThemeNameChanges() {
+        const newName = modalInputName.value.trim();
+        if (!newName || !themeIdToEdit) {
+            return alert('New name cannot be empty.');
+        }
+        try {
+            await apiUpdateThemeName(themeIdToEdit, newName); // Call API function
+            hideEditModal(); // Call UI function
+            await loadAndDisplayThemes(); // Refresh the list
+        } catch (error) {
+            console.error(error);
+            alert(error.message);
+        }
+    }
+
 	// --- Event Listeners ---
 	generateButton.addEventListener("click", handleGenerateTheme);
 	reviseButton.addEventListener("click", handleReviseTheme);
@@ -149,26 +172,35 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	savedThemesList.addEventListener("click", (event) => {
-		const target = event.target;
-		const themeId = target.dataset.id;
+		const loadBtn = event.target.closest('.load-btn');
+        if (loadBtn) {
+            const themeToLoad = savedThemesCache.find(t => t._id === loadBtn.dataset.id);
+            if (themeToLoad) {
+                currentTheme = themeToLoad;
+                applyTheme(themeToLoad, previewThemeName);
+                displayThemeOutput(themeToLoad, outputContent);
+                reviseButton.disabled = false;
+            }
+            return;
+        }
 
-		if (target.classList.contains("load-btn")) {
-			const themeToLoad = savedThemesCache.find(
-				(theme) => theme._id === themeId
-			);
-			if (themeToLoad) {
-				currentTheme = themeToLoad;
-				applyTheme(themeToLoad, previewThemeName);
-				displayThemeOutput(themeToLoad, outputContent);
+        const editBtn = event.target.closest('.edit-btn');
+        if (editBtn) {
+            const themeToEdit = savedThemesCache.find(t => t._id === editBtn.dataset.id);
+            if (themeToEdit) {
+                themeIdToEdit = themeToEdit._id; // Set the ID to edit
+				// console.log("Editing theme:", themeToEdit);
+                showEditModal(themeToEdit); // Call UI function
+            }
+            return;
+        }
 
-				reviseButton.disabled = false;
-			}
-		}
-
-		if (target.classList.contains("delete-btn")) {
-			handleDeleteTheme(themeId);
-		}
-	});
+        const deleteBtn = event.target.closest('.delete-btn');
+        if (deleteBtn) {
+            handleDeleteTheme(deleteBtn.dataset.id);
+            return;
+        }
+    });
 
 	titleHeader.addEventListener("click", () => {
 		console.log("Restoring default theme.");
@@ -177,6 +209,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		applyTheme(defaultTheme, previewThemeName);
 		displayThemeOutput(defaultTheme, outputContent);
 	});
+
+	modalSaveBtn.addEventListener("click", handleThemeNameChanges);
+    modalCancelBtn.addEventListener("click", hideEditModal);
 
 	// Helper function to copy color code
 	window.copyToClipboard = (text) => {

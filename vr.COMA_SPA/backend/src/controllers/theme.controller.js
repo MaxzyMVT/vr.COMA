@@ -1,5 +1,6 @@
 const https = require("https");
 const Theme = require("../models/theme.model");
+const mongoose = require("mongoose");
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -88,12 +89,10 @@ const saveTheme = async (req, res) => {
 };
 
 const getAllThemes = async (req, res) => {
-	console.log(Theme);
 	try {
 		const themes = await Theme.find();
 		res.json(themes);
 	} catch (error) {
-		console.error("Error in getAllThemes:", error);
 		res.status(500).json({ error: "Failed to fetch themes." });
 	}
 };
@@ -111,10 +110,42 @@ const deleteTheme = async (req, res) => {
 	}
 };
 
+const updateThemeName = async (req, res) => {
+    const { id } = req.params;
+    const { themeName } = req.body;
+
+    // Use Mongoose's ObjectId validator
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: "Invalid ID" });
+    }
+    if (!themeName || themeName.trim() === '') {
+        return res.status(400).json({ error: 'Theme name cannot be empty.' });
+    }
+
+    try {
+        // Use the Mongoose Model 'Theme' to perform the update
+        const result = await Theme.updateOne(
+            { _id: id },
+            { $set: { themeName: themeName.trim() } }
+        );
+
+        if (result.modifiedCount === 0) {
+            return res.status(404).json({ error: 'Theme not found or name is unchanged.' });
+        }
+
+        res.status(200).json({ message: "Theme name updated successfully." });
+
+    } catch (error) {
+        console.error("Error updating theme name:", error);
+        res.status(500).json({ error: "Failed to update theme name." });
+    }
+}
+
 // Export all the functions
 module.exports = {
 	generateTheme,
 	saveTheme,
 	getAllThemes,
 	deleteTheme,
+	updateThemeName,
 };
