@@ -1,15 +1,33 @@
-// File: r.COMA/frontend/scripts/main.js
-
 document.addEventListener("DOMContentLoaded", () => {
 	// --- State ---
 	let currentTheme = null;
 	let savedThemesCache = [];
 
+	// Defualt theme to apply on initial load
+	const defaultTheme = {
+		themeName: "Default Neutral",
+		advice:
+			"This is a balanced, neutral theme perfect for professional portfolios, blogs, or business applications. It prioritizes readability and provides a clean, modern starting point.",
+		colors: {
+			primaryBackground: "#2c3e50",
+			canvasBackground: "#ecf0f1",
+			primaryText: "#2c3e50",
+			secondaryText: "#8j99a9",
+			accent: "#3498db",
+			interactiveBackground: "#3498db",
+			interactiveText: "#ffffff",
+			surfaceBackground: "#ffffff",
+			outlineSeparators: "#bdc3c7",
+		},
+	};
+
 	// --- UI Elements ---
-	const generateButton = document.getElementById("generate-button");
-	const reviseButton = document.getElementById("revise-button");
+
+	const titleHeader = document.querySelector(".app-header h1");
 	const textInput = document.getElementById("text-input");
 	const savedThemesList = document.getElementById("saved-themes-list");
+	const generateButton = document.getElementById("generate-button");
+	const reviseButton = document.getElementById("revise-button");
 	const outputSection = document.getElementById("output-section");
 	const previewThemeName = document.getElementById("preview-theme-name");
 	const outputContent = document.getElementById("output-content");
@@ -120,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	}
 
-	// --- Attach Event Listeners ---
+	// --- Event Listeners ---
 	generateButton.addEventListener("click", handleGenerateTheme);
 	reviseButton.addEventListener("click", handleReviseTheme);
 
@@ -152,6 +170,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	});
 
+	titleHeader.addEventListener("click", () => {
+		console.log("Restoring default theme.");
+		currentTheme = defaultTheme;
+		textInput.value = ""; // Clear the text area
+		applyTheme(defaultTheme, previewThemeName);
+		displayThemeOutput(defaultTheme, outputContent);
+	});
+
 	// Helper function to copy color code
 	window.copyToClipboard = (text) => {
 		navigator.clipboard
@@ -165,5 +191,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	};
 
 	// --- Initial Load ---
-	loadAndDisplayThemes();
+	function initializeApp() {
+		currentTheme = defaultTheme;
+		applyTheme(defaultTheme, previewThemeName);
+		displayThemeOutput(defaultTheme, outputContent);
+		loadAndDisplayThemes();
+	}
+
+	initializeApp(); // Run the initialization
 });
