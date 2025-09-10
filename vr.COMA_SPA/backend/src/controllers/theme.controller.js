@@ -88,12 +88,10 @@ const saveTheme = async (req, res) => {
 };
 
 const getAllThemes = async (req, res) => {
-	console.log(Theme);
 	try {
 		const themes = await Theme.find();
 		res.json(themes);
 	} catch (error) {
-		console.error("Error in getAllThemes:", error);
 		res.status(500).json({ error: "Failed to fetch themes." });
 	}
 };
