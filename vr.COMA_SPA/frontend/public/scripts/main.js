@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	// --- State ---
 	let currentTheme = null;
 	let savedThemesCache = [];
-	let themeIdToEdit = null
+	let themeIdToEdit = null;
 
 	// Defualt theme to apply on initial load
 	const defaultTheme = {
@@ -35,10 +35,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	// --- Modals ---
 
-	const editModal = document.getElementById('edit-modal');
-    const modalInputName = document.getElementById('modal-input-name');
-    const modalSaveBtn = document.getElementById('modal-save-btn');
-    const modalCancelBtn = document.getElementById('modal-cancel-btn');
+	const editModal = document.getElementById("edit-modal");
+	const modalInputName = document.getElementById("modal-input-name");
+	const modalSaveBtn = document.getElementById("modal-save-btn");
+	const modalCancelBtn = document.getElementById("modal-cancel-btn");
 
 	// --- Event Handlers ---
 	async function handleGenerateTheme() {
@@ -147,19 +147,19 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	async function handleThemeNameChanges() {
-        const newName = modalInputName.value.trim();
-        if (!newName || !themeIdToEdit) {
-            return alert('New name cannot be empty.');
-        }
-        try {
-            await apiUpdateThemeName(themeIdToEdit, newName); // Call API function
-            hideEditModal(); // Call UI function
-            await loadAndDisplayThemes(); // Refresh the list
-        } catch (error) {
-            console.error(error);
-            alert(error.message);
-        }
-    }
+		const newName = modalInputName.value.trim();
+		if (!newName || !themeIdToEdit) {
+			return alert("New name cannot be empty.");
+		}
+		try {
+			await apiUpdateThemeName(themeIdToEdit, newName); // Call API function
+			hideEditModal(); // Call UI function
+			await loadAndDisplayThemes(); // Refresh the list
+		} catch (error) {
+			console.error(error);
+			alert(error.message);
+		}
+	}
 
 	// --- Event Listeners ---
 	generateButton.addEventListener("click", handleGenerateTheme);
@@ -172,35 +172,39 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	savedThemesList.addEventListener("click", (event) => {
-		const loadBtn = event.target.closest('.load-btn');
-        if (loadBtn) {
-            const themeToLoad = savedThemesCache.find(t => t._id === loadBtn.dataset.id);
-            if (themeToLoad) {
-                currentTheme = themeToLoad;
-                applyTheme(themeToLoad, previewThemeName);
-                displayThemeOutput(themeToLoad, outputContent);
-                reviseButton.disabled = false;
-            }
-            return;
-        }
+		const loadBtn = event.target.closest(".load-btn");
+		if (loadBtn) {
+			const themeToLoad = savedThemesCache.find(
+				(t) => t._id === loadBtn.dataset.id
+			);
+			if (themeToLoad) {
+				currentTheme = themeToLoad;
+				applyTheme(themeToLoad, previewThemeName);
+				displayThemeOutput(themeToLoad, outputContent);
+				reviseButton.disabled = false;
+			}
+			return;
+		}
 
-        const editBtn = event.target.closest('.edit-btn');
-        if (editBtn) {
-            const themeToEdit = savedThemesCache.find(t => t._id === editBtn.dataset.id);
-            if (themeToEdit) {
-                themeIdToEdit = themeToEdit._id; // Set the ID to edit
+		const editBtn = event.target.closest(".edit-btn");
+		if (editBtn) {
+			const themeToEdit = savedThemesCache.find(
+				(t) => t._id === editBtn.dataset.id
+			);
+			if (themeToEdit) {
+				themeIdToEdit = themeToEdit._id; // Set the ID to edit
 				// console.log("Editing theme:", themeToEdit);
-                showEditModal(themeToEdit); // Call UI function
-            }
-            return;
-        }
+				showEditModal(themeToEdit); // Call UI function
+			}
+			return;
+		}
 
-        const deleteBtn = event.target.closest('.delete-btn');
-        if (deleteBtn) {
-            handleDeleteTheme(deleteBtn.dataset.id);
-            return;
-        }
-    });
+		const deleteBtn = event.target.closest(".delete-btn");
+		if (deleteBtn) {
+			handleDeleteTheme(deleteBtn.dataset.id);
+			return;
+		}
+	});
 
 	titleHeader.addEventListener("click", () => {
 		console.log("Restoring default theme.");
@@ -211,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	modalSaveBtn.addEventListener("click", handleThemeNameChanges);
-    modalCancelBtn.addEventListener("click", hideEditModal);
+	modalCancelBtn.addEventListener("click", hideEditModal);
 
 	// Helper function to copy color code
 	window.copyToClipboard = (text) => {
