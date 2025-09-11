@@ -414,7 +414,9 @@ button.secondary:hover {
 
 /* Add this style for the new cancel button */
 #modal-color-cancel-btn {
-    background-color: var(--secondary-text);
+    background-color: var(--secondary-interactive-bg, var(--border-color));
+    color: var(--secondary-interactive-text, var(--primary-text));
+    border: 1px solid var(--border-color);
 }
 
 /* Add these styles for the new inline theme name editor */
