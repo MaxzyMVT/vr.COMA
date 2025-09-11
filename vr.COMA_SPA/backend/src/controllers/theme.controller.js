@@ -186,6 +186,7 @@ const generateTheme = (req, res) => {
 				res.json(themeData);
 			} catch (error) {
 				console.error("Error parsing Gemini response:", error);
+				console.error("Response from Gemini API:", rawText);
 				res.status(500).json({ error: "Failed to parse theme from API." });
 			}
 		});
@@ -193,6 +194,7 @@ const generateTheme = (req, res) => {
 
 	apiRequest.on("error", (error) => {
 		console.error("Error calling Gemini API:", error);
+		alert("There was an error generating the theme. Please try again.");
 		res.status(500).json({ error: "Failed to generate theme from API." });
 	});
 
