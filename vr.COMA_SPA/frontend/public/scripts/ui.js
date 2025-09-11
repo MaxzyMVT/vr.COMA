@@ -120,12 +120,7 @@ function displaySavedThemes(themes) {
 		themeItem.className = "saved-theme-item load-btn";
 		themeItem.dataset.id = theme._id; // The ID is still on the main element
 
-<<<<<<< Updated upstream
-		// The inner HTML remains the same (no separate "Load" button).
-		themeItem.innerHTML = `
-=======
         themeItem.innerHTML = `
->>>>>>> Stashed changes
             <span>${theme.themeName}</span>
             <div class="saved-theme-actions">
                 <button class="icon-btn save-btn" data-id="${theme._id}" title="Overwrite with current theme">

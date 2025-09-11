@@ -240,20 +240,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	savedThemesList.addEventListener("click", (event) => {
-<<<<<<< Updated upstream
-		// Check for the most specific buttons first (the icons)
-		const editBtn = event.target.closest(".edit-btn");
-		if (editBtn) {
-			event.stopPropagation(); // Stop the click from bubbling to the parent div
-			const themeId = editBtn.dataset.id;
-			const themeToEdit = savedThemesCache.find((t) => t._id === themeId);
-			if (themeToEdit) {
-				themeIdToEdit = themeToEdit._id;
-				showEditModal(themeToEdit);
-			}
-			return;
-		}
-=======
     // Check for the most specific buttons first (the icons)
 		const editBtn = event.target.closest('.edit-btn');
 		const saveBtn = event.target.closest('.save-btn');
@@ -262,7 +248,6 @@ document.addEventListener("DOMContentLoaded", () => {
             handleOverwriteTheme(saveBtn.dataset.id);
             return;
         }
->>>>>>> Stashed changes
 
 		const deleteBtn = event.target.closest(".delete-btn");
 		if (deleteBtn) {
