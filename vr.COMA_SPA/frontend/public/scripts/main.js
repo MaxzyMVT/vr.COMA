@@ -14,12 +14,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		colors: {
 			primaryHeader: "#2c3e50",
 			secondaryHeader: "#34495e",
+			headerText: "#ffffff",
+			subHeaderText: "#bdc3c7",
 			canvasBackground: "#ecf0f1",
-			outlineSeparators: "#bdc3c7",
+			surfaceBackground: "#ffffff",
 			primaryText: "#2c3e50",
 			secondaryText: "#7f8c8d",
 			accent: "#3498db",
-			surfaceBackground: "#ffffff",
+			outlineSeparators: "#bdc3c7",
 			primaryInteractive: "#3498db",
 			primaryInteractiveText: "#ffffff",
 			secondaryInteractive: "#bdc3c7",
@@ -36,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	const reviseButton = document.getElementById("revise-button");
 	const outputSection = document.getElementById("output-section");
 	const previewThemeName = document.getElementById("preview-theme-name");
+	const previewSubHeader = document.getElementById("preview-sub-header");
 	const outputContent = document.getElementById("output-content");
 
 	// --- Modals ---
@@ -58,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const prompt = textInput.value.trim();
 			const themeData = await apiGenerateTheme(prompt); // Call API function
 			currentTheme = themeData;
-			applyTheme(themeData, previewThemeName); // Call UI function
+			applyTheme(themeData, previewThemeName, previewSubHeader); // Call UI function
 			displayThemeOutput(themeData, outputContent); // Call UI function
 
 			// After a successful generation, the revise button should be enabled.
@@ -151,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const themeData = await apiGenerateTheme(fullPrompt);
 
 			currentTheme = themeData; // Update the state
-			applyTheme(themeData, previewThemeName);
+			applyTheme(themeData, previewThemeName, previewSubHeader);
 			displayThemeOutput(themeData, outputContent);
 		} catch (error) {
 			console.error("Revision Error:", error);
@@ -203,7 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					// Re-render the entire output to restore the h3 and button
 					displayThemeOutput(currentTheme, outputContent);
 					// Also update the preview panel's name
-					applyTheme(currentTheme, previewThemeName);
+					applyTheme(themeData, previewThemeName, previewSubHeader);
 				} else {
 					// If name is empty, just revert
 					displayThemeOutput(currentTheme, outputContent);
@@ -263,7 +266,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const themeToLoad = savedThemesCache.find((t) => t._id === themeId);
 			if (themeToLoad) {
 				currentTheme = themeToLoad;
-				applyTheme(themeToLoad, previewThemeName);
+				applyTheme(themeToLoad, previewThemeName, previewSubHeader);
 				displayThemeOutput(themeToLoad, outputContent);
 				reviseButton.disabled = false;
 			}
@@ -274,7 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		console.log("Restoring default theme.");
 		currentTheme = defaultTheme;
 		textInput.value = ""; // Clear the text area
-		applyTheme(defaultTheme, previewThemeName);
+		applyTheme(defaultTheme, previewThemeName, previewSubHeader);
 		displayThemeOutput(defaultTheme, outputContent);
 	});
 
@@ -285,7 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		// Update the current theme object IN REAL TIME
 		currentTheme.colors[colorKeyToEdit] = newColor;
 		// Re-apply the entire theme to see the change live
-		applyTheme(currentTheme, previewThemeName);
+		applyTheme(currentTheme, previewThemeName, previewSubHeader);
 	});
 
 	modalColorHex.addEventListener("input", () => {
@@ -294,7 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (/^#[0-9A-F]{6}$/i.test(newColor)) {
 			modalColorPicker.value = newColor;
 			currentTheme.colors[colorKeyToEdit] = newColor;
-			applyTheme(currentTheme, previewThemeName);
+			applyTheme(currentTheme, previewThemeName, previewSubHeader);
 		}
 	});
 
@@ -304,7 +307,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	modalColorCancelBtn.addEventListener("click", () => {
 		currentTheme.colors[colorKeyToEdit] = originalColorBeforeEdit;
-		applyTheme(currentTheme, previewThemeName);
+		applyTheme(themeData, previewThemeName, previewSubHeader);
 		displayThemeOutput(currentTheme, outputContent);
 		hideColorEditorModal();
 	});
@@ -333,7 +336,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	// --- Initial Load ---
 	function initializeApp() {
 		currentTheme = defaultTheme;
-		applyTheme(defaultTheme, previewThemeName);
+		applyTheme(defaultTheme, previewThemeName, previewSubHeader);
 		displayThemeOutput(defaultTheme, outputContent);
 		loadAndDisplayThemes();
 	}

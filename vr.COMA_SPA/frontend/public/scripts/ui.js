@@ -1,9 +1,29 @@
-function applyTheme(theme, previewThemeName) {
+// This is a mapping from the JSON key to the display name
+const friendlyNames = {
+	primaryHeader: "Primary Header",
+	secondaryHeader: "Secondary Header",
+	headerText: "Header Text",
+	subHeaderText: "Sub-Header Text",
+	canvasBackground: "Canvas Background",
+	surfaceBackground: "Surface Background",
+	primaryText: "Primary Text",
+	secondaryText: "Secondary Text",
+	accent: "Accent / Highlight",
+	outlineSeparators: "Outline & Separators",
+	primaryInteractive: "Primary Interactive",
+	primaryInteractiveText: "Primary Interactive Text",
+	secondaryInteractive: "Secondary Interactive",
+	secondaryInteractiveText: "Secondary Interactive Text",
+};
+
+function applyTheme(theme, previewThemeName, previewSubHeader) {
 	if (!theme || !theme.colors) return;
 	const root = document.documentElement;
 	// Map colors from themeData to CSS variables
 	const colorMap = {
 		"--header-bg": theme.colors.primaryHeader,
+		"--header-text": theme.colors.headerText,
+		"--sub-header-text": theme.colors.subHeaderText,
 		"--main-bg": theme.colors.canvasBackground,
 		"--primary-text": theme.colors.primaryText,
 		"--secondary-text": theme.colors.secondaryText,
@@ -26,6 +46,10 @@ function applyTheme(theme, previewThemeName) {
 	if (previewThemeName) {
 		previewThemeName.textContent = theme.themeName;
 	}
+
+	if (previewSubHeader) {
+		previewSubHeader.style.color = theme.colors.subHeaderText;
+	}
 }
 
 function displayThemeOutput(theme, outputContent) {
@@ -35,39 +59,25 @@ function displayThemeOutput(theme, outputContent) {
 	const displayOrder = [
 		"primaryHeader",
 		"secondaryHeader",
+		"headerText",
+		"subHeaderText",
 		"canvasBackground",
-		"outlineSeparators",
+		"surfaceBackground",
 		"primaryText",
 		"secondaryText",
 		"accent",
-		"surfaceBackground",
+		"outlineSeparators",
 		"primaryInteractive",
 		"primaryInteractiveText",
 		"secondaryInteractive",
 		"secondaryInteractiveText",
 	];
 
-	// This is a mapping from the JSON key to the display name
-	const friendlyNames = {
-		primaryHeader: "Primary Header",
-		secondaryHeader: "Secondary Header",
-		canvasBackground: "Canvas Background",
-		outlineSeparators: "Outline & Separators",
-		primaryText: "Primary Text",
-		secondaryText: "Secondary Text",
-		accent: "Accent / Highlight",
-		surfaceBackground: "Surface Background",
-		primaryInteractive: "Primary Interactive",
-		primaryInteractiveText: "Primary Interactive Text",
-		secondaryInteractive: "Secondary Interactive",
-		secondaryInteractiveText: "Secondary Interactive Text",
-	};
-
 	let colorChipsHTML = "";
-	for (const [key, color] of Object.entries(theme.colors)) {
-		// Add data-key attribute to identify which color was clicked
+	displayOrder.forEach((key) => {
+		const color = theme.colors[key];
 		if (color) {
-			// Only display if the color exists
+			// Only display if the color exists in the theme data
 			const displayName = friendlyNames[key] || key;
 			colorChipsHTML += `
                 <div class="color-chip" data-key="${key}" title="Edit ${displayName}">
@@ -78,7 +88,7 @@ function displayThemeOutput(theme, outputContent) {
                     </div>
                 </div>`;
 		}
-	}
+	});
 
 	outputContent.innerHTML = `
         <div class="theme-name-header">

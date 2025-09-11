@@ -93,6 +93,32 @@ button:disabled {
     cursor: not-allowed;
 }
 
+
+/* Add this new rule for any secondary button */
+button.secondary {
+    background-color: var(--secondary-interactive-bg, var(--border-color));
+    color: var(--secondary-interactive-text, var(--primary-text));
+    border: 1px solid var(--border-color);
+}
+
+button.secondary:hover {
+    opacity: 0.8;
+}
+
+/* Add this new rule for the sub-header in the preview */
+#preview-sub-header {
+    color: var(--sub-header-text, var(--btn-text));
+    /* Fallback to btn-text */
+    margin: 0.25rem 0 0 0;
+    font-weight: 400;
+    opacity: 0.9;
+}
+
+.preview-theme-name {
+    margin: 0;
+    color: var(--header-text);
+}
+
 /* Add this new style for our secondary preview button */
 .preview-button.secondary {
     background-color: var(--secondary-interactive-bg, var(--secondary-text));
