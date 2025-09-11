@@ -106,6 +106,10 @@ const saveTheme = async (req, res) => {
 				// Check if the error is the specific "duplicate key" error (code 11000)
 				if (error.code === 11000) {
 					// If it is, generate a new name and the loop will try again
+					console.log(`Name: ${newName} duplicated, trying a new name...`);
+
+					// Generate a new ObjectId for the new document
+					themeData._id = new mongoose.Types.ObjectId();
 					newName = `${originalName} (${counter})`;
 					counter++;
 				} else {
@@ -121,7 +125,7 @@ const saveTheme = async (req, res) => {
 
 const getAllThemes = async (req, res) => {
 	try {
-		const themes = await Theme.find();
+		const themes = await Theme.find().sort({ themeName: 1 }); // Sort lexographically by themeName
 		res.json(themes);
 	} catch (error) {
 		res.status(500).json({ error: "Failed to fetch themes." });
