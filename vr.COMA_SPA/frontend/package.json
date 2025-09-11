@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "live-server public --port=3221"
@@ -11,12 +10,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "type": "commonjs",
   "devDependencies": {
     "live-server": "^1.2.2"
-  },
-  "overrides": {
-    "braces": "^3.0.3",
-    "micromatch": "^4.0.8",
-    "chokidar": "^3.6.0"
   }
 }

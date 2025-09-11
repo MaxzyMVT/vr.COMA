@@ -11,21 +11,15 @@
 <body>
 
     <div class="app-container">
-            <div class="control-panel">
-                <header class="app-header">
-                    <h1>vr.COMA</h1>
-                    <div class="theme-switch-container">
-                        <span class="theme-icon light-icon">☀️</span>
-                        <label class="theme-switch" for="theme-toggle-checkbox" aria-label="Toggle dark mode">
-                            <input type="checkbox" id="theme-toggle-checkbox" />
-                            <div class="slider"></div>
-                        </label>
-                        <span class="theme-icon dark-icon">🌙</span>
-                    </div>
-                    <p class="punchline">Waking up your creative ideas.</p>
-                    <p class="description">Versatile & Reactive Chromatic Orchestration & Mood Analyzer</p>
-                    <p class="description">An AI-powered design assistant that translates your words and ideas into complete, ready-to-use color themes.</p>
-                </header>
+
+        <!-- LEFT PANEL: CONTROLS & OUTPUT -->
+        <div class="control-panel">
+            <header class="app-header">
+                <h1>vr.COMA</h1>
+                <p class="punchline">Waking up your creative ideas.</p>
+                <p class="description">Versatile & Reactive Chromatic Orchestration & Mood Analyzer</p>
+                <p class="description">An AI-powered design assistant that translates your words and ideas into complete, ready-to-use color themes.</p>
+            </header>
 
             <section class="input-section">
                 <h2>1. Describe Your Theme</h2>
@@ -33,7 +27,7 @@
                     placeholder="e.g., 'a serene forest at dawn' or 'a vibrant 80s arcade'"></textarea>
                 <div class="button-group">
                     <button id="generate-button">Generate</button>
-                    <button id="revise-button" disabled>Revise</button>
+                    <button id="revise-button">Revise</button>
                 </div>
             </section>
 
@@ -45,8 +39,10 @@
             </section>
         </div>
 
+        <!-- RIGHT PANEL: PREVIEW & MANAGEMENT -->
         <div class="preview-panel">
 
+            <!-- The "Gimmick" Preview Area -->
             <div class="theme-preview-container" id="theme-preview">
                 <header class="preview-header">
                     <h3 id="preview-theme-name">Theme Preview</h3>
@@ -65,7 +61,8 @@
             <section class="management-section">
                 <h2>Saved Themes</h2>
                 <div id="saved-themes-list">
-                    </div>
+                    <!-- Saved themes will be dynamically inserted here -->
+                </div>
             </section>
         </div>
 
@@ -74,9 +71,54 @@
     <script src="scripts/config.js"></script>
     <script src="scripts/api.js"></script>
     <script src="scripts/ui.js"></script>
-    <script src="scripts/main.js" defer></script>
-    <script src="scripts/theme.js" defer></script>
+    <script src="scripts/main.js"></script>
+
+    <!-- Modal for Editing only Theme Name -->
+    <div class="modal-overlay hidden" id="edit-modal">
+        <div class="modal-content">
+            <h2>Edit Theme Name</h2>
+            <p>Enter a new name for your theme.</p>
+            <input type="text" id="modal-input-name" placeholder="New theme name">
+            <div class="modal-actions">
+                <button id="modal-cancel-btn">Cancel</button>
+                <button id="modal-save-btn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Editing Theme Color -->
+    <div class="modal-overlay hidden" id="color-edit-modal">
+        <div class="modal-content">
+            <h2 id="modal-color-name">Edit Color</h2>
+            <div class="color-editor">
+                <input type="color" id="modal-color-picker">
+                <div class="color-details">
+                    <input type="text" id="modal-color-hex" placeholder="#ffffff">
+                    <button class="icon-btn" id="modal-copy-btn" title="Copy Hex">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button id="modal-color-close-btn">Done</button>
+            </div>
+        </div>
+    </div>
 
 </body>
 
 </html>
+
+
+
+
+
+
+
+
+
+
+

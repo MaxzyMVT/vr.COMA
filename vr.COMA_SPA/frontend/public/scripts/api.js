@@ -51,7 +51,6 @@ async function apiDeleteTheme(themeId) {
 	});
 
 	// A successful DELETE often returns a 204 "No Content" status.
-	// We check if the response status is NOT ok (e.g., 404, 500).
 	if (!response.ok) {
 		const errorData = await response.json().catch(() => ({})); // Try to get error, but don't fail if no body
 		throw new Error(
@@ -63,16 +62,16 @@ async function apiDeleteTheme(themeId) {
 	return true;
 }
 
-// apiRenameTheme in api.js
-async function apiRenameTheme(themeId, newName) {
-  const res = await fetch(`${BACKEND_URL}/api/themes/${themeId}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ themeName: newName }),
-  });
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(`Rename failed: ${res.status} ${res.statusText} ${text}`);
-  }
-  return res.json();
+async function apiUpdateTheme(themeId, updateData) {
+	const response = await fetch(`${BACKEND_URL}/api/themes/${themeId}`, {
+		method: "PATCH",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(updateData),
+	});
+
+	if (!response.ok) {
+		const errorData = await response.json().catch(() => ({}));
+		throw new Error(errorData.error || "Failed to update theme.");
+	}
+	return response.json();
 }

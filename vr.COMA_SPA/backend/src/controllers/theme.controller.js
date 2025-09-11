@@ -145,35 +145,41 @@ const deleteTheme = async (req, res) => {
 	}
 };
 
-const updateThemeName = async (req, res) => {
+// Function to update theme name and/or colors
+const updateTheme = async (req, res) => {
 	const { id } = req.params;
-	const { themeName } = req.body;
+	const { themeName, colors } = req.body;
 
-	// Use Mongoose's ObjectId validator
 	if (!mongoose.Types.ObjectId.isValid(id)) {
 		return res.status(400).json({ error: "Invalid ID" });
+	}
+
+	const updateData = {};
+	if (themeName) updateData.themeName = themeName.trim();
+	if (colors) updateData.colors = colors;
+
+	if (Object.keys(updateData).length === 0) {
+		return res.status(400).json({ error: "No update data provided." });
 	}
 	if (!themeName || themeName.trim() === "") {
 		return res.status(400).json({ error: "Theme name cannot be empty." });
 	}
 
 	try {
-		// Use the Mongoose Model 'Theme' to perform the update
-		const result = await Theme.updateOne(
-			{ _id: id },
-			{ $set: { themeName: themeName.trim() } }
-		);
+		const result = await Theme.updateOne({ _id: id }, { $set: updateData });
 
-		if (result.modifiedCount === 0) {
-			return res
-				.status(404)
-				.json({ error: "Theme not found or name is unchanged." });
+		if (result.matchedCount === 0) {
+			return res.status(404).json({ error: "Theme not found." });
 		}
 
-		res.status(200).json({ message: "Theme name updated successfully." });
+		res.status(200).json({ message: "Theme updated successfully." });
 	} catch (error) {
-		console.error("Error updating theme name:", error);
-		res.status(500).json({ error: "Failed to update theme name." });
+		// Handle potential duplicate key error if name is changed to an existing one
+		if (error.code === 11000) {
+			return res.status(409).json({ error: "That theme name already exists." });
+		}
+		console.error("Error updating theme:", error);
+		res.status(500).json({ error: "Failed to update theme." });
 	}
 };
 
@@ -183,5 +189,5 @@ module.exports = {
 	saveTheme,
 	getAllThemes,
 	deleteTheme,
-	updateThemeName,
+	updateTheme,
 };
