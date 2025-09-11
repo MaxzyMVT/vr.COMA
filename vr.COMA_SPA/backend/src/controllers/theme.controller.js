@@ -15,25 +15,50 @@ const generateTheme = (req, res) => {
 	if (!prompt)
 		return res.status(400).json({ error: "Text prompt is required." });
 
-	const systemPrompt = `You are a creative assistant for a design application that generates color themes. Your task is to respond with a single, clean JSON object and nothing else. The JSON object must contain "themeName", "advice", and a "colors" object. The "colors" object must use these exact keys: "primaryBackground", "canvasBackground", "primaryText", "secondaryText", "accent", "interactiveBackground", "interactiveText", "surfaceBackground", "outlineSeparators".
+const systemPrompt = `You are a creative assistant for a design application that generates color themes. Respond with a single, clean JSON object and nothing else.
+	REQUIREMENTS:
+	- Keys: "themeName", "advice", "accessibility", and "colors".
+	- "colors" "light" and "dark" depends on how dark the theme is.
+	- Each of "light" and "dark" MUST contain EXACTLY these keys:
+  	"primaryBackground", "canvasBackground", "primaryText", "secondaryText",
+  	"accent", "interactiveBackground", "interactiveText",
+  	"surfaceBackground", "outlineSeparators".
 
-    Example Response:
-    {
-    "themeName": "Forest",
-    "advice": "This theme evokes a sense of calm and nature, ideal for wellness or environmental brands. The high-contrast text ensures readability on the light surface backgrounds.",
-    "colors": {
-        "primaryBackground": "#2F4F4F",
-        "canvasBackground": "#F0F8FF",
-        "primaryText": "#2F4F4F",
-        "secondaryText": "#696969",
-        "accent": "#556B2F",
-        "interactiveBackground": "#556B2F",
-        "interactiveText": "#FFFFFF",
-        "surfaceBackground": "#FFFFFF",
-        "outlineSeparators": "#D3D3D3"
-    }
-    }
-    REMINDER: Only return the raw JSON object. Do not use markdown like \`\`\`json.`;
+	ACCESSIBILITY:
+	- Ensure WCAG AA readable contrast for text against its background:
+  	• primaryText on canvasBackground >= 4.5:1
+  	• secondaryText on canvasBackground >= 3:1
+  	• interactiveText on interactiveBackground >= 4.5:1
+  	• primaryText on surfaceBackground >= 4.5:1
+	- If a chosen color would fail, adjust the text color (prefer #000 or #FFF) to meet the threshold while preserving the palette’s vibe.
+
+	EXAMPLE (format only; choose your own colors):
+	{
+  	"themeName": "Forest",
+  	"advice": "Calm, nature-forward theme; suited to wellness brands.",
+  	"accessibility": {
+    	"notes": "All key text/background pairs meet AA.",
+    	"contrasts": {
+      	"primaryOnCanvas": 7.2,
+      	"secondaryOnCanvas": 3.4,
+      	"interactiveTextOnInteractiveBg": 5.0,
+      	"primaryOnSurface": 8.1
+    	}
+  	},
+  	"colors": {
+      	"primaryBackground": "#2F4F4F",
+      	"canvasBackground": "#F0F8FF",
+      	"primaryText": "#2F4F4F",
+      	"secondaryText": "#696969",
+      	"accent": "#556B2F",
+      	"interactiveBackground": "#556B2F",
+      	"interactiveText": "#FFFFFF",
+      	"surfaceBackground": "#FFFFFF",
+      	"outlineSeparators": "#D3D3D3"
+    	}
+  	}
+	}
+	REMINDER: Only return the raw JSON object. Do not use markdown like \`\`\`json.`;
 
 	const payload = JSON.stringify({
 		contents: [{ parts: [{ text: prompt }] }],

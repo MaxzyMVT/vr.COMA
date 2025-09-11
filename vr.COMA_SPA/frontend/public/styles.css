@@ -208,7 +208,6 @@ button:disabled {
 .preview-header h3 {
     margin: 0;
     color: var(--btn-text);
-    /* Usually a good contrast color */
 }
 
 .preview-content {
