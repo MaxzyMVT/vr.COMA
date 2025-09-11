@@ -137,9 +137,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		// 2. Create a more detailed prompt for the AI
 		const fullPrompt = `Based on the previously generated theme named "${
 			currentTheme.themeName
-		}" which has this JSON data: ${JSON.stringify(
+		}", which has this JSON data: ${JSON.stringify(
 			currentTheme
-		)}, please revise it with this new instruction: "${revisionPrompt}"`;
+		)}, please revise and improve it with this new instruction: "${revisionPrompt}"`;
 
 		// 3. The rest is very similar to handleGenerateTheme
 		setLoadingState(true, generateButton, reviseButton);
