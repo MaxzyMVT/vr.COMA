@@ -241,7 +241,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	savedThemesList.addEventListener("click", (event) => {
     // Check for the most specific buttons first (the icons)
-		const editBtn = event.target.closest('.edit-btn');
 		const saveBtn = event.target.closest('.save-btn');
         if (saveBtn) {
             event.stopPropagation();
@@ -305,7 +304,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	modalColorCancelBtn.addEventListener("click", () => {
 		currentTheme.colors[colorKeyToEdit] = originalColorBeforeEdit;
-		applyTheme(themeData, previewThemeName, previewSubHeader);
+		applyTheme(currentTheme, previewThemeName, previewSubHeader);
 		displayThemeOutput(currentTheme, outputContent);
 		hideColorEditorModal();
 	});

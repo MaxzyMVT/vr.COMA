@@ -107,14 +107,14 @@ button.secondary:hover {
 
 /* Add this new rule for the sub-header in the preview */
 #preview-sub-header {
-    color: var(--sub-header-text, var(--btn-text));
+    color: var(--sub-header-text);
     /* Fallback to btn-text */
     margin: 0.25rem 0 0 0;
     font-weight: 400;
     opacity: 0.9;
 }
 
-.preview-theme-name {
+#preview-theme-name {
     margin: 0;
     color: var(--header-text);
 }
