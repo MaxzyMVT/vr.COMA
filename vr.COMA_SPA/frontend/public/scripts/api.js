@@ -63,17 +63,16 @@ async function apiDeleteTheme(themeId) {
 	return true;
 }
 
-async function apiUpdateThemeName(themeId, newName) {
-    const response = await fetch(`${BACKEND_URL}/api/themes/${themeId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ themeName: newName }),
-    });
-
-    if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to update theme name.');
-    }
-
-    return response.json();
+// apiRenameTheme in api.js
+async function apiRenameTheme(themeId, newName) {
+  const res = await fetch(`${BACKEND_URL}/api/themes/${themeId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ themeName: newName }),
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`Rename failed: ${res.status} ${res.statusText} ${text}`);
+  }
+  return res.json();
 }
