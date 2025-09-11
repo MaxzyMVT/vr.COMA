@@ -70,26 +70,38 @@ function displayThemeOutput(theme, outputContent) {
 }
 
 function displaySavedThemes(themes) {
-	const savedThemesList = document.getElementById("saved-themes-list");
-	savedThemesList.innerHTML = "";
-	if (!themes || themes.length === 0) {
-		savedThemesList.innerHTML = "<p>No saved themes yet.</p>";
-		return;
-	}
-	themes.forEach((theme) => {
-		const themeItem = document.createElement("div");
-		themeItem.className = "saved-theme-item";
-		themeItem.innerHTML = `
+    const savedThemesList = document.getElementById("saved-themes-list");
+    savedThemesList.innerHTML = "";
+
+    if (!themes || themes.length === 0) {
+        savedThemesList.innerHTML = "<p>No saved themes yet.</p>";
+        return;
+    }
+
+    themes.forEach((theme) => {
+        // --- THIS IS THE CHANGE: We are creating a <div> again ---
+        const themeItem = document.createElement("div");
+
+        // We still assign both classes. 'load-btn' is our hook for JavaScript.
+        themeItem.className = "saved-theme-item load-btn";
+        themeItem.dataset.id = theme._id; // The ID is still on the main element
+
+        // The inner HTML remains the same (no separate "Load" button).
+        themeItem.innerHTML = `
             <span>${theme.themeName}</span>
             <div class="saved-theme-actions">
-                <button class="load-btn" data-id="${theme._id}">Load</button>
                 <button class="icon-btn edit-btn" data-id="${theme._id}" title="Edit Name">
                     <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                 </button>
-                <button class="delete-btn" data-id="${theme._id}">Delete</button>
+                <button class="icon-btn delete-btn" data-id="${theme._id}" title="Delete Theme">
+                    <svg viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6L6 18"></path>
+                        <path d="M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>`;
-		savedThemesList.appendChild(themeItem);
-	});
+        savedThemesList.appendChild(themeItem);
+    });
 }
 
 function setLoadingState(isLoading, generateButton, reviseButton) {
