@@ -3,15 +3,17 @@ function applyTheme(theme, previewThemeName) {
 	const root = document.documentElement;
 	// Map colors from themeData to CSS variables
 	const colorMap = {
-		"--header-bg": theme.colors.primaryBackground,
+		"--header-bg": theme.colors.primaryHeader,
 		"--main-bg": theme.colors.canvasBackground,
 		"--primary-text": theme.colors.primaryText,
 		"--secondary-text": theme.colors.secondaryText,
 		"--accent": theme.colors.accent,
-		"--btn-bg": theme.colors.interactiveBackground,
-		"--btn-text": theme.colors.interactiveText,
+		"--btn-bg": theme.colors.primaryInteractive,
+		"--btn-text": theme.colors.primaryInteractiveText,
 		"--container-bg": theme.colors.surfaceBackground,
 		"--border-color": theme.colors.outlineSeparators,
+		"--secondary-interactive-bg": theme.colors.secondaryInteractive,
+		"--secondary-interactive-text": theme.colors.secondaryInteractiveText,
 	};
 
 	for (const [variable, color] of Object.entries(colorMap)) {
@@ -29,31 +31,53 @@ function applyTheme(theme, previewThemeName) {
 function displayThemeOutput(theme, outputContent) {
 	if (!outputContent) return;
 
+	// The exact order that the colors will appear in.
+	const displayOrder = [
+		"primaryHeader",
+		"secondaryHeader",
+		"canvasBackground",
+		"outlineSeparators",
+		"primaryText",
+		"secondaryText",
+		"accent",
+		"surfaceBackground",
+		"primaryInteractive",
+		"primaryInteractiveText",
+		"secondaryInteractive",
+		"secondaryInteractiveText",
+	];
+
 	// This is a mapping from the JSON key to the display name
 	const friendlyNames = {
-		primaryBackground: "Primary Background",
+		primaryHeader: "Primary Header",
+		secondaryHeader: "Secondary Header",
 		canvasBackground: "Canvas Background",
+		outlineSeparators: "Outline & Separators",
 		primaryText: "Primary Text",
 		secondaryText: "Secondary Text",
 		accent: "Accent / Highlight",
-		interactiveBackground: "Interactive Background",
-		interactiveText: "Interactive Text",
 		surfaceBackground: "Surface Background",
-		outlineSeparators: "Outline & Separators",
+		primaryInteractive: "Primary Interactive",
+		primaryInteractiveText: "Primary Interactive Text",
+		secondaryInteractive: "Secondary Interactive",
+		secondaryInteractiveText: "Secondary Interactive Text",
 	};
 
 	let colorChipsHTML = "";
 	for (const [key, color] of Object.entries(theme.colors)) {
-		const displayName = friendlyNames[key] || key;
 		// Add data-key attribute to identify which color was clicked
-		colorChipsHTML += `
-            <div class="color-chip" data-key="${key}" title="Edit ${displayName}">
-                <div class="color-swatch" style="background-color: ${color};"></div>
-                <div class="color-info">
-                    <span class="color-name">${displayName}</span>
-                    <span>${color}</span>
-                </div>
-            </div>`;
+		if (color) {
+			// Only display if the color exists
+			const displayName = friendlyNames[key] || key;
+			colorChipsHTML += `
+                <div class="color-chip" data-key="${key}" title="Edit ${displayName}">
+                    <div class="color-swatch" style="background-color: ${color};"></div>
+                    <div class="color-info">
+                        <span class="color-name">${displayName}</span>
+                        <span>${color}</span>
+                    </div>
+                </div>`;
+		}
 	}
 
 	outputContent.innerHTML = `
@@ -70,24 +94,24 @@ function displayThemeOutput(theme, outputContent) {
 }
 
 function displaySavedThemes(themes) {
-    const savedThemesList = document.getElementById("saved-themes-list");
-    savedThemesList.innerHTML = "";
+	const savedThemesList = document.getElementById("saved-themes-list");
+	savedThemesList.innerHTML = "";
 
-    if (!themes || themes.length === 0) {
-        savedThemesList.innerHTML = "<p>No saved themes yet.</p>";
-        return;
-    }
+	if (!themes || themes.length === 0) {
+		savedThemesList.innerHTML = "<p>No saved themes yet.</p>";
+		return;
+	}
 
-    themes.forEach((theme) => {
-        // --- THIS IS THE CHANGE: We are creating a <div> again ---
-        const themeItem = document.createElement("div");
+	themes.forEach((theme) => {
+		// --- THIS IS THE CHANGE: We are creating a <div> again ---
+		const themeItem = document.createElement("div");
 
-        // We still assign both classes. 'load-btn' is our hook for JavaScript.
-        themeItem.className = "saved-theme-item load-btn";
-        themeItem.dataset.id = theme._id; // The ID is still on the main element
+		// We still assign both classes. 'load-btn' is our hook for JavaScript.
+		themeItem.className = "saved-theme-item load-btn";
+		themeItem.dataset.id = theme._id; // The ID is still on the main element
 
-        // The inner HTML remains the same (no separate "Load" button).
-        themeItem.innerHTML = `
+		// The inner HTML remains the same (no separate "Load" button).
+		themeItem.innerHTML = `
             <span>${theme.themeName}</span>
             <div class="saved-theme-actions">
                 <button class="icon-btn edit-btn" data-id="${theme._id}" title="Edit Name">
@@ -100,8 +124,8 @@ function displaySavedThemes(themes) {
                     </svg>
                 </button>
             </div>`;
-        savedThemesList.appendChild(themeItem);
-    });
+		savedThemesList.appendChild(themeItem);
+	});
 }
 
 function setLoadingState(isLoading, generateButton, reviseButton) {
@@ -122,8 +146,9 @@ function showColorEditorModal(colorKey, colorValue) {
 	const colorPicker = document.getElementById("modal-color-picker");
 	const hexInput = document.getElementById("modal-color-hex");
 
-	const friendlyName = colorKey.replace(/([A-Z])/g, " $1").trim();
-	nameLabel.textContent = `Edit ${friendlyName}`;
+	const displayName = friendlyNames[colorKey] || colorKey;
+	nameLabel.textContent = `Edit ${displayName}`;
+
 	colorPicker.value = colorValue;
 	hexInput.value = colorValue;
 

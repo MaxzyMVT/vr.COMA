@@ -12,15 +12,18 @@ document.addEventListener("DOMContentLoaded", () => {
 		advice:
 			"This is a balanced, neutral theme perfect for professional portfolios, blogs, or business applications. It prioritizes readability and provides a clean, modern starting point.",
 		colors: {
-			primaryBackground: "#2c3e50",
+			primaryHeader: "#2c3e50",
+			secondaryHeader: "#34495e",
 			canvasBackground: "#ecf0f1",
+			outlineSeparators: "#bdc3c7",
 			primaryText: "#2c3e50",
 			secondaryText: "#7f8c8d",
 			accent: "#3498db",
-			interactiveBackground: "#3498db",
-			interactiveText: "#ffffff",
 			surfaceBackground: "#ffffff",
-			outlineSeparators: "#bdc3c7",
+			primaryInteractive: "#3498db",
+			primaryInteractiveText: "#ffffff",
+			secondaryInteractive: "#bdc3c7",
+			secondaryInteractiveText: "#2c3e50",
 		},
 	};
 
@@ -232,12 +235,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	savedThemesList.addEventListener("click", (event) => {
-    // Check for the most specific buttons first (the icons)
-		const editBtn = event.target.closest('.edit-btn');
+		// Check for the most specific buttons first (the icons)
+		const editBtn = event.target.closest(".edit-btn");
 		if (editBtn) {
 			event.stopPropagation(); // Stop the click from bubbling to the parent div
 			const themeId = editBtn.dataset.id;
-			const themeToEdit = savedThemesCache.find(t => t._id === themeId);
+			const themeToEdit = savedThemesCache.find((t) => t._id === themeId);
 			if (themeToEdit) {
 				themeIdToEdit = themeToEdit._id;
 				showEditModal(themeToEdit);
@@ -245,7 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			return;
 		}
 
-		const deleteBtn = event.target.closest('.delete-btn');
+		const deleteBtn = event.target.closest(".delete-btn");
 		if (deleteBtn) {
 			event.stopPropagation(); // Stop the click from bubbling to the parent div
 			const themeId = deleteBtn.dataset.id;
@@ -254,10 +257,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 		// If not an icon, check if the click was on the main item
-		const loadBtn = event.target.closest('.load-btn');
+		const loadBtn = event.target.closest(".load-btn");
 		if (loadBtn) {
 			const themeId = loadBtn.dataset.id;
-			const themeToLoad = savedThemesCache.find(t => t._id === themeId);
+			const themeToLoad = savedThemesCache.find((t) => t._id === themeId);
 			if (themeToLoad) {
 				currentTheme = themeToLoad;
 				applyTheme(themeToLoad, previewThemeName);
