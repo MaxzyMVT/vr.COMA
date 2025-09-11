@@ -7,6 +7,6 @@ router.post("/generate-theme", themeController.generateTheme);
 router.post("/themes", themeController.saveTheme);
 router.get("/themes", themeController.getAllThemes);
 router.delete("/themes/:id", themeController.deleteTheme);
-router.patch("/themes/:id", themeController.updateTheme);
+router.put("/themes/:id", themeController.overwriteTheme);
 
 module.exports = router;

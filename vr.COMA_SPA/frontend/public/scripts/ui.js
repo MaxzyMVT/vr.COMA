@@ -120,12 +120,21 @@ function displaySavedThemes(themes) {
 		themeItem.className = "saved-theme-item load-btn";
 		themeItem.dataset.id = theme._id; // The ID is still on the main element
 
+<<<<<<< Updated upstream
 		// The inner HTML remains the same (no separate "Load" button).
 		themeItem.innerHTML = `
+=======
+        themeItem.innerHTML = `
+>>>>>>> Stashed changes
             <span>${theme.themeName}</span>
             <div class="saved-theme-actions">
-                <button class="icon-btn edit-btn" data-id="${theme._id}" title="Edit Name">
-                    <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                <button class="icon-btn save-btn" data-id="${theme._id}" title="Overwrite with current theme">
+					<svg viewBox="0 0 24 24">
+                        <path d="M22.5,22.5H1.5V1.5H18.68L22.5,5.32Z"></path>
+                        <path d="M7.23,1.5h9.55a0,0,0,0,1,0,0V6.27a1,1,0,0,1-1,1H8.18a1,1,0,0,1-1-1V1.5A0,0,0,0,1,7.23,1.5Z"></path>
+                        <rect x="6.27" y="14.86" width="11.45" height="7.64"></rect>
+                        <line x1="9.14" y1="18.68" x2="14.86" y2="18.68"></line>
+                    </svg>
                 </button>
                 <button class="icon-btn delete-btn" data-id="${theme._id}" title="Delete Theme">
                     <svg viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -168,18 +177,4 @@ function showColorEditorModal(colorKey, colorValue) {
 function hideColorEditorModal() {
 	const modal = document.getElementById("color-edit-modal");
 	modal.classList.add("hidden");
-}
-
-function showEditModal(theme) {
-	console.log("Showing edit modal for theme:", theme);
-	const editModal = document.getElementById("edit-modal");
-	const modalInputName = document.getElementById("modal-input-name");
-
-	modalInputName.value = theme.themeName; // Pre-fill the input
-	editModal.classList.remove("hidden");
-}
-
-function hideEditModal() {
-	const editModal = document.getElementById("edit-modal");
-	editModal.classList.add("hidden");
 }

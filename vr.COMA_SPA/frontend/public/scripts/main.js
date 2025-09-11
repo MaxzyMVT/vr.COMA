@@ -43,11 +43,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	// --- Modals ---
 
-	const editModal = document.getElementById("edit-modal");
-	const modalInputName = document.getElementById("modal-input-name");
-	const modalSaveBtn = document.getElementById("modal-save-btn");
-	const modalCancelBtn = document.getElementById("modal-cancel-btn");
-	const colorEditModal = document.getElementById("color-edit-modal");
 	const modalColorPicker = document.getElementById("modal-color-picker");
 	const modalColorHex = document.getElementById("modal-color-hex");
 	const modalCopyBtn = document.getElementById("modal-copy-btn");
@@ -164,19 +159,26 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	}
 
-	async function handleSaveChanges() {
-		const newName = modalInputName.value.trim();
-		if (!newName || !themeIdToEdit) return;
+	async function handleOverwriteTheme(themeId) {
+        if (!currentTheme) {
+            alert("Please generate or revise a theme first before trying to overwrite another.");
+            return;
+        }
+        const themeToOverwrite = savedThemesCache.find(t => t._id === themeId);
+        if (!themeToOverwrite) return;
 
-		try {
-			await apiUpdateTheme(themeIdToEdit, { themeName: newName });
-			hideEditModal();
-			await loadAndDisplayThemes();
-		} catch (error) {
-			console.error(error);
-			alert(error.message);
-		}
-	}
+        if (confirm(`Are you sure you want to overwrite "${themeToOverwrite.themeName}" with the currently generated theme? This cannot be undone.`)) {
+            try {
+                // We send the entire current theme object to the backend for replacement.
+                await apiOverwriteTheme(themeId, currentTheme);
+                alert(`Successfully updated "${themeToOverwrite.themeName}"!`);
+                await loadAndDisplayThemes(); // Refresh the list
+            } catch (error) {
+                console.error("Error overwriting theme:", error);
+                alert("Could not update the theme. Please try again.");
+            }
+        }
+    }
 
 	// --- Event Listeners ---
 	generateButton.addEventListener("click", handleGenerateTheme);
@@ -238,6 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	savedThemesList.addEventListener("click", (event) => {
+<<<<<<< Updated upstream
 		// Check for the most specific buttons first (the icons)
 		const editBtn = event.target.closest(".edit-btn");
 		if (editBtn) {
@@ -250,6 +253,16 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 			return;
 		}
+=======
+    // Check for the most specific buttons first (the icons)
+		const editBtn = event.target.closest('.edit-btn');
+		const saveBtn = event.target.closest('.save-btn');
+        if (saveBtn) {
+            event.stopPropagation();
+            handleOverwriteTheme(saveBtn.dataset.id);
+            return;
+        }
+>>>>>>> Stashed changes
 
 		const deleteBtn = event.target.closest(".delete-btn");
 		if (deleteBtn) {
@@ -317,9 +330,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		displayThemeOutput(currentTheme, outputContent);
 		hideColorEditorModal();
 	});
-
-	modalSaveBtn.addEventListener("click", handleSaveChanges);
-	modalCancelBtn.addEventListener("click", hideEditModal);
 
 	// Helper function to copy color code
 	window.copyToClipboard = (text) => {

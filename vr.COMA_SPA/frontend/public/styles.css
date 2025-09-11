@@ -272,7 +272,6 @@ button.secondary:hover {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    
     background-color: var(--container-bg);
     border: 1px solid var(--border-color);
     padding: 1rem;
@@ -286,15 +285,6 @@ button.secondary:hover {
 /* This adds the hover effect to the entire div */
 .saved-theme-item:hover {
     background-color: var(--main-bg);
-}
-
-/* .load-btn {
-    background-color: var(--accent);
-} */
-
-.delete-btn {
-    margin : 0;
-    background-color: var(--secondary-text);
 }
 
 .modal-overlay {
@@ -378,14 +368,20 @@ button.secondary:hover {
 }
 
 .icon-btn svg {
-    width: 16px;
-    height: 16px;
-    stroke-width: 2;
-    stroke: var(--secondary-text); /* Use stroke for line icons */
+    width: 20px;
+    height: 20px;
+    
+    /* --- CORE CHANGE --- */
+    stroke: var(--secondary-text); 
     fill: none;
-    transition: stroke 0.2s ease;
+    stroke-width: 1.9px; /* Define a consistent line thickness */
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    
+    transition: stroke 0.2s ease; /* Transition the stroke color */
 }
 
+/* Also update the hover effect to use stroke */
 .icon-btn:hover svg {
     stroke: var(--accent);
 }
