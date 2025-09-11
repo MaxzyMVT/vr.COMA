@@ -229,23 +229,29 @@ button:disabled {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
+    width: 100%;
+    
     background-color: var(--container-bg);
     border: 1px solid var(--border-color);
+    padding: 1rem;
     border-radius: 8px;
+    
+    /* --- KEY STYLES FOR DIV BEHAVIOR --- */
+    cursor: pointer; /* This makes it feel clickable */
+    transition: background-color 0.2s ease;
 }
 
-.saved-theme-item button {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.8rem;
-    margin-left: 0.5rem;
+/* This adds the hover effect to the entire div */
+.saved-theme-item:hover {
+    background-color: var(--main-bg);
 }
 
-.load-btn {
+/* .load-btn {
     background-color: var(--accent);
-}
+} */
 
 .delete-btn {
+    margin : 0;
     background-color: var(--secondary-text);
 }
 

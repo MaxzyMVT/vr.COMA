@@ -203,37 +203,38 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	savedThemesList.addEventListener("click", (event) => {
-		const loadBtn = event.target.closest(".load-btn");
+    // Check for the most specific buttons first (the icons)
+		const editBtn = event.target.closest('.edit-btn');
+		if (editBtn) {
+			event.stopPropagation(); // Stop the click from bubbling to the parent div
+			const themeId = editBtn.dataset.id;
+			const themeToEdit = savedThemesCache.find(t => t._id === themeId);
+			if (themeToEdit) {
+				themeIdToEdit = themeToEdit._id;
+				showEditModal(themeToEdit);
+			}
+			return;
+		}
+
+		const deleteBtn = event.target.closest('.delete-btn');
+		if (deleteBtn) {
+			event.stopPropagation(); // Stop the click from bubbling to the parent div
+			const themeId = deleteBtn.dataset.id;
+			handleDeleteTheme(themeId);
+			return;
+		}
+
+		// If not an icon, check if the click was on the main item
+		const loadBtn = event.target.closest('.load-btn');
 		if (loadBtn) {
-			const themeToLoad = savedThemesCache.find(
-				(t) => t._id === loadBtn.dataset.id
-			);
+			const themeId = loadBtn.dataset.id;
+			const themeToLoad = savedThemesCache.find(t => t._id === themeId);
 			if (themeToLoad) {
 				currentTheme = themeToLoad;
 				applyTheme(themeToLoad, previewThemeName);
 				displayThemeOutput(themeToLoad, outputContent);
 				reviseButton.disabled = false;
 			}
-			return;
-		}
-
-		const editBtn = event.target.closest(".edit-btn");
-		if (editBtn) {
-			const themeToEdit = savedThemesCache.find(
-				(t) => t._id === editBtn.dataset.id
-			);
-			if (themeToEdit) {
-				themeIdToEdit = themeToEdit._id; // Set the ID to edit
-				// console.log("Editing theme:", themeToEdit);
-				showEditModal(themeToEdit); // Call UI function
-			}
-			return;
-		}
-
-		const deleteBtn = event.target.closest(".delete-btn");
-		if (deleteBtn) {
-			handleDeleteTheme(deleteBtn.dataset.id);
-			return;
 		}
 	});
 
