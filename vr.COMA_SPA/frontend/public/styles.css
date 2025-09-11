@@ -436,6 +436,46 @@ button.secondary:hover {
 }
 
 
+/* --- Styles for the new Saved Theme Color Icons --- */
+
+/* This new container will group the name and the swatches together */
+.theme-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    /* This creates a nice space between the name and the icons */
+    overflow: hidden;
+    /* Prevents long names from breaking the layout */
+}
+
+/* This is the container for the row of swatch icons */
+.theme-swatches {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    /* Prevents the swatches from shrinking if the name is long */
+}
+
+/* This is the style for each individual color swatch */
+.theme-swatch {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    /* Creates the round-cornered square */
+    border: 1px solid var(--outlineSeparators, var(--border-color));
+    /* The outline */
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+    /* A subtle shadow for depth */
+    margin-left: -6px;
+    /* THE KEY: This makes the icons overlap neatly */
+}
+
+/* This makes sure the first swatch in the list has no negative margin */
+.theme-swatch:first-child {
+    margin-left: 0;
+}
+
+
 /*
 ==================================================================
     RESPONSIVE DESIGN - MEDIA QUERIES
