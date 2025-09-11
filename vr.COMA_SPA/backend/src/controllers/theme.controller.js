@@ -28,7 +28,7 @@ const generateTheme = (req, res) => {
 	- DO NOT USE GRAVE ACCENT in theme names
 
 	COLOR DESCRIPTIONS (for context):
-	- primaryHeader: The main background for key sections like hero banners.
+	- primaryHeader: The main background for key sections like hero banner, should be easily distinct from canvasBackground and surfaceBackground.
 	- secondaryHeader: A secondary color for header gradients or accents, this color should be able to blend with primaryHeader for nice gradients.
 	- headerText: The main text color for use on top of the headers.
 	- subHeaderText: A less prominent text color for subtitles on headers.
@@ -264,26 +264,26 @@ const deleteTheme = async (req, res) => {
 };
 
 const overwriteTheme = async (req, res) => {
-    try {
-        // findByIdAndUpdate will find the document and completely replace it with the request body.
-        // { new: true } ensures the updated document is returned.
-        const updatedTheme = await Theme.findByIdAndUpdate(
-            req.params.id,
-            req.body, // The entire new theme object from the frontend
-            { new: true, runValidators: true, overwrite: true } // overwrite: true is key for PUT
-        );
+	try {
+		// findByIdAndUpdate will find the document and completely replace it with the request body.
+		// { new: true } ensures the updated document is returned.
+		const updatedTheme = await Theme.findByIdAndUpdate(
+			req.params.id,
+			req.body, // The entire new theme object from the frontend
+			{ new: true, runValidators: true, overwrite: true } // overwrite: true is key for PUT
+		);
 
-        if (!updatedTheme) {
-            return res.status(404).json({ error: 'Theme not found' });
-        }
-        res.status(200).json(updatedTheme);
-    } catch (error) {
-        if (error.kind === 'ObjectId') {
-            return res.status(400).json({ error: 'Invalid theme ID format' });
-        }
-        console.error("Error overwriting theme:", error);
-        res.status(500).json({ error: "Failed to overwrite theme." });
-    }
+		if (!updatedTheme) {
+			return res.status(404).json({ error: "Theme not found" });
+		}
+		res.status(200).json(updatedTheme);
+	} catch (error) {
+		if (error.kind === "ObjectId") {
+			return res.status(400).json({ error: "Invalid theme ID format" });
+		}
+		console.error("Error overwriting theme:", error);
+		res.status(500).json({ error: "Failed to overwrite theme." });
+	}
 };
 
 // Export all the functions
