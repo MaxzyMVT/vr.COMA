@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	let currentTheme = null;
 	let savedThemesCache = [];
 	let themeIdToEdit = null;
+	let colorKeyToEdit = null;
 
 	// Defualt theme to apply on initial load
 	const defaultTheme = {
@@ -39,6 +40,11 @@ document.addEventListener("DOMContentLoaded", () => {
 	const modalInputName = document.getElementById("modal-input-name");
 	const modalSaveBtn = document.getElementById("modal-save-btn");
 	const modalCancelBtn = document.getElementById("modal-cancel-btn");
+	const colorEditModal = document.getElementById("color-edit-modal");
+	const modalColorPicker = document.getElementById("modal-color-picker");
+	const modalColorHex = document.getElementById("modal-color-hex");
+	const modalCopyBtn = document.getElementById("modal-copy-btn");
+	const modalColorCloseBtn = document.getElementById("modal-color-close-btn");
 
 	// --- Event Handlers ---
 	async function handleGenerateTheme() {
@@ -127,7 +133,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 		// 2. Create a more detailed prompt for the AI
-		const fullPrompt = `Based on the previous theme named "${currentTheme.themeName}", please revise it with this new instruction: "${revisionPrompt}"`;
+		const fullPrompt = `Based on the previously generated theme named "${
+			currentTheme.themeName
+		}" which has this JSON data: ${JSON.stringify(
+			currentTheme
+		)}, please revise it with this new instruction: "${revisionPrompt}"`;
 
 		// 3. The rest is very similar to handleGenerateTheme
 		setLoadingState(true, generateButton, reviseButton);
@@ -146,15 +156,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	}
 
-	async function handleThemeNameChanges() {
+	async function handleSaveChanges() {
 		const newName = modalInputName.value.trim();
-		if (!newName || !themeIdToEdit) {
-			return alert("New name cannot be empty.");
-		}
+		if (!newName || !themeIdToEdit) return;
+
 		try {
-			await apiUpdateThemeName(themeIdToEdit, newName); // Call API function
-			hideEditModal(); // Call UI function
-			await loadAndDisplayThemes(); // Refresh the list
+			await apiUpdateTheme(themeIdToEdit, { themeName: newName });
+			hideEditModal();
+			await loadAndDisplayThemes();
 		} catch (error) {
 			console.error(error);
 			alert(error.message);
@@ -166,8 +175,30 @@ document.addEventListener("DOMContentLoaded", () => {
 	reviseButton.addEventListener("click", handleReviseTheme);
 
 	outputSection.addEventListener("click", (event) => {
+		// Handle Save button
 		if (event.target.id === "save-theme-button") {
 			handleSaveTheme();
+		}
+		// Handle inline edit button
+		const editNameBtn = event.target.closest(".edit-theme-name-btn");
+		if (editNameBtn) {
+			const newName = prompt(
+				"Enter a new name for the current theme:",
+				currentTheme.themeName
+			);
+			if (newName && newName.trim() !== "") {
+				currentTheme.themeName = newName.trim();
+				// Re-render the UI to show the new name instantly
+				applyTheme(currentTheme, previewThemeName);
+				displayThemeOutput(currentTheme, outputContent);
+			}
+		}
+		// Handle color chip click
+		const colorChip = event.target.closest(".color-chip");
+		if (colorChip) {
+			colorKeyToEdit = colorChip.dataset.key; // Store which color we're editing
+			const currentColor = currentTheme.colors[colorKeyToEdit];
+			showColorEditorModal(colorKeyToEdit, currentColor);
 		}
 	});
 
@@ -214,7 +245,37 @@ document.addEventListener("DOMContentLoaded", () => {
 		displayThemeOutput(defaultTheme, outputContent);
 	});
 
-	modalSaveBtn.addEventListener("click", handleThemeNameChanges);
+	modalColorPicker.addEventListener("input", () => {
+		const newColor = modalColorPicker.value;
+		modalColorHex.value = newColor;
+
+		// Update the current theme object IN REAL TIME
+		currentTheme.colors[colorKeyToEdit] = newColor;
+		// Re-apply the entire theme to see the change live
+		applyTheme(currentTheme, previewThemeName);
+	});
+
+	modalColorHex.addEventListener("input", () => {
+		const newColor = modalColorHex.value;
+		// Basic validation for hex color
+		if (/^#[0-9A-F]{6}$/i.test(newColor)) {
+			modalColorPicker.value = newColor;
+			currentTheme.colors[colorKeyToEdit] = newColor;
+			applyTheme(currentTheme, previewThemeName);
+		}
+	});
+
+	modalCopyBtn.addEventListener("click", () => {
+		copyToClipboard(modalColorHex.value);
+	});
+
+	modalColorCloseBtn.addEventListener("click", () => {
+		// When we close, we also need to re-render the output to reflect any changes
+		displayThemeOutput(currentTheme, outputContent);
+		hideColorEditorModal();
+	});
+
+	modalSaveBtn.addEventListener("click", handleSaveChanges);
 	modalCancelBtn.addEventListener("click", hideEditModal);
 
 	// Helper function to copy color code

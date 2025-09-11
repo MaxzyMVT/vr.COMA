@@ -43,13 +43,11 @@ function displayThemeOutput(theme, outputContent) {
 	};
 
 	let colorChipsHTML = "";
-	// Use Object.entries to loop through the received colors
 	for (const [key, color] of Object.entries(theme.colors)) {
-		// Look up the friendly name, or use the key as a fallback
 		const displayName = friendlyNames[key] || key;
-
+		// Add data-key attribute to identify which color was clicked
 		colorChipsHTML += `
-            <div class="color-chip" title="Click to copy" onclick="copyToClipboard('${color}')">
+            <div class="color-chip" data-key="${key}" title="Edit ${displayName}">
                 <div class="color-swatch" style="background-color: ${color};"></div>
                 <div class="color-info">
                     <span class="color-name">${displayName}</span>
@@ -59,7 +57,12 @@ function displayThemeOutput(theme, outputContent) {
 	}
 
 	outputContent.innerHTML = `
-        <h3>${theme.themeName}</h3>
+        <div class="theme-name-header">
+            <h3 id="current-theme-name">${theme.themeName}</h3>
+            <button class="icon-btn edit-theme-name-btn" title="Edit Name">
+                <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+            </button>
+        </div>
         <p>${theme.advice}</p>
         <div class="color-palette">${colorChipsHTML}</div>
         <button id="save-theme-button">Save Theme</button>
@@ -67,33 +70,26 @@ function displayThemeOutput(theme, outputContent) {
 }
 
 function displaySavedThemes(themes) {
-	// This function's only job is to update the UI.
-    const savedThemesList = document.getElementById("saved-themes-list");
-    savedThemesList.innerHTML = "";
-
+	const savedThemesList = document.getElementById("saved-themes-list");
+	savedThemesList.innerHTML = "";
 	if (!themes || themes.length === 0) {
 		savedThemesList.innerHTML = "<p>No saved themes yet.</p>";
 		return;
 	}
-
-    themes.forEach((theme) => {
-        const themeItem = document.createElement("div");
-        themeItem.className = "saved-theme-item";
-
+	themes.forEach((theme) => {
+		const themeItem = document.createElement("div");
+		themeItem.className = "saved-theme-item";
 		themeItem.innerHTML = `
             <span>${theme.themeName}</span>
-            <div>
             <div class="saved-theme-actions">
                 <button class="load-btn" data-id="${theme._id}">Load</button>
-                
                 <button class="icon-btn edit-btn" data-id="${theme._id}" title="Edit Name">
                     <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                 </button>
-                
                 <button class="delete-btn" data-id="${theme._id}">Delete</button>
             </div>`;
-        savedThemesList.appendChild(themeItem);
-    });
+		savedThemesList.appendChild(themeItem);
+	});
 }
 
 function setLoadingState(isLoading, generateButton, reviseButton) {
@@ -108,16 +104,35 @@ function setLoadingState(isLoading, generateButton, reviseButton) {
 	}
 }
 
+function showColorEditorModal(colorKey, colorValue) {
+	const modal = document.getElementById("color-edit-modal");
+	const nameLabel = document.getElementById("modal-color-name");
+	const colorPicker = document.getElementById("modal-color-picker");
+	const hexInput = document.getElementById("modal-color-hex");
+
+	const friendlyName = colorKey.replace(/([A-Z])/g, " $1").trim();
+	nameLabel.textContent = `Edit ${friendlyName}`;
+	colorPicker.value = colorValue;
+	hexInput.value = colorValue;
+
+	modal.classList.remove("hidden");
+}
+
+function hideColorEditorModal() {
+	const modal = document.getElementById("color-edit-modal");
+	modal.classList.add("hidden");
+}
+
 function showEditModal(theme) {
 	console.log("Showing edit modal for theme:", theme);
-    const editModal = document.getElementById('edit-modal');
-    const modalInputName = document.getElementById('modal-input-name');
-    
-    modalInputName.value = theme.themeName; // Pre-fill the input
-    editModal.classList.remove('hidden');
+	const editModal = document.getElementById("edit-modal");
+	const modalInputName = document.getElementById("modal-input-name");
+
+	modalInputName.value = theme.themeName; // Pre-fill the input
+	editModal.classList.remove("hidden");
 }
 
 function hideEditModal() {
-    const editModal = document.getElementById('edit-modal');
-    editModal.classList.add('hidden');
+	const editModal = document.getElementById("edit-modal");
+	editModal.classList.add("hidden");
 }

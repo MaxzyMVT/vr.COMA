@@ -333,6 +333,27 @@ button:disabled {
     stroke: var(--accent);
 }
 
+/* --- Styles for Inline Name Editing --- */
+.theme-name-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#output-content h3 {
+    margin-top: 0;
+    /* Reset margin */
+}
+
+/* --- Styles for the new Color Editor Modal --- */
+.color-editor {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
 
 /*
 ==================================================================
