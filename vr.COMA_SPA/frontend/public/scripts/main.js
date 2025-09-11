@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			primaryBackground: "#2c3e50",
 			canvasBackground: "#ecf0f1",
 			primaryText: "#2c3e50",
-			secondaryText: "#8j99a9",
+			secondaryText: "#7f8c8d",
 			accent: "#3498db",
 			interactiveBackground: "#3498db",
 			interactiveText: "#ffffff",

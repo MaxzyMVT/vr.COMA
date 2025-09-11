@@ -309,7 +309,7 @@ button:disabled {
     align-items: center;
     cursor: pointer;
     padding: 0.4rem;
-    border-radius: 50%;
+    border-radius: 8px;
     transition: background-color 0.2s ease;
     border: none;
     background-color: transparent;
