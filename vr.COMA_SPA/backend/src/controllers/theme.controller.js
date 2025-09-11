@@ -68,7 +68,7 @@ const systemPrompt = `You are a creative assistant for a design application that
 
 	const options = {
 		hostname: "generativelanguage.googleapis.com",
-		path: `/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`,
+		path: `/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
