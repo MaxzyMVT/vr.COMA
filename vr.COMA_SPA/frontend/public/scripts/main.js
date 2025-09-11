@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	let savedThemesCache = [];
 	let themeIdToEdit = null;
 	let colorKeyToEdit = null;
+	let originalColorBeforeEdit = null;
 
 	// Defualt theme to apply on initial load
 	const defaultTheme = {
@@ -45,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	const modalColorHex = document.getElementById("modal-color-hex");
 	const modalCopyBtn = document.getElementById("modal-copy-btn");
 	const modalColorCloseBtn = document.getElementById("modal-color-close-btn");
+	const modalColorCancelBtn = document.getElementById("modal-color-cancel-btn");
 
 	// --- Event Handlers ---
 	async function handleGenerateTheme() {
@@ -179,25 +181,52 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (event.target.id === "save-theme-button") {
 			handleSaveTheme();
 		}
-		// Handle inline edit button
+		// Handle INLINE EDIT button
 		const editNameBtn = event.target.closest(".edit-theme-name-btn");
 		if (editNameBtn) {
-			const newName = prompt(
-				"Enter a new name for the current theme:",
-				currentTheme.themeName
-			);
-			if (newName && newName.trim() !== "") {
-				currentTheme.themeName = newName.trim();
-				// Re-render the UI to show the new name instantly
-				applyTheme(currentTheme, previewThemeName);
-				displayThemeOutput(currentTheme, outputContent);
-			}
+			const h3 = document.getElementById("current-theme-name");
+			const header = h3.parentElement;
+
+			const input = document.createElement("input");
+			input.type = "text";
+			input.value = currentTheme.themeName;
+			input.className = "theme-name-input";
+
+			// Function to save changes and switch back to h3
+			const saveAndExitEditMode = () => {
+				const newName = input.value.trim();
+				if (newName) {
+					currentTheme.themeName = newName;
+					// Re-render the entire output to restore the h3 and button
+					displayThemeOutput(currentTheme, outputContent);
+					// Also update the preview panel's name
+					applyTheme(currentTheme, previewThemeName);
+				} else {
+					// If name is empty, just revert
+					displayThemeOutput(currentTheme, outputContent);
+				}
+			};
+
+			input.addEventListener("blur", saveAndExitEditMode);
+			input.addEventListener("keydown", (e) => {
+				if (e.key === "Enter") {
+					saveAndExitEditMode();
+				} else if (e.key === "Escape") {
+					// On escape, just revert without saving
+					displayThemeOutput(currentTheme, outputContent);
+				}
+			});
+
+			header.innerHTML = ""; // Clear the header
+			header.appendChild(input);
+			input.focus(); // Focus the input for immediate typing
 		}
 		// Handle color chip click
 		const colorChip = event.target.closest(".color-chip");
 		if (colorChip) {
-			colorKeyToEdit = colorChip.dataset.key; // Store which color we're editing
+			colorKeyToEdit = colorChip.dataset.key;
 			const currentColor = currentTheme.colors[colorKeyToEdit];
+			originalColorBeforeEdit = currentColor; // <-- Store original color
 			showColorEditorModal(colorKeyToEdit, currentColor);
 		}
 	});
@@ -268,6 +297,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	modalCopyBtn.addEventListener("click", () => {
 		copyToClipboard(modalColorHex.value);
+	});
+
+	modalColorCancelBtn.addEventListener("click", () => {
+		currentTheme.colors[colorKeyToEdit] = originalColorBeforeEdit;
+		applyTheme(currentTheme, previewThemeName);
+		displayThemeOutput(currentTheme, outputContent);
+		hideColorEditorModal();
 	});
 
 	modalColorCloseBtn.addEventListener("click", () => {

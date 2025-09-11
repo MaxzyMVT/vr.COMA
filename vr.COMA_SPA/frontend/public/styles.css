@@ -322,6 +322,15 @@ button:disabled {
     margin: 0 0.25rem;
 }
 
+.edit-theme-name-btn {
+    flex-grow: 0;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    margin: 0;
+}
+
 .icon-btn:hover {
     background-color: var(--border-color);
 }
@@ -343,7 +352,12 @@ button:disabled {
 .theme-name-header {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    min-height: 40px;
+}
+
+.theme-name-header h3 {
+    margin: 0;
 }
 
 #output-content h3 {
@@ -358,6 +372,34 @@ button:disabled {
     justify-content: center;
     gap: 1.5rem;
     margin: 2rem 0;
+}
+
+/* Add this style for the new cancel button */
+#modal-color-cancel-btn {
+    background-color: var(--secondary-text);
+}
+
+/* Add these styles for the new inline theme name editor */
+.theme-name-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 40px;
+    /* Prevents layout shift when replacing h3 with input */
+}
+
+.theme-name-input {
+    font-size: 1.75rem;
+    /* Matches h3 font-size */
+    font-weight: 600;
+    font-family: var(--font-family);
+    border: none;
+    border-bottom: 2px solid var(--accent);
+    outline: none;
+    background-color: transparent;
+    color: var(--primary-text);
+    padding: 0;
+    width: 100%;
 }
 
 
