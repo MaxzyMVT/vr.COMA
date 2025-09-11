@@ -2,8 +2,9 @@ document.addEventListener("DOMContentLoaded", () => {
 	// --- State ---
 	let currentTheme = null;
 	let savedThemesCache = [];
+	let themeIdToEdit = null
 
-	// Default themes to apply on initial load
+	// Defualt theme to apply on initial load
 	const defaultTheme = {
 		themeName: "Default Neutral",
 		advice:
@@ -12,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			primaryBackground: "#2c3e50",
 			canvasBackground: "#ecf0f1",
 			primaryText: "#2c3e50",
-			secondaryText: "#8b99a9", // FIXED: Was invalid #8j99a9
+			secondaryText: "#8j99a9",
 			accent: "#3498db",
 			interactiveBackground: "#3498db",
 			interactiveText: "#ffffff",
@@ -21,23 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 	};
 
-	const defaultThemeDark = {
-		themeName: "Default Dark",
-		advice:
-			"A sleek, dark theme that's easy on the eyes. Great for dashboards, code editors, or any application where users spend a lot of time.",
-		colors: {
-			primaryBackground: "#212529", // CORRECTED: Was a light color, now it's dark gray
-			canvasBackground: "#121212",
-			primaryText: "#e9ecef",
-			secondaryText: "#adb5bd",
-			accent: "#5294e2",
-			interactiveBackground: "#5294e2",
-			interactiveText: "#ffffff",
-			surfaceBackground: "#1e1e1e",
-			outlineSeparators: "#495057",
-		},
-	};
 	// --- UI Elements ---
+
 	const titleHeader = document.querySelector(".app-header h1");
 	const textInput = document.getElementById("text-input");
 	const savedThemesList = document.getElementById("saved-themes-list");
@@ -47,38 +33,48 @@ document.addEventListener("DOMContentLoaded", () => {
 	const previewThemeName = document.getElementById("preview-theme-name");
 	const outputContent = document.getElementById("output-content");
 
+	// --- Modals ---
+
+	const editModal = document.getElementById('edit-modal');
+    const modalInputName = document.getElementById('modal-input-name');
+    const modalSaveBtn = document.getElementById('modal-save-btn');
+    const modalCancelBtn = document.getElementById('modal-cancel-btn');
+
 	// --- Event Handlers ---
-	async function handleGenerateTheme(promptOverride) {
+	async function handleGenerateTheme() {
 		setLoadingState(true, generateButton, reviseButton);
 		try {
-			const prompt = promptOverride || textInput.value.trim();
-			if (!prompt) {
-				alert("Please enter a description for the theme.");
-				return;
-			}
-
+			const prompt = textInput.value.trim();
 			const themeData = await apiGenerateTheme(prompt); // Call API function
 			currentTheme = themeData;
 			applyTheme(themeData, previewThemeName); // Call UI function
 			displayThemeOutput(themeData, outputContent); // Call UI function
 
+			// After a successful generation, the revise button should be enabled.
 			reviseButton.disabled = false;
 		} catch (error) {
 			console.error(error);
-			alert("An error occurred while generating the theme. Please check the console.");
+			// Show error on UI
 		} finally {
 			setLoadingState(false, generateButton, reviseButton);
 		}
 	}
 
 	async function handleSaveTheme() {
+		// Guard Clause: Check if there is a theme to save.
 		if (!currentTheme) {
 			alert("No theme has been generated yet. Please generate a theme first.");
 			return;
 		}
+
 		try {
+			// Call the API function to do the network request.
 			await apiSaveTheme(currentTheme);
+
+			// Give the user feedback.
 			alert(`Theme "${currentTheme.themeName}" was saved successfully!`);
+
+			// Refresh the saved themes list to show the new addition.
 			await loadAndDisplayThemes();
 		} catch (error) {
 			console.error("Failed to save theme:", error);
@@ -88,44 +84,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	async function loadAndDisplayThemes() {
 		try {
-			savedThemesCache = await apiLoadThemes();
-			displaySavedThemes(savedThemesCache);
+			const themes = await apiLoadThemes();
+
+			savedThemesCache = themes;
+
+			displaySavedThemes(themes);
 		} catch (error) {
 			console.error("Failed to load and display themes:", error);
-			savedThemesList.innerHTML = '<p style="color: red;">Could not load saved themes.</p>';
+			savedThemesList.innerHTML =
+				'<p style="color: red;">Could not load saved themes.</p>';
 		}
 	}
 
 	async function handleDeleteTheme(themeId) {
+		// 1. Confirm with the user before deleting.
 		if (confirm("Are you sure you want to delete this theme?")) {
 			try {
+				// 2. Call the dedicated API function.
 				await apiDeleteTheme(themeId);
+
+				// 3. Refresh the UI to show the theme has been removed.
 				await loadAndDisplayThemes();
 			} catch (error) {
+				// 4. Show an error message if the API call fails.
 				console.error("Error deleting theme:", error);
 				alert("Could not delete the theme. Please try again.");
 			}
 		}
 	}
 
-    async function handleRenameTheme(themeId) {
-        const theme = savedThemesCache.find(t => t._id === themeId);
-        if (!theme) return;
-
-        const newName = prompt("Enter the new name for this theme:", theme.themeName);
-
-        if (newName && newName.trim() !== "") {
-            try {
-                await apiRenameTheme(themeId, newName.trim());
-                await loadAndDisplayThemes(); // Refresh list to show the new name
-            } catch (error) {
-                console.error("Error renaming theme:", error);
-                alert("Could not rename the theme. Please try again.");
-            }
-        }
-    }
-
 	async function handleReviseTheme() {
+		// 1. Guard Clause: Don't do anything if there's no theme to revise.
 		if (!currentTheme) {
 			alert("Please generate or load a theme before trying to revise it.");
 			return;
@@ -137,66 +126,92 @@ document.addEventListener("DOMContentLoaded", () => {
 			return;
 		}
 
+		// 2. Create a more detailed prompt for the AI
 		const fullPrompt = `Based on the previous theme named "${currentTheme.themeName}", please revise it with this new instruction: "${revisionPrompt}"`;
-		await handleGenerateTheme(fullPrompt);
-	}
 
-	async function handleMakeDark() {
-		if (!currentTheme) {
-			alert("Please generate or load a theme first.");
-			return;
+		// 3. The rest is very similar to handleGenerateTheme
+		setLoadingState(true, generateButton, reviseButton);
+		try {
+			// We can reuse the same API function!
+			const themeData = await apiGenerateTheme(fullPrompt);
+
+			currentTheme = themeData; // Update the state
+			applyTheme(themeData, previewThemeName);
+			displayThemeOutput(themeData, outputContent);
+		} catch (error) {
+			console.error("Revision Error:", error);
+			alert("There was an error revising the theme. Please try again.");
+		} finally {
+			setLoadingState(false, generateButton, reviseButton);
 		}
-		const darkPrompt = `Create a dark mode version of the theme named "${currentTheme.themeName}". The new name should be "${currentTheme.themeName}_dark". Keep the spirit of the original colors but adapt them for a dark background.`;
-		await handleGenerateTheme(darkPrompt);
 	}
 
+	async function handleThemeNameChanges() {
+        const newName = modalInputName.value.trim();
+        if (!newName || !themeIdToEdit) {
+            return alert('New name cannot be empty.');
+        }
+        try {
+            await apiUpdateThemeName(themeIdToEdit, newName); // Call API function
+            hideEditModal(); // Call UI function
+            await loadAndDisplayThemes(); // Refresh the list
+        } catch (error) {
+            console.error(error);
+            alert(error.message);
+        }
+    }
 
 	// --- Event Listeners ---
-	generateButton.addEventListener("click", () => handleGenerateTheme());
+	generateButton.addEventListener("click", handleGenerateTheme);
 	reviseButton.addEventListener("click", handleReviseTheme);
 
 	outputSection.addEventListener("click", (event) => {
 		if (event.target.id === "save-theme-button") {
 			handleSaveTheme();
 		}
-        if (event.target.id === "make-dark-button") {
-            handleMakeDark();
-        }
 	});
 
 	savedThemesList.addEventListener("click", (event) => {
-		const target = event.target;
-		const themeId = target.dataset.id;
-		if (!themeId) return;
+		const loadBtn = event.target.closest('.load-btn');
+        if (loadBtn) {
+            const themeToLoad = savedThemesCache.find(t => t._id === loadBtn.dataset.id);
+            if (themeToLoad) {
+                currentTheme = themeToLoad;
+                applyTheme(themeToLoad, previewThemeName);
+                displayThemeOutput(themeToLoad, outputContent);
+                reviseButton.disabled = false;
+            }
+            return;
+        }
 
-		if (target.classList.contains("load-btn")) {
-			const themeToLoad = savedThemesCache.find((theme) => theme._id === themeId);
-			if (themeToLoad) {
-				currentTheme = themeToLoad;
-				applyTheme(themeToLoad, previewThemeName);
-				displayThemeOutput(themeToLoad, outputContent);
-				reviseButton.disabled = false;
-			}
-		} else if (target.classList.contains("rename-btn")) {
-            handleRenameTheme(themeId);
-        } else if (target.classList.contains("delete-btn")) {
-			handleDeleteTheme(themeId);
-		}
-	});
+        const editBtn = event.target.closest('.edit-btn');
+        if (editBtn) {
+            const themeToEdit = savedThemesCache.find(t => t._id === editBtn.dataset.id);
+            if (themeToEdit) {
+                themeIdToEdit = themeToEdit._id; // Set the ID to edit
+				// console.log("Editing theme:", themeToEdit);
+                showEditModal(themeToEdit); // Call UI function
+            }
+            return;
+        }
+
+        const deleteBtn = event.target.closest('.delete-btn');
+        if (deleteBtn) {
+            handleDeleteTheme(deleteBtn.dataset.id);
+            return;
+        }
+    });
 
 	titleHeader.addEventListener("click", () => {
-		initializeApp();
+		console.log("Restoring default theme.");
+		currentTheme = defaultTheme;
+		textInput.value = ""; // Clear the text area
+		applyTheme(defaultTheme, previewThemeName);
+		displayThemeOutput(defaultTheme, outputContent);
 	});
 
-	window.addEventListener('theme:changed', (e) => {
-		const isDarkMode = e.detail.mode === 'dark';
-		// Only switch default theme if a default theme is currently active
-		if (currentTheme === defaultTheme || currentTheme === defaultThemeDark) {
-			currentTheme = isDarkMode ? defaultThemeDark : defaultTheme;
-			applyTheme(currentTheme, previewThemeName);
-			displayThemeOutput(currentTheme, outputContent);
-		}
-	});
+	modalSaveBtn.addEventListener("click", handleThemeNameChanges);
+    modalCancelBtn.addEventListener("click", hideEditModal);
 
 	// Helper function to copy color code
 	window.copyToClipboard = (text) => {
@@ -212,13 +227,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	// --- Initial Load ---
 	function initializeApp() {
-		const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
-		currentTheme = isDarkMode ? defaultThemeDark : defaultTheme;
-		textInput.value = "";
-		applyTheme(currentTheme, previewThemeName);
-		displayThemeOutput(currentTheme, outputContent);
+		currentTheme = defaultTheme;
+		applyTheme(defaultTheme, previewThemeName);
+		displayThemeOutput(defaultTheme, outputContent);
 		loadAndDisplayThemes();
 	}
 
-	initializeApp();
+	initializeApp(); // Run the initialization
 });
