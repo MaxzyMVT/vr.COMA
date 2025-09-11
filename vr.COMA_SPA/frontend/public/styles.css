@@ -261,6 +261,29 @@ button.secondary:hover {
     margin-left: 1rem;
 }
 
+.search-container {
+    margin-bottom: 1.5rem;
+}
+
+#search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--primary-text);
+    background-color: var(--secondary-interactive-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2); /* Use your accent color */
+}
+
 #saved-themes-list {
     display: flex;
     flex-direction: column;
