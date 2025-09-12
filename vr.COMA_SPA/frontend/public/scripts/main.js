@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	const titleHeader = document.querySelector(".app-header h1");
 	const textInput = document.getElementById("text-input");
+	const searchInput = document.getElementById("search-input");
 	const savedThemesList = document.getElementById("saved-themes-list");
 	const generateButton = document.getElementById("generate-button");
 	const reviseButton = document.getElementById("revise-button");
@@ -105,6 +106,23 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	}
 
+	async function handleSearch() {
+		const searchText = searchInput.value.toLowerCase().trim();
+
+		// Filter the cached themes based on the search text
+		const filteredThemes = savedThemesCache.filter((theme) =>
+			theme.themeName.toLowerCase().includes(searchText)
+		);
+
+		// Re-render the list with only the filtered themes
+		displaySavedThemes(filteredThemes);
+
+		// If the search yields no results, display a helpful message
+		if (filteredThemes.length === 0 && searchText) {
+			savedThemesList.innerHTML = `<p>No themes found matching "${searchText}".</p>`;
+		}
+	}
+
 	async function handleDeleteTheme(themeId) {
 		// 1. Confirm with the user before deleting.
 		if (confirm("Are you sure you want to delete this theme?")) {
@@ -160,25 +178,31 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	async function handleOverwriteTheme(themeId) {
-        if (!currentTheme) {
-            alert("Please generate or revise a theme first before trying to overwrite another.");
-            return;
-        }
-        const themeToOverwrite = savedThemesCache.find(t => t._id === themeId);
-        if (!themeToOverwrite) return;
+		if (!currentTheme) {
+			alert(
+				"Please generate or revise a theme first before trying to overwrite another."
+			);
+			return;
+		}
+		const themeToOverwrite = savedThemesCache.find((t) => t._id === themeId);
+		if (!themeToOverwrite) return;
 
-        if (confirm(`Are you sure you want to overwrite "${themeToOverwrite.themeName}" with the currently generated theme? This cannot be undone.`)) {
-            try {
-                // We send the entire current theme object to the backend for replacement.
-                await apiOverwriteTheme(themeId, currentTheme);
-                alert(`Successfully updated "${themeToOverwrite.themeName}"!`);
-                await loadAndDisplayThemes(); // Refresh the list
-            } catch (error) {
-                console.error("Error overwriting theme:", error);
-                alert("Could not update the theme. Please try again.");
-            }
-        }
-    }
+		if (
+			confirm(
+				`Are you sure you want to overwrite "${themeToOverwrite.themeName}" with the currently generated theme? This cannot be undone.`
+			)
+		) {
+			try {
+				// We send the entire current theme object to the backend for replacement.
+				await apiOverwriteTheme(themeId, currentTheme);
+				alert(`Successfully updated "${themeToOverwrite.themeName}"!`);
+				await loadAndDisplayThemes(); // Refresh the list
+			} catch (error) {
+				console.error("Error overwriting theme:", error);
+				alert("Could not update the theme. Please try again.");
+			}
+		}
+	}
 
 	// --- Event Listeners ---
 	generateButton.addEventListener("click", handleGenerateTheme);
@@ -240,13 +264,13 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	savedThemesList.addEventListener("click", (event) => {
-    // Check for the most specific buttons first (the icons)
-		const saveBtn = event.target.closest('.save-btn');
-        if (saveBtn) {
-            event.stopPropagation();
-            handleOverwriteTheme(saveBtn.dataset.id);
-            return;
-        }
+		// Check for the most specific buttons first (the icons)
+		const saveBtn = event.target.closest(".save-btn");
+		if (saveBtn) {
+			event.stopPropagation();
+			handleOverwriteTheme(saveBtn.dataset.id);
+			return;
+		}
 
 		const deleteBtn = event.target.closest(".delete-btn");
 		if (deleteBtn) {
