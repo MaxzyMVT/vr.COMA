@@ -16,15 +16,18 @@
         <div class="control-panel">
             <header class="app-header">
                 <h1>vr.COMA</h1>
-                <p class="punchline">Waking up your creative ideas.</p>
-                <p class="description">Versatile & Reactive Chromatic Orchestration & Mood Analyzer</p>
-                <p class="description">An AI-powered design assistant that translates your words and ideas into complete, ready-to-use color themes.</p>
-            </header>
+                <br>
+                <p class="punchline">Your MOOD. Your MESSAGE. Your MASTERPIECE.</p>
+                <br>
+                <p class="description">Versatile & Reactive Chromatic Orchestration & Mood Analyzer <br>
+                <br> &ensp; Powered by advanced mood analysis and chromatic orchestration, vr.COMA decodes your input—whether it's a feeling, a phrase, or a brand vision—and generates dynamic color themes optimized for UI/UX.</p>
+            </header> <!-- change punchline add new descriptions-->
 
             <section class="input-section">
                 <h2>1. Describe Your Theme</h2>
                 <textarea id="text-input"
-                    placeholder="e.g., 'a serene forest at dawn' or 'a vibrant 80s arcade'"></textarea>
+                    placeholder="e.g., 'a serene forest at dawn' or 'a vibrant 80s arcade'"
+                    maxlength="200"></textarea>
                 <div class="button-group">
                     <button id="generate-button">Generate</button>
                     <button id="revise-button" class="secondary">Revise</button>
@@ -62,11 +65,6 @@
 
             <section class="management-section">
                 <h2>Saved Themes</h2>
-
-                <div class="search-container">
-                    <input type="search" id="search-input" placeholder="Searching your themes">
-                </div>
-
                 <div id="saved-themes-list">
                     <!-- Saved themes will be dynamically inserted here -->
                 </div>
