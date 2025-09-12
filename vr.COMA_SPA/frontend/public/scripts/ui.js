@@ -22,16 +22,17 @@ function applyTheme(theme, previewThemeName, previewSubHeader) {
 	// Map colors from themeData to CSS variables
 	const colorMap = {
 		"--header-bg": theme.colors.primaryHeader,
+		"--secondary-header-bg": theme.colors.secondaryHeader,
 		"--header-text": theme.colors.headerText,
 		"--sub-header-text": theme.colors.subHeaderText,
 		"--main-bg": theme.colors.canvasBackground,
+		"--container-bg": theme.colors.surfaceBackground,
 		"--primary-text": theme.colors.primaryText,
 		"--secondary-text": theme.colors.secondaryText,
 		"--accent": theme.colors.accent,
+		"--border-color": theme.colors.outlineSeparators,
 		"--btn-bg": theme.colors.primaryInteractive,
 		"--btn-text": theme.colors.primaryInteractiveText,
-		"--container-bg": theme.colors.surfaceBackground,
-		"--border-color": theme.colors.outlineSeparators,
 		"--secondary-interactive-bg": theme.colors.secondaryInteractive,
 		"--secondary-interactive-text": theme.colors.secondaryInteractiveText,
 	};
@@ -99,7 +100,7 @@ function displayThemeOutput(theme, outputContent) {
         </div>
         <p>${theme.advice}</p>
         <div class="color-palette">${colorChipsHTML}</div>
-        <button id="save-theme-button"  class="spaced-button" >Save Theme</button>
+        <button id="save-theme-button">Save Theme</button>
     `;
 }
 
@@ -113,15 +114,32 @@ function displaySavedThemes(themes) {
 	}
 
 	themes.forEach((theme) => {
-		// --- THIS IS THE CHANGE: We are creating a <div> again ---
 		const themeItem = document.createElement("div");
-
-		// We still assign both classes. 'load-btn' is our hook for JavaScript.
 		themeItem.className = "saved-theme-item load-btn";
-		themeItem.dataset.id = theme._id; // The ID is still on the main element
+		themeItem.dataset.id = theme._id;
 
-        themeItem.innerHTML = `
-            <span>${theme.themeName}</span>
+		const keyColors = [
+			"primaryHeader",
+			"surfaceBackground",
+			"primaryText",
+			"accent",
+		];
+
+		let swatchesHTML = '<div class="theme-swatches">';
+		keyColors.forEach((key) => {
+			const color = theme.colors[key];
+			if (color) {
+				// Only add a swatch if the color exists
+				swatchesHTML += `<div class="theme-swatch" style="background-color: ${color};"></div>`;
+			}
+		});
+		swatchesHTML += "</div>";
+
+		themeItem.innerHTML = `
+            <div class="theme-info">
+                <span>${theme.themeName}</span>
+                ${swatchesHTML}
+            </div>
             <div class="saved-theme-actions">
                 <button class="icon-btn save-btn" data-id="${theme._id}" title="Overwrite with current theme">
 					<svg viewBox="0 0 24 24">
@@ -132,7 +150,7 @@ function displaySavedThemes(themes) {
                     </svg>
                 </button>
                 <button class="icon-btn delete-btn" data-id="${theme._id}" title="Delete Theme">
-                    <svg viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <svg viewBox="0 0 24 24">
                         <path d="M18 6L6 18"></path>
                         <path d="M6 6l12 12"></path>
                     </svg>

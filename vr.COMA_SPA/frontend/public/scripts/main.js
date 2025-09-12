@@ -263,6 +263,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	});
 
+	searchInput.addEventListener("input", handleSearch);
+
 	savedThemesList.addEventListener("click", (event) => {
 		// Check for the most specific buttons first (the icons)
 		const saveBtn = event.target.closest(".save-btn");

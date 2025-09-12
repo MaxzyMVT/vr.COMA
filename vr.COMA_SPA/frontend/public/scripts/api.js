@@ -63,16 +63,16 @@ async function apiDeleteTheme(themeId) {
 }
 
 async function apiOverwriteTheme(themeId, newThemeData) {
-    const response = await fetch(`${BACKEND_URL}/api/themes/${themeId}`, {
-        method: 'PUT', // Use PUT for full replacement
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newThemeData),
-    });
+	const response = await fetch(`${BACKEND_URL}/api/themes/${themeId}`, {
+		method: "PUT", // Use PUT for full replacement
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(newThemeData),
+	});
 
-    if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to overwrite theme.');
-    }
+	if (!response.ok) {
+		const errorData = await response.json().catch(() => ({}));
+		throw new Error(errorData.error || "Failed to overwrite theme.");
+	}
 
-    return response.json();
+	return response.json();
 }
