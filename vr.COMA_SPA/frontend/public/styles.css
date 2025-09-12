@@ -1,14 +1,19 @@
 /* Using CSS variables for dynamic theming */
 :root {
     --header-bg: #2c3e50;
+    --secondary-header-bg: #34495e;
+    --header-text: #ffffff;
+    --sub-header-text: #bdc3c7;
     --main-bg: #ecf0f1;
     --primary-text: #2c3e50;
-    --secondary-text: #8j99a9;
+    --secondary-text: #7f8c8d;
     --accent: #3498db;
     --btn-bg: #3498db;
     --btn-text: #ffffff;
     --container-bg: #ffffff;
     --border-color: #bdc3c7;
+    --secondary-interactive-bg: #bdc3c7;
+    --secondary-interactive-text: #2c3e50;
 
     --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
@@ -168,20 +173,6 @@ button.secondary:hover {
     cursor:pointer;
 }
 
-/* Add this new rule for the sub-header in the preview */
-#preview-sub-header {
-    color: var(--secondary-text);
-    /* Fallback to btn-text */
-    margin: 0.25rem 0 0 0;
-    font-weight: 400;
-    opacity: 0.9;
-}
-
-#preview-theme-name {
-    margin: 0;
-    color: var(--primary-text);
-}
-
 /* Add this new style for our secondary preview button */
 .preview-button.secondary {
     background-color: var(--secondary-interactive-bg, var(--secondary-text));
@@ -333,14 +324,22 @@ button.secondary:hover {
 }
 
 .preview-header {
-    background-image: linear-gradient(to right, var(--main-bg), var(--header-bg));
+    background-image: linear-gradient(to right, var(--header-bg), var(--secondary-header-bg));
     padding: 1.5rem;
     transition: background-color 0.5s ease;
 }
 
-.preview-header h3 {
+/* Add this new rule for the sub-header in the preview */
+#preview-sub-header {
+    color: var(--sub-header-text);
+    margin: 0.25rem 0 0 0;
+    font-weight: 400;
+    opacity: 0.9;
+}
+
+#preview-theme-name {
     margin: 0;
-    color: var(--primary-text);
+    color: var(--header-text);
 }
 
 .preview-content {
