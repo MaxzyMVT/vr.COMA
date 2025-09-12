@@ -33,7 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	const titleHeader = document.querySelector(".app-header h1");
 	const textInput = document.getElementById("text-input");
-	const searchInput = document.getElementById("search-input")
 	const savedThemesList = document.getElementById("saved-themes-list");
 	const generateButton = document.getElementById("generate-button");
 	const reviseButton = document.getElementById("revise-button");
@@ -105,23 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				'<p style="color: red;">Could not load saved themes.</p>';
 		}
 	}
-
-	async function handleSearch() {
-        const searchText = searchInput.value.toLowerCase().trim();
-
-        // Filter the cached themes based on the search text
-        const filteredThemes = savedThemesCache.filter(theme => 
-            theme.themeName.toLowerCase().includes(searchText)
-        );
-
-        // Re-render the list with only the filtered themes
-        displaySavedThemes(filteredThemes);
-
-        // If the search yields no results, display a helpful message
-        if (filteredThemes.length === 0 && searchText) {
-            savedThemesList.innerHTML = `<p>No themes found matching "${searchText}".</p>`;
-        }
-    }
 
 	async function handleDeleteTheme(themeId) {
 		// 1. Confirm with the user before deleting.
@@ -256,8 +238,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			showColorEditorModal(colorKeyToEdit, currentColor);
 		}
 	});
-
-	searchInput.addEventListener("input", handleSearch);
 
 	savedThemesList.addEventListener("click", (event) => {
     // Check for the most specific buttons first (the icons)
