@@ -12,10 +12,16 @@
 
     <div class="app-container">
 
-        <!-- LEFT PANEL: CONTROLS & OUTPUT -->
         <div class="control-panel">
             <header class="app-header">
+              <div class="brand-row">
                 <h1>vr.COMA</h1>
+                <div class="ui-actions">
+                    <button id="ui-mode-toggle" class="icon-btn" title="Toggle UI light/dark">
+                        <svg viewBox="0 0 24 24" id="ui-mode-icon"><path d="M12 3a9 9 0 1 0 9 9A7.5 7.5 0 0 1 12 3z"/></svg>
+                    </button>
+                </div>
+              </div>
                 <p class="punchline">WAKING UP your creative ideas.</p>
                 <br><br><br>
                 <p class="description"><span class="brand-letters">V</span>ersatile & <span class="brand-letters">R</span>eactive <span class="brand-letters">C</span>hromatic <br>  <span class="brand-letters">O</span>rchestration & <span class="brand-letters">M</span>ood <span class="brand-letters">A</span>nalyzer <br>
@@ -33,7 +39,6 @@
                     <button id="revise-button" class="secondary">Revise</button>
                 </div>
             </section>
-
             <section class="output-section" id="output-section">
                 <h2>2. Generated Theme</h2>
                 <div id="output-content">
@@ -42,10 +47,8 @@
             </section>
         </div>
 
-        <!-- RIGHT PANEL: PREVIEW & MANAGEMENT -->
         <div class="preview-panel">
 
-            <!-- The "Gimmick" Preview Area -->
             <div class="theme-preview-container" id="theme-preview">
                 <header class="preview-header">
                     <h3 id="preview-theme-name">Theme Preview</h3>
@@ -64,14 +67,28 @@
             </div>
 
             <section class="management-section">
-                <h2>Saved Themes</h2>
-                 <div class="search-container">
-                    <input type="search" id="search-input" placeholder="Searching your themes">
+              <h2>Saved Themes</h2>
+            
+              <div class="toolbar-row">
+                <div class="search-container">
+                  <input type="search" id="search-input" placeholder="Searching your themes">
                 </div>
-
-                <div id="saved-themes-list">
-                    <!-- Saved themes will be dynamically inserted here -->
+                <div class="density">
+                  <label>Density</label>
+                  <div class="seg" id="density-controls">
+                    <button data-cols="1" class="seg-btn active">1×</button>
+                    <button data-cols="3" class="seg-btn">3×</button>
+                    <button data-cols="5" class="seg-btn">5×</button>
+                  </div>
                 </div>
+              </div>
+            
+              <div id="saved-themes-list" class="theme-grid" data-cols="1"></div>
+            
+              <div id="selection-actions" class="selection-actions hidden">
+                <button id="save-selected">Save</button>
+                <button id="delete-selected" class="secondary">Delete</button>
+              </div>
             </section>
         </div>
 
@@ -82,7 +99,6 @@
     <script src="scripts/ui.js"></script>
     <script src="scripts/main.js"></script>
 
-    <!-- Modal for Editing Theme Color -->
     <div class="modal-overlay hidden" id="color-edit-modal">
         <div class="modal-content">
             <h2 id="modal-color-name">Edit Color</h2>
@@ -104,18 +120,18 @@
             </div>
         </div>
     </div>
-
+    
+    <div class="modal-overlay hidden" id="describe-modal">
+      <div class="modal-content">
+        <h2>Describe Your Theme</h2>
+        <textarea id="describe-textarea" placeholder="e.g., ‘a serene forest at dawn’ or ‘a vibrant 80s arcade’"></textarea>
+        <div class="modal-actions">
+          <button id="describe-cancel" class="secondary">Cancel</button>
+          <button id="describe-apply">Generate</button>
+        </div>
+      </div>
+    </div>
+    
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-

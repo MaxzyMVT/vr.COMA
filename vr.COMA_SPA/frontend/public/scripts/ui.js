@@ -16,10 +16,14 @@ const friendlyNames = {
 	secondaryInteractiveText: "Secondary Interactive Text",
 };
 
-function applyTheme(theme, previewThemeName, previewSubHeader) {
+/**
+ * The single, consolidated function to apply a theme to the entire document.
+ * It sets CSS variables, updates the preview card, and sets the UI mode icon.
+ */
+function applyTheme(theme) {
 	if (!theme || !theme.colors) return;
 	const root = document.documentElement;
-	// Map colors from themeData to CSS variables
+
 	const colorMap = {
 		"--header-bg": theme.colors.primaryHeader,
 		"--secondary-header-bg": theme.colors.secondaryHeader,
@@ -39,18 +43,23 @@ function applyTheme(theme, previewThemeName, previewSubHeader) {
 
 	for (const [variable, color] of Object.entries(colorMap)) {
 		if (color) {
-			// Safety check in case a color is missing
 			root.style.setProperty(variable, color);
 		}
 	}
 
+	// Update the preview card specifically
+	const previewThemeName = document.getElementById("preview-theme-name");
+	const previewSubHeader = document.getElementById("preview-sub-header");
+
 	if (previewThemeName) {
 		previewThemeName.textContent = theme.themeName;
 	}
-
 	if (previewSubHeader) {
 		previewSubHeader.style.color = theme.colors.subHeaderText;
 	}
+
+	// Update the UI mode icon (sun/moon)
+	setUiIcon(!!theme.isDark);
 }
 
 function displayThemeOutput(theme, outputContent) {
@@ -78,7 +87,6 @@ function displayThemeOutput(theme, outputContent) {
 	displayOrder.forEach((key) => {
 		const color = theme.colors[key];
 		if (color) {
-			// Only display if the color exists in the theme data
 			const displayName = friendlyNames[key] || key;
 			colorChipsHTML += `
                 <div class="color-chip" data-key="${key}" title="Edit ${displayName}">
@@ -129,7 +137,6 @@ function displaySavedThemes(themes) {
 		keyColors.forEach((key) => {
 			const color = theme.colors[key];
 			if (color) {
-				// Only add a swatch if the color exists
 				swatchesHTML += `<div class="theme-swatch" style="background-color: ${color};"></div>`;
 			}
 		});
@@ -167,7 +174,6 @@ function setLoadingState(isLoading, generateButton, reviseButton) {
 	}
 
 	if (reviseButton) {
-		// We will add more complex logic for this later. For now, just disable it.
 		reviseButton.disabled = isLoading;
 	}
 }
@@ -178,7 +184,7 @@ function showColorEditorModal(colorKey, colorValue) {
 	const colorPicker = document.getElementById("modal-color-picker");
 	const hexInput = document.getElementById("modal-color-hex");
 
-	const displayName = friendlyNames[colorKey] || colorKey;
+	const displayName = friendlyNames[colorKey] || key;
 	nameLabel.textContent = `Edit ${displayName}`;
 
 	colorPicker.value = colorValue;
@@ -190,4 +196,108 @@ function showColorEditorModal(colorKey, colorValue) {
 function hideColorEditorModal() {
 	const modal = document.getElementById("color-edit-modal");
 	modal.classList.add("hidden");
+}
+
+// Density controls
+const gridEl = document.getElementById("saved-themes-list");
+const densityControls = document.getElementById("density-controls");
+
+if (gridEl) gridEl.classList.add("theme-grid"); // ensure the hook
+if (densityControls && gridEl) {
+	densityControls.addEventListener("click", (e) => {
+		const btn = e.target.closest(".seg-btn");
+		if (!btn) return;
+		const cols = btn.dataset.cols || "1";
+		gridEl.setAttribute("data-cols", cols);
+		[...densityControls.querySelectorAll(".seg-btn")].forEach((b) =>
+			b.classList.toggle("active", b === btn)
+		);
+	});
+}
+
+// --- Theme Inversion Logic ---
+function hexToHsl(hex) {
+	const x = hex.replace("#", "");
+	const n = parseInt(x, 16);
+	const r = ((n >> 16) & 255) / 255,
+		g = ((n >> 8) & 255) / 255,
+		b = (n & 255) / 255;
+	const max = Math.max(r, g, b),
+		min = Math.min(r, g, b);
+	let h,
+		s,
+		l = (max + min) / 2;
+	if (max === min) {
+		h = s = 0;
+	} else {
+		const d = max - min;
+		s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+		switch (max) {
+			case r:
+				h = (g - b) / d + (g < b ? 6 : 0);
+				break;
+			case g:
+				h = (b - r) / d + 2;
+				break;
+			case b:
+				h = (r - g) / d + 4;
+				break;
+		}
+		h /= 6;
+	}
+	return { h, s, l };
+}
+
+function hslToHex(h, s, l) {
+	const hue2rgb = (p, q, t) => {
+		if (t < 0) t += 1;
+		if (t > 1) t -= 1;
+		if (t < 1 / 6) return p + (q - p) * 6 * t;
+		if (t < 1 / 2) return q;
+		if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+		return p;
+	};
+	let r, g, b;
+	if (s === 0) {
+		r = g = b = l;
+	} else {
+		const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+		const p = 2 * l - q;
+		r = hue2rgb(p, q, h + 1 / 3);
+		g = hue2rgb(p, q, h);
+		b = hue2rgb(p, q, h - 1 / 3);
+	}
+	const toHex = (v) => Math.round(v * 255).toString(16).padStart(2, "0");
+	return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toUpperCase();
+}
+
+// Dummy ensureContrast function if it's not defined elsewhere
+// This is a placeholder; your actual implementation might be more complex
+function ensureContrast(fg, bg, ratio) {
+    const bgLightness = hexToHsl(bg).l;
+    const fgLightness = hexToHsl(fg).l;
+    if (bgLightness > 0.5) { // Light background
+        return fgLightness > 0.4 ? '#111111' : fg; // Darken light text
+    } else { // Dark background
+        return fgLightness < 0.6 ? '#EEEEEE' : fg; // Lighten dark text
+    }
+}
+
+// Expose to global scope for main.js
+window.hexToHsl = hexToHsl;
+
+function setUiIcon(isDark) {
+	const svg = document.getElementById("ui-mode-icon");
+	const button = document.getElementById("ui-mode-toggle");
+	if (!svg || !button) return;
+
+	if (isDark) {
+		svg.innerHTML =
+			'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+		button.title = "Switch to Light Mode";
+	} else {
+		svg.innerHTML =
+			'<circle cx="12" cy="12" r="5"></circle><g stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="4"></line><line x1="12" y1="20" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"></line><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="4" y2="12"></line><line x1="20" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"></line><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"></line></g>';
+		button.title = "Switch to Dark Mode";
+	}
 }

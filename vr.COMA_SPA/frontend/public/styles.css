@@ -373,11 +373,12 @@ button.secondary:hover {
     font-size: 1rem;
     font-family: inherit;
     color: var(--primary-text);
-    background-color: var(--secondary-interactive-bg);
+    /* --- CHANGED --- Matched background to the left panel's textarea */
+    background-color: var(--main-bg); 
     border: 1px solid var(--border-color);
     border-radius: 8px;
     box-sizing: border-box;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.5s ease, color 0.5s ease;
 }
 
 #search-input:focus {
@@ -405,14 +406,14 @@ button.secondary:hover {
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    /* These are the key fixes */
     background-color: var(--container-bg);
+    color: var(--primary-text);
     border: 1px solid var(--border-color);
     padding: 1rem;
     border-radius: 8px;
-    
-    /* --- KEY STYLES FOR DIV BEHAVIOR --- */
-    cursor: pointer; /* This makes it feel clickable */
-    transition: background-color 0.2s ease;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 /* This adds the hover effect to the entire div */
@@ -577,6 +578,12 @@ button.secondary:hover {
     /* Prevents long names from breaking the layout */
 }
 
+.theme-info span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 /* This is the container for the row of swatch icons */
 .theme-swatches {
     display: flex;
@@ -648,5 +655,90 @@ button.secondary:hover {
 
     #saved-themes-list {
     padding-right: 25px ;
+    }
 }
+
+/* brand row + UI mode toggle */
+.brand-row {
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:.5rem;
 }
+.ui-actions .icon-btn svg { stroke: var(--secondary-text); }
+
+/* management toolbar */
+.toolbar-row { display:flex; align-items:flex-end; gap:1rem; justify-content:space-between; margin-bottom:1rem; }
+.density { display:flex; align-items:center; gap:.5rem; }
+.seg { display:flex; border:1px solid var(--border-color); border-radius:8px; overflow:hidden; transition: border-color 0.5s ease; }
+.seg-btn { padding:.45rem .7rem; background:transparent; border:none; cursor:pointer; color: var(--secondary-text); transition: background-color 0.5s ease, color 0.5s ease; }
+.seg-btn.active { background: var(--container-bg); color: var(--primary-text); }
+
+/* theme grid + group card */
+.theme-grid { display:grid; gap:1rem; }
+.theme-grid[data-cols="1"] { grid-template-columns: 1fr; }
+.theme-grid[data-cols="3"] { grid-template-columns: repeat(3, minmax(0,1fr)); }
+.theme-grid[data-cols="5"] { grid-template-columns: repeat(5, minmax(0,1fr)); }
+
+.theme-group {
+  border:1px solid var(--border-color);
+  border-radius:10px; background:var(--container-bg);
+  padding:.75rem; display:flex; flex-direction:column; gap:.5rem;
+  position:relative; cursor:pointer;
+}
+.theme-group .pair { display:grid; grid-template-columns: 1fr 1fr; gap:.5rem; }
+.theme-variant {
+  border:1px dashed var(--border-color); border-radius:8px; padding:.5rem;
+  display:flex; align-items:center; justify-content:space-between; gap:.5rem;
+}
+.theme-variant .name { font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.theme-variant .actions { display:flex; gap:.25rem; }
+
+.theme-group.selected { outline:2px solid var(--accent); }
+.theme-group .tick {
+  position:absolute; top:.4rem; left:.4rem; width:22px; height:22px; border-radius:6px;
+  border:1px solid var(--border-color); background:var(--container-bg);
+  display:flex; align-items:center; justify-content:center; font-size:.85rem;
+}
+.theme-group.selected .tick { background:var(--accent); color:var(--btn-text); }
+
+/* selection actions row */
+.selection-actions { display:flex; gap:.5rem; margin-top:1rem; }
+.selection-actions.hidden { display:none; }
+
+/* describe modal textarea */
+#describe-modal textarea { width:100%; height:120px; }
+
+/* UI light/dark for the app chrome only */
+:root[data-ui-theme="dark"] {
+  --header-bg:#1f2937; --main-bg:#0f172a; --container-bg:#0b1220;
+  --primary-text:#e5e7eb; --secondary-text:#9ca3af; --border-color:#374151;
+  --btn-bg:#2563eb; --btn-text:#ffffff; --accent:#60a5fa;
+}
+
+/* Force grid for the density control */
+#saved-themes-list.theme-grid {
+  display: grid !important;
+  gap: 1rem;
+}
+
+/* Force the grid on the saved list (beats old flex rule) */
+#saved-themes-list.theme-grid { 
+  display: grid !important;
+  gap: 1rem;
+}
+
+/* Column counts driven by data attribute */
+#saved-themes-list.theme-grid[data-cols="1"] { grid-template-columns: 1fr; }
+#saved-themes-list.theme-grid[data-cols="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+#saved-themes-list.theme-grid[data-cols="5"] { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+/* Make rows behave inside grid cells */
+#saved-themes-list.theme-grid .saved-theme-item {
+  width: auto;          /* don’t force 100% inside grid cells */
+  min-width: 0;         /* allow content to shrink and ellipsize */
+}
+
+/* Ensure text area of the item can shrink without pushing actions out */
+.theme-info { min-width: 0; }
+.theme-info span { min-width: 0; }
+
+/* Optional: compact the swatch overlap slightly so it still looks neat in 3x/5x */
+.theme-swatch { margin-left: -5px; }
