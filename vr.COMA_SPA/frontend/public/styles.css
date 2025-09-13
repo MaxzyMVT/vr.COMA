@@ -363,12 +363,10 @@ button.secondary:hover {
     color: var(--btn-text);
     padding: 0.6rem 1.2rem;
 }
-.search-container {
-    margin-bottom: 1.5rem;
-}
 
 #search-input {
     width: 100%;
+    flex: 1;
     padding: 0.75rem 1rem;
     font-size: 1rem;
     font-family: inherit;
@@ -654,7 +652,22 @@ button.secondary:hover {
     }
 
     #saved-themes-list {
-    padding-right: 25px ;
+        padding-right: 25px ;
+    }
+
+    .toolbar-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    .sample-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem; /* Adds some space between items */
+    }
+    .preview-accent-link {
+        margin-left: 0;
+        margin-top: 0.5rem;
     }
 }
 
@@ -669,7 +682,13 @@ button.secondary:hover {
 .ui-actions .icon-btn svg { stroke: var(--secondary-text); }
 
 /* management toolbar */
-.toolbar-row { display:flex; align-items:flex-end; gap:1rem; justify-content:space-between; margin-bottom:1rem; }
+.toolbar-row { 
+    display:flex; 
+    align-items: center; /* This is the key change */
+    gap:1rem; 
+    justify-content:space-between; 
+    margin-bottom:1rem; 
+}
 .density { display:flex; align-items:center; gap:.5rem; }
 .seg { display:flex; border:1px solid var(--border-color); border-radius:8px; overflow:hidden; transition: border-color 0.5s ease; }
 .seg-btn { padding:.45rem .7rem; background:transparent; border:none; cursor:pointer; color: var(--secondary-text); transition: background-color 0.5s ease, color 0.5s ease; }
@@ -746,3 +765,9 @@ button.secondary:hover {
 
 /* Optional: compact the swatch overlap slightly so it still looks neat in 3x/5x */
 .theme-swatch { margin-left: -5px; }
+
+#save-theme-button {
+    width: 100%;
+    margin-top: 1.5rem;
+    box-sizing: border-box; /* Ensures padding doesn't break the width */
+}
