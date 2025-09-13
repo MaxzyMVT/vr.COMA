@@ -4,57 +4,57 @@ const mongoose = require("mongoose");
 
 // Helper function to ensure isDark is always a valid boolean
 function normalizeIsDark(payload) {
-  if (typeof payload.isDark !== "boolean") {
-    const name = payload?.themeName || "";
-    if (/\(Night\)\s*$/i.test(name) || /\(Dark\)\s*$/i.test(name)) {
-      payload.isDark = true;
-    } else {
-      payload.isDark = false;
-    }
-  }
-  payload.isDark = !!payload.isDark; // Coerce to boolean
+	if (typeof payload.isDark !== "boolean") {
+		const name = payload?.themeName || "";
+		if (/\(Night\)\s*$/i.test(name) || /\(Dark\)\s*$/i.test(name)) {
+			payload.isDark = true;
+		} else {
+			payload.isDark = false;
+		}
+	}
+	payload.isDark = !!payload.isDark; // Coerce to boolean
 }
 
 const saveTheme = async (req, res) => {
-  try {
-    const themeData = { ...req.body };
-    normalizeIsDark(themeData); // Ensure isDark is set
+	try {
+		const themeData = { ...req.body };
+		normalizeIsDark(themeData); // Ensure isDark is set
 
-    // --- MODIFICATION START ---
-    // If a theme is being saved without a groupId, it's the start of a new pair.
-    // So, we create a new unique ID for its group.
-    if (!themeData.groupId) {
-      themeData.groupId = new mongoose.Types.ObjectId().toString();
-    }
-    // --- MODIFICATION END ---
+		// --- MODIFICATION START ---
+		// If a theme is being saved without a groupId, it's the start of a new pair.
+		// So, we create a new unique ID for its group.
+		if (!themeData.groupId) {
+			themeData.groupId = new mongoose.Types.ObjectId().toString();
+		}
+		// --- MODIFICATION END ---
 
-    const newTheme = new Theme(themeData);
-    await newTheme.save();
-    return res.status(201).json(newTheme);
-  } catch (err) {
-    if (err?.code === 11000) {
-      return res
-        .status(409)
-        .json({ error: "Theme name already exists", code: "DUPLICATE_NAME" });
-    }
-    return res.status(500).json({ error: "Failed to save theme." });
-  }
+		const newTheme = new Theme(themeData);
+		await newTheme.save();
+		return res.status(201).json(newTheme);
+	} catch (err) {
+		if (err?.code === 11000) {
+			return res
+				.status(409)
+				.json({ error: "Theme name already exists", code: "DUPLICATE_NAME" });
+		}
+		return res.status(500).json({ error: "Failed to save theme." });
+	}
 };
 
 const overwriteTheme = async (req, res) => {
-  try {
-    const body = { ...req.body };
-    normalizeIsDark(body); 
-    const updated = await Theme.findByIdAndUpdate(
-      req.params.id,
-      body,
-      { new: true, runValidators: true, overwrite: true }
-    );
-    if (!updated) return res.status(404).json({ error: "Not found" });
-    return res.json(updated);
-  } catch (err) {
-    return res.status(500).json({ error: "Failed to overwrite theme." });
-  }
+	try {
+		const body = { ...req.body };
+		normalizeIsDark(body);
+		const updated = await Theme.findByIdAndUpdate(req.params.id, body, {
+			new: true,
+			runValidators: true,
+			overwrite: true,
+		});
+		if (!updated) return res.status(404).json({ error: "Not found" });
+		return res.json(updated);
+	} catch (err) {
+		return res.status(500).json({ error: "Failed to overwrite theme." });
+	}
 };
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -211,7 +211,7 @@ const generateTheme = (req, res) => {
 
 	const options = {
 		hostname: "generativelanguage.googleapis.com",
-		path: `/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+		path: `/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -226,27 +226,32 @@ const generateTheme = (req, res) => {
 		});
 		apiRes.on("end", () => {
 			try {
-			  const responseJson = JSON.parse(data);
-			
-			  const parts = responseJson?.candidates?.[0]?.content?.parts ?? [];
-			  const rawText = parts
-				.map(p => p?.text)
-				.filter(Boolean)
-				.join('\n');
-			
-			  const themeData = extractJsonObject(rawText);
-			
-			  inferIsDark(themeData);
-			  themeData.isDark = !!themeData.isDark;
-			
-			  if (!themeData.colors || !themeData.colors.canvasBackground) {
-				throw new Error('Theme missing colors.canvasBackground');
-			  }
-			
-			  res.json(themeData);
+				const responseJson = JSON.parse(data);
+
+				const parts = responseJson?.candidates?.[0]?.content?.parts ?? [];
+				const rawText = parts
+					.map((p) => p?.text)
+					.filter(Boolean)
+					.join("\n");
+
+				const themeData = extractJsonObject(rawText);
+
+				inferIsDark(themeData);
+				themeData.isDark = !!themeData.isDark;
+
+				if (!themeData.colors || !themeData.colors.canvasBackground) {
+					throw new Error("Theme missing colors.canvasBackground");
+				}
+
+				res.json(themeData);
 			} catch (err) {
-			  console.error('AI theme parse error:', err?.message || err, { data: String(data).slice(0, 500) });
-			  res.status(502).json({ error: 'Bad AI response', detail: String(err?.message || err) });
+				console.error("AI theme parse error:", err?.message || err, {
+					data: String(data).slice(0, 500),
+				});
+				res.status(502).json({
+					error: "Bad AI response",
+					detail: String(err?.message || err),
+				});
 			}
 		});
 	});
@@ -282,13 +287,19 @@ const invertThemeByAI = (req, res) => {
 
 	const payload = JSON.stringify({
 		contents: [{ parts: [{ text: inversionPrompt }] }],
-		systemInstruction: { parts: [{ text: "You are a creative assistant for a design application that generates color themes. Respond with a single, clean JSON object." }] },
+		systemInstruction: {
+			parts: [
+				{
+					text: "You are a creative assistant for a design application that generates color themes. Respond with a single, clean JSON object.",
+				},
+			],
+		},
 		generationConfig: { responseMimeType: "application/json" },
 	});
 
 	const options = {
 		hostname: "generativelanguage.googleapis.com",
-		path: `/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+		path: `/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -301,27 +312,32 @@ const invertThemeByAI = (req, res) => {
 		apiRes.on("data", (chunk) => (data += chunk));
 		apiRes.on("end", () => {
 			try {
-				if (apiRes.statusCode !== 200) throw new Error(`API Error: ${apiRes.statusCode}`);
+				if (apiRes.statusCode !== 200)
+					throw new Error(`API Error: ${apiRes.statusCode}`);
 				const responseJson = JSON.parse(data);
 				const rawText = responseJson.candidates[0].content.parts[0].text;
 				const themeData = JSON.parse(rawText);
-				
-				themeData.isDark = newIsDark; 
 
-                // --- MODIFICATION START ---
-                // Ensure the new inverted theme shares the same groupId as the original.
-                themeData.groupId = currentTheme.groupId;
-                // --- MODIFICATION END ---
-				
+				themeData.isDark = newIsDark;
+
+				// --- MODIFICATION START ---
+				// Ensure the new inverted theme shares the same groupId as the original.
+				themeData.groupId = currentTheme.groupId;
+				// --- MODIFICATION END ---
+
 				res.json(themeData);
 			} catch (error) {
 				console.error("Error parsing inversion response:", error);
-				res.status(500).json({ error: "Failed to parse inverted theme from API." });
+				res
+					.status(500)
+					.json({ error: "Failed to parse inverted theme from API." });
 			}
 		});
 	});
 
-	apiRequest.on("error", (error) => res.status(500).json({ error: "Failed to generate inverted theme." }));
+	apiRequest.on("error", (error) =>
+		res.status(500).json({ error: "Failed to generate inverted theme." })
+	);
 	apiRequest.write(payload);
 	apiRequest.end();
 };
@@ -358,36 +374,38 @@ const deleteTheme = async (req, res) => {
 };
 
 function hexToLuminance(hex) {
-  if (typeof hex !== 'string') return null;
-  const h = hex.replace('#', '');
-  if (!/^[0-9a-f]{6}$/i.test(h)) return null;
-  const r = parseInt(h.slice(0,2),16)/255;
-  const g = parseInt(h.slice(2,4),16)/255;
-  const b = parseInt(h.slice(4,6),16)/255;
-  const lin = v => (v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4));
-  return 0.2126*lin(r) + 0.7152*lin(g) + 0.0722*lin(b);
+	if (typeof hex !== "string") return null;
+	const h = hex.replace("#", "");
+	if (!/^[0-9a-f]{6}$/i.test(h)) return null;
+	const r = parseInt(h.slice(0, 2), 16) / 255;
+	const g = parseInt(h.slice(2, 4), 16) / 255;
+	const b = parseInt(h.slice(4, 6), 16) / 255;
+	const lin = (v) =>
+		v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+	return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
 }
 
 function inferIsDark(theme) {
-  if (typeof theme.isDark === 'boolean') return;
-  const bg =
-    theme?.colors?.canvasBackground ??
-    theme?.colors?.background ??
-    theme?.background ??
-    null;
-  const L = hexToLuminance(bg);
-  theme.isDark = (L !== null) ? L < 0.5 : false; 
+	if (typeof theme.isDark === "boolean") return;
+	const bg =
+		theme?.colors?.canvasBackground ??
+		theme?.colors?.background ??
+		theme?.background ??
+		null;
+	const L = hexToLuminance(bg);
+	theme.isDark = L !== null ? L < 0.5 : false;
 }
 
 function extractJsonObject(text) {
-  if (typeof text !== 'string') throw new Error('No text to parse');
-  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  let candidate = fenced ? fenced[1] : text;
-  const start = candidate.indexOf('{');
-  const end = candidate.lastIndexOf('}');
-  if (start === -1 || end === -1 || end <= start) throw new Error('No JSON object found in model output');
-  candidate = candidate.slice(start, end + 1);
-  return JSON.parse(candidate);
+	if (typeof text !== "string") throw new Error("No text to parse");
+	const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+	let candidate = fenced ? fenced[1] : text;
+	const start = candidate.indexOf("{");
+	const end = candidate.lastIndexOf("}");
+	if (start === -1 || end === -1 || end <= start)
+		throw new Error("No JSON object found in model output");
+	candidate = candidate.slice(start, end + 1);
+	return JSON.parse(candidate);
 }
 
 module.exports = {
