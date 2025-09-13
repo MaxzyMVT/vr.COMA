@@ -243,9 +243,18 @@ const saveTheme = async (req, res) => {
 	}
 };
 
+const normalizeString = (str) => {
+	return str.replace(/[^a-zA-Z]/g, "").toLowerCase();
+};
+
 const getAllThemes = async (req, res) => {
 	try {
-		const themes = await Theme.find().sort({ themeName: 1 }); // Sort lexographically by themeName
+		const themes = await Theme.find();
+		themes.sort((a, b) => {
+			const nameA = normalizeString(a.themeName);
+			const nameB = normalizeString(b.themeName);
+			return nameA.localeCompare(nameB);
+		}); // Sort lexicographically by themeName (IMPROVED)
 		res.json(themes);
 	} catch (error) {
 		res.status(500).json({ error: "Failed to fetch themes." });
