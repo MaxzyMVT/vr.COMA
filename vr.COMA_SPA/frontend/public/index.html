@@ -23,7 +23,14 @@
                     <h1>vr.COMA</h1>
                 </div>
                     <p class="punchline">WAKING UP your creative ideas.</p>
-                    <p class="description"><span class="brand-letters">V</span>ersatile & <span class="brand-letters">R</span>eactive <span class="brand-letters">C</span>hromatic <br>  <span class="brand-letters">O</span>rchestration & <span class="brand-letters">M</span>ood <span class="brand-letters">A</span>nalyzer <br>
+                    <p class="description" id="brand-full-name">
+                        <span class="brand-word"><span class="brand-letters">V</span>ersatile</span> &amp;
+                        <span class="brand-word"><span class="brand-letters">R</span>eactive</span>
+                        <span class="brand-word"><span class="brand-letters">C</span>hromatic</span><br>
+                        <span class="brand-word"><span class="brand-letters">O</span>rchestration</span> &amp;
+                        <span class="brand-word"><span class="brand-letters">M</span>ood</span>
+                        <span class="brand-word"><span class="brand-letters">A</span>nalyzer</span><br>
+                    </p>
                     <br> <span class="sub-description"> Powered by advanced mood analysis, vr.COMA decodes your input—whether it's a feeling, a phrase, or a brand vision—and
                     generates dynamic color themes ready to bring any creative project to life.</span> </p>
                 </header>
@@ -69,17 +76,9 @@
             
             <div class="toolbar-row">
                 <input type="search" id="search-input" class="theme-search" placeholder="Search your themes" />
-                <div class="density">
-                  <label>Density</label>
-                  <div class="seg" id="density-controls">
-                    <button data-cols="1" class="seg-btn active">1×</button>
-                    <button data-cols="3" class="seg-btn">3×</button>
-                    <button data-cols="5" class="seg-btn">5×</button>
-                  </div>
-                </div>
-              </div>
+            </div>
             
-              <div id="saved-themes-list" class="theme-grid" data-cols="1"></div>
+              <div id="saved-themes-list" class="theme-grid"></div>
             
               <div id="selection-actions" class="selection-actions hidden">
                 <button id="save-selected">Save</button>
@@ -90,10 +89,6 @@
 
     </div>
 
-    <script src="scripts/config.js"></script>
-    <script src="scripts/api.js"></script>
-    <script src="scripts/ui.js"></script>
-    <script src="scripts/main.js"></script>
 
     <div class="modal-overlay hidden" id="color-edit-modal">
         <div class="modal-content">
@@ -127,6 +122,11 @@
         </div>
       </div>
     </div>
+
+    <script src="scripts/config.js"></script>
+    <script src="scripts/api.js"></script>
+    <script src="scripts/ui.js"></script>
+    <script src="scripts/main.js"></script>
     
 </body>
 

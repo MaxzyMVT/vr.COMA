@@ -198,23 +198,6 @@ function hideColorEditorModal() {
 	modal.classList.add("hidden");
 }
 
-// Density controls
-const gridEl = document.getElementById("saved-themes-list");
-const densityControls = document.getElementById("density-controls");
-
-if (gridEl) gridEl.classList.add("theme-grid"); // ensure the hook
-if (densityControls && gridEl) {
-	densityControls.addEventListener("click", (e) => {
-		const btn = e.target.closest(".seg-btn");
-		if (!btn) return;
-		const cols = btn.dataset.cols || "1";
-		gridEl.setAttribute("data-cols", cols);
-		[...densityControls.querySelectorAll(".seg-btn")].forEach((b) =>
-			b.classList.toggle("active", b === btn)
-		);
-	});
-}
-
 // --- Theme Inversion Logic ---
 function hexToHsl(hex) {
 	const x = hex.replace("#", "");
@@ -267,20 +250,25 @@ function hslToHex(h, s, l) {
 		g = hue2rgb(p, q, h);
 		b = hue2rgb(p, q, h - 1 / 3);
 	}
-	const toHex = (v) => Math.round(v * 255).toString(16).padStart(2, "0");
+	const toHex = (v) =>
+		Math.round(v * 255)
+			.toString(16)
+			.padStart(2, "0");
 	return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toUpperCase();
 }
 
 // Dummy ensureContrast function if it's not defined elsewhere
 // This is a placeholder; your actual implementation might be more complex
 function ensureContrast(fg, bg, ratio) {
-    const bgLightness = hexToHsl(bg).l;
-    const fgLightness = hexToHsl(fg).l;
-    if (bgLightness > 0.5) { // Light background
-        return fgLightness > 0.4 ? '#111111' : fg; // Darken light text
-    } else { // Dark background
-        return fgLightness < 0.6 ? '#EEEEEE' : fg; // Lighten dark text
-    }
+	const bgLightness = hexToHsl(bg).l;
+	const fgLightness = hexToHsl(fg).l;
+	if (bgLightness > 0.5) {
+		// Light background
+		return fgLightness > 0.4 ? "#111111" : fg; // Darken light text
+	} else {
+		// Dark background
+		return fgLightness < 0.6 ? "#EEEEEE" : fg; // Lighten dark text
+	}
 }
 
 // Expose to global scope for main.js
