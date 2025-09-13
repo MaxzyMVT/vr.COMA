@@ -93,11 +93,11 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    margin-right: 0; 
     text-align: center;
     margin-right: 2px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    text-align: center;
     letter-spacing: -0.02em;
     position: relative; 
 
@@ -660,7 +660,11 @@ button.secondary:hover {
 
 /* brand row + UI mode toggle */
 .brand-row {
-  display:flex; align-items:center; justify-content:space-between; margin-bottom:.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;   /* was space-between */
+  gap: .5rem;                /* space between logo and icon */
+  margin-bottom: .5rem;
 }
 .ui-actions .icon-btn svg { stroke: var(--secondary-text); }
 
