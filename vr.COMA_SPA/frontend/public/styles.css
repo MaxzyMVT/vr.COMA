@@ -181,6 +181,7 @@ button.secondary:hover {
     border: none;
     border-radius: 8px;
     cursor: default;
+    margin-left: 10px;
 }
 
 /* Modify the main preview button style to use the new variables */
@@ -190,7 +191,9 @@ button.secondary:hover {
     padding: 0.6rem 1.2rem;
     border: none;
     border-radius: 8px;
-    cursor: default;
+    margin-top: 15px;
+    margin-right: 8px;
+    cursor: pointer;
 }
 
 .app-header .punchline {
@@ -355,14 +358,9 @@ button.secondary:hover {
 }
 
 .spaced-button {
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
-.preview-button {
-    background-color: var(--btn-bg);
-    color: var(--btn-text);
-    padding: 0.6rem 1.2rem;
-}
 .search-container {
     margin-bottom: 1.5rem;
 }
@@ -648,5 +646,9 @@ button.secondary:hover {
 
     #saved-themes-list {
     padding-right: 25px ;
+}
+    .preview-accent-link {
+    margin-top: 12px;
+    display: inline-block;
 }
 }
