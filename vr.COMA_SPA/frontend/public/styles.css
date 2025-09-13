@@ -197,32 +197,35 @@ button.secondary:hover {
 }
 
 .app-header .punchline {
-    font-family: var(--font-family);
-    font-size: 1rem;
-    align-items: center;
-    font-weight: bold;
-    text-align: center;
-    overflow: hidden;
-    /* Keeps the content on a single line */
-    margin: 0 auto;
-    /* Gives that scrolling effect as the typing happens */
-    letter-spacing: 0.1em;
-    /* Adjust as needed */
-    animation-name: slide-left;
-    animation-duration: 1.5s;
-    animation-timing-function: ease-out;
+  font-family: var(--font-family);
+  font-size: 1rem;
+  align-items: center;
+  font-weight: bold;
+  text-align: center;
+  overflow: hidden;
+  border-right: .15em solid orange;
+  white-space: nowrap;
+  margin: 0 auto;
+  letter-spacing: .15em;
+
+  animation: typing 3.5s steps(40, end) forwards, hide-cursor 0.5s ease-out 3.5s forwards;
 }
 
-@keyframes slide-left {
-    /* use % to specify the animation at different stages (in this case, 0% and 100%) */
-    0% {
-      transform: translateX(-100px);
-    }
-    100% {
-      /* adjust the value to control how much the text moves */
-      transform: translateX(0);
-    }
-  }
+/* Typing effect */
+@keyframes typing {
+  from { max-width: 0ch }
+  to { max-width: 34ch }
+}
+
+/* Hide the border-right cursor */
+@keyframes hide-cursor {
+  to { border-right-color: transparent; }
+}
+
+/* Cursor blink */
+
+
+
 
 
 .app-header .description {
