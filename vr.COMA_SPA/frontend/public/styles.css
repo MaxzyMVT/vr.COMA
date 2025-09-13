@@ -225,7 +225,7 @@ button.secondary:hover {
 .app-header .description {
     font-size: 1.5rem;
     text-align: center; 
-    margin: 0 0 2rem 0;
+    margin: 2.5rem 0 2rem 0;
     color: var(--secondary-text);
     opacity: 0.9;
 }
@@ -242,11 +242,14 @@ button.secondary:hover {
 }
 
 
-.app-header .sub-description{
+.app-header .sub-description {
     font-size: 1rem;
-    text-align: left;
+    text-align: center;     /* Center the text */
+    display: block;         /* Treat it as a block to control its width */
+    max-width: 380px;       /* Set a max-width for better readability */
+    margin: 0 auto;         /* Center the block itself within the header */
+    line-height: 1.6;       /* Improve line spacing */
 }
-
 
 /* Output & Management Sections */
 .output-section,
@@ -609,14 +612,6 @@ button.secondary:hover {
     margin-left: 0;
 }
 
-
-
-
-/*
-==================================================================
-    RESPONSIVE DESIGN - MEDIA QUERIES
-==================================================================
-*/
 /* Apply these styles on screens 900px wide or smaller */
 @media (max-width: 900px) {
     .app-container {
@@ -647,8 +642,40 @@ button.secondary:hover {
         grid-template-columns: 1fr;
     }
 
+    .app-header {
+        padding: 2rem 1rem 1.5rem 1rem; /* Reduce vertical padding */
+        margin-bottom: 1.5rem; 
+    } 
+
     .app-header h1 {
-        font-size: 2rem;
+        font-size: 2.25rem;          /* Adjust font size for mobile */
+        margin-bottom: 0.5rem;
+    }
+
+    .punchline {
+        margin-bottom: 1rem;       /* Add space to replace the <br> tags */
+        font-size: 0.9rem;
+    }
+
+    .app-header .description {
+        font-size: 1rem;             /* Reduce description font size */
+        margin: 0;                   /* Remove desktop margins */
+    }
+
+    .app-header .sub-description {
+        font-size: 0.9rem;           /* Reduce sub-description font size */
+        line-height: 1.5;
+        max-width: 90%;              /* Ensure it fits well within the screen */
+    }
+
+    /* Also, add this rule to the description in the DESKTOP section (outside the media query) */
+    /* to maintain the spacing you had from the <br> tags */
+    .app-header .description {
+        font-size: 1.5rem;
+        text-align: center;
+        margin: 2rem 0 2rem 0; /* Add margin-top here */
+        color: var(--secondary-text);
+        opacity: 0.9;
     }
 
     #saved-themes-list {
@@ -678,6 +705,13 @@ button.secondary:hover {
   justify-content: center;   /* was space-between */
   gap: .5rem;                /* space between logo and icon */
   margin-bottom: .5rem;
+}
+
+/* This new rule positions the toggle button */
+.ui-actions {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
 }
 .ui-actions .icon-btn svg { stroke: var(--secondary-text); }
 
