@@ -22,16 +22,17 @@ function applyTheme(theme, previewThemeName, previewSubHeader) {
 	// Map colors from themeData to CSS variables
 	const colorMap = {
 		"--header-bg": theme.colors.primaryHeader,
+		"--secondary-header-bg": theme.colors.secondaryHeader,
 		"--header-text": theme.colors.headerText,
 		"--sub-header-text": theme.colors.subHeaderText,
 		"--main-bg": theme.colors.canvasBackground,
+		"--container-bg": theme.colors.surfaceBackground,
 		"--primary-text": theme.colors.primaryText,
 		"--secondary-text": theme.colors.secondaryText,
 		"--accent": theme.colors.accent,
+		"--border-color": theme.colors.outlineSeparators,
 		"--btn-bg": theme.colors.primaryInteractive,
 		"--btn-text": theme.colors.primaryInteractiveText,
-		"--container-bg": theme.colors.surfaceBackground,
-		"--border-color": theme.colors.outlineSeparators,
 		"--secondary-interactive-bg": theme.colors.secondaryInteractive,
 		"--secondary-interactive-text": theme.colors.secondaryInteractiveText,
 	};
