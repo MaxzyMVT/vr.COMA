@@ -76,3 +76,18 @@ async function apiOverwriteTheme(themeId, newThemeData) {
 
 	return response.json();
 }
+
+async function apiInvertThemeByAI(currentTheme) {
+    const response = await fetch(`${BACKEND_URL}/api/invert-theme`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentTheme }), // Send the entire current theme for context
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to generate inverted theme.');
+    }
+
+    return response.json();
+}

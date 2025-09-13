@@ -8,5 +8,6 @@ router.post("/themes", themeController.saveTheme);
 router.get("/themes", themeController.getAllThemes);
 router.delete("/themes/:id", themeController.deleteTheme);
 router.put("/themes/:id", themeController.overwriteTheme);
+router.post('/invert-theme', themeController.invertThemeByAI);
 
 module.exports = router;
