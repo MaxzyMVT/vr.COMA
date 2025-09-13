@@ -70,6 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			reviseButton.disabled = false;
 		} catch (error) {
 			console.error(error);
+			alert("Could not generate the theme. Please try again.");
 		} finally {
 			setLoadingState(false, generateButton, reviseButton);
 		}
@@ -202,7 +203,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (doOverwrite) {
 			try {
 				await apiOverwriteTheme(themeId, currentTheme);
-				if (!silent) alert(`Successfully updated "${themeToOverwrite.themeName}"!`);
+				if (!silent)
+					alert(`Successfully updated "${themeToOverwrite.themeName}"!`);
 				await loadAndDisplayThemes();
 			} catch (error) {
 				console.error("Error overwriting theme:", error);
@@ -227,13 +229,15 @@ document.addEventListener("DOMContentLoaded", () => {
 		try {
 			// Call the new API function that asks the AI to invert the theme
 			const invertedTheme = await apiInvertThemeByAI(currentTheme);
-			
+
 			currentTheme = invertedTheme;
 			applyTheme(currentTheme);
 			displayThemeOutput(currentTheme, outputContent);
 		} catch (error) {
 			console.error("Failed to get AI-inverted theme:", error);
-			alert("There was an error generating the theme variant. Please try again.");
+			alert(
+				"There was an error generating the theme variant. Please try again."
+			);
 		} finally {
 			uiModeToggle.disabled = false;
 			// The title will be updated automatically by applyTheme -> setUiIcon
