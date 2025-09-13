@@ -343,7 +343,7 @@ button.secondary:hover {
 }
 
 .preview-content {
-    padding: 1.5rem;
+    padding: 0.5rem 1.5rem 1.5rem 1.5rem; /* Top, Right, Bottom, Left */
 }
 
 .sample-text-primary {
