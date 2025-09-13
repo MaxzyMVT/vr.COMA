@@ -100,7 +100,7 @@ function displayThemeOutput(theme, outputContent) {
         </div>
         <p>${theme.advice}</p>
         <div class="color-palette">${colorChipsHTML}</div>
-        <button id="save-theme-button">Save Theme</button>
+        <button id="save-theme-button" class="spaced-button">Save Theme</button>
     `;
 }
 
