@@ -49,6 +49,22 @@ document.addEventListener("DOMContentLoaded", () => {
 	const modalCopyBtn = document.getElementById("modal-copy-btn");
 	const modalColorCloseBtn = document.getElementById("modal-color-close-btn");
 	const modalColorCancelBtn = document.getElementById("modal-color-cancel-btn");
+	
+	// ---text exceeded warning elements ---
+	const warningMessage = document.getElementById("warning-message");
+	const maxLength = 1000;
+	textInput.addEventListener("input", () => {
+    if (textInput.value.length > maxLength) {
+        textInput.value = textInput.value.slice(0, maxLength);
+    }
+
+    // Show or hide warning
+    if (textInput.value.length === maxLength) {
+        warningMessage.style.display = "block";
+    } else {
+        warningMessage.style.display = "none";
+    }
+});
 
 	// --- Event Handlers ---
 	async function handleGenerateTheme() {

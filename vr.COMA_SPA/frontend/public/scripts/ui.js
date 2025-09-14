@@ -191,3 +191,43 @@ function hideColorEditorModal() {
 	const modal = document.getElementById("color-edit-modal");
 	modal.classList.add("hidden");
 }
+
+function initializeCharacterCounter() {
+    const textInput = document.getElementById('text-input');
+    const characterCounter = document.getElementById('character-counter');
+    const warningMessage = document.getElementById('warning-message');
+    
+    function updateCharacterCounter() {
+        const currentLength = textInput.value.length;
+        const maxLength = 1000;
+        
+        // Update counter text
+        characterCounter.textContent = `${currentLength}/${maxLength} characters`;
+        
+        // Update counter color based on usage
+        if (currentLength >= maxLength) {
+            characterCounter.classList.add('at-limit');
+            warningMessage.style.display = 'block';
+        } else if (currentLength >= maxLength * 0.9) { // 90% of limit
+            characterCounter.classList.add('near-limit');
+            characterCounter.classList.remove('at-limit');
+            warningMessage.style.display = 'none';
+        } else {
+            characterCounter.classList.remove('near-limit', 'at-limit');
+            warningMessage.style.display = 'none';
+        }
+    }
+    
+    // Add event listeners for real-time updates
+    textInput.addEventListener('input', updateCharacterCounter);
+    textInput.addEventListener('paste', function() {
+        // Use setTimeout to ensure the pasted content is processed
+        setTimeout(updateCharacterCounter, 0);
+    });
+    
+    // Initialize counter on page load
+    updateCharacterCounter();
+}
+
+// Call this function when DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeCharacterCounter);
