@@ -290,88 +290,112 @@ function setUiIcon(isDark) {
 	}
 }
 
-// iPad / iPadOS detection (covers iPadOS that reports as "Mac")
+/* ------------ iPad 1× lock + global hide for density controls ------------ */
+
+// Robust iPad / iPadOS detection (covers iPadOS that reports as "Mac")
 function isIPad() {
-	const ua = navigator.userAgent || navigator.vendor || "";
-	return /\biPad\b/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const ua = navigator.userAgent || navigator.vendor || "";
+  return /\biPad\b/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 }
 
-// 1) Prefer true viewport zoom via the meta tag (best on iOS Safari)
-function setViewportScale(scale) {
-	let meta = document.querySelector('meta[name="viewport"]');
-	if (!meta) {
-		meta = document.createElement("meta");
-		meta.name = "viewport";
-		document.head.appendChild(meta);
-	}
+// Force the grid to 1× and flip a GLOBAL html flag that CSS listens to
+function lockDensityTo1x() {
+  const grid = document.getElementById("saved-themes-list");
+  if (grid) {
+    grid.removeAttribute("data-density");   // 1× = no attribute
+    grid.dataset.lockDensity = "1";         // local marker (optional)
+  }
 
-	// Build a clean content string that pins the scale
-	// Keep width=device-width so layout breakpoints remain correct.
-	const tokens = [
-		"width=device-width",
-		`initial-scale=${scale}`,
-		`minimum-scale=${scale}`,
-		`maximum-scale=${scale}`,
-		"viewport-fit=cover", // safe on iOS; ignores elsewhere
-	];
-	meta.setAttribute("content", tokens.join(", "));
+  // Global flag → CSS hides all current/future .density-controls instances
+  document.documentElement.setAttribute("data-density-locked", "1");
+
+  // If the buttons are already in DOM, make them inert (harmless redundancy)
+  document.querySelectorAll(".density-controls button").forEach(b => {
+    b.disabled = true;
+    b.classList.remove("active");
+    b.title = "Locked to 1× on iPad";
+  });
 }
 
-// 2) Fallback: CSS transform scale (for engines that ignore <1 initial-scale)
-function enableCSSScaleFallback(scale) {
-	// Expect a single app root; adjust selector if yours differs
-	let root = document.getElementById("app-root") || document.body;
+// Remove the lock and show controls again (for non-iPad or when leaving lock)
+function unlockDensity() {
+  const grid = document.getElementById("saved-themes-list");
+  if (grid) {
+    delete grid.dataset.lockDensity;
+  }
+  document.documentElement.removeAttribute("data-density-locked");
 
-	// Write a CSS variable once; avoids inlining styles all over
-	document.documentElement.style.setProperty("--ui-scale", String(scale));
-
-	// Idempotent wrapper to avoid compounding transforms on re-entry
-	const WRAP_ID = "__scale_wrap__";
-	if (!document.getElementById(WRAP_ID)) {
-		const wrap = document.createElement("div");
-		wrap.id = WRAP_ID;
-		// Make wrapper take the place of the original root in the DOM
-		root.parentNode.insertBefore(wrap, root);
-		wrap.appendChild(root);
-	}
-
-	// Apply scale on the real root so events/layout remain predictable
-	root.style.transformOrigin = "top left";
-	root.style.transform = "scale(var(--ui-scale))";
-	// Expand width/height so the scaled content still fills the viewport
-	root.style.width = "calc(100% / var(--ui-scale))";
-	root.style.height = "calc(100% / var(--ui-scale))";
+  document.querySelectorAll(".density-controls button").forEach(b => {
+    b.disabled = false;
+    if (b.dataset?.density) b.title = `${b.dataset.density}×`;
+  });
 }
 
-// 3) One-call pin to 80% with reapply on orientation/resize (iOS can drop it)
-function pinIPadToSeventyFivePercent() {
-	const SCALE = 0.8;
+// Wrap global applyDensity so existing callers keep working safely
+(function wrapApplyDensity() {
+  const orig = window.applyDensity;
+  window.applyDensity = function (n, opts = {}) {
+    const force = !!opts.force;
+    const grid = document.getElementById("saved-themes-list");
 
-	try {
-		setViewportScale(SCALE);
-	} catch {}
+    // If iPad locked and not forced, keep 1× and exit
+    if (isIPad() && document.documentElement.getAttribute("data-density-locked") === "1" && !force) {
+      lockDensityTo1x();
+      return;
+    }
 
-	// Quick runtime check: if the visual viewport scale isn’t at ~0.75, enable fallback.
-	// iOS exposes visualViewport on Safari 13+.
-	const vv = window.visualViewport;
-	const approx = (x, y) => Math.abs(x - y) < 0.05;
-	if (!vv || !approx(1 / vv.scale, SCALE)) {
-		enableCSSScaleFallback(SCALE);
-	}
+    // Delegate to original if present
+    if (typeof orig === "function") return orig.call(this, n, opts);
 
-	// Re-apply on events where iOS may reset scaling
-	const reapply = () => {
-		try {
-			setViewportScale(SCALE);
-		} catch {}
-		// keep fallback consistent, too
-		enableCSSScaleFallback(SCALE);
-	};
-	window.addEventListener("orientationchange", reapply, { passive: true });
-	window.addEventListener("resize", reapply, { passive: true });
+    // Minimal fallback implementation
+    if (!grid) return;
+    if (n === 1) grid.removeAttribute("data-density");
+    else grid.setAttribute("data-density", String(n));
+    document.querySelectorAll(".density-controls button")
+      .forEach(b => b.classList.toggle("active", Number(b.dataset.density) === n));
+  };
+})();
+
+// Ensure the zoom/density check respects the lock
+(function wrapCheckZoom() {
+  const orig = window.checkZoomAndToggleDensityButtons;
+  window.checkZoomAndToggleDensityButtons = function () {
+    if (isIPad() && document.documentElement.getAttribute("data-density-locked") === "1") {
+      lockDensityTo1x();
+      return; // short-circuit any downstream logic
+    }
+    if (typeof orig === "function") return orig.apply(this, arguments);
+  };
+})();
+
+// Keep the lock through resize/orientation and revert any stray changes
+function installIPadLockGuards() {
+  const grid = document.getElementById("saved-themes-list");
+  const reLock = () => lockDensityTo1x();
+
+  // Re-lock on viewport changes (some code paths may re-run on resize)
+  window.addEventListener("resize", reLock, { passive: true });
+  window.addEventListener("orientationchange", reLock, { passive: true });
+
+  // If any code sets data-density later, immediately remove it
+  if (grid) {
+    const mo = new MutationObserver(muts => {
+      for (const m of muts) {
+        if (m.type === "attributes" && m.attributeName === "data-density") {
+          grid.removeAttribute("data-density");
+        }
+      }
+    });
+    mo.observe(grid, { attributes: true, attributeFilter: ["data-density"] });
+  }
 }
 
-// ---- Call this once after DOM is ready ----
+// Boot
 document.addEventListener("DOMContentLoaded", () => {
-	if (isIPad()) pinIPadToSeventyFivePercent();
+  if (isIPad()) {
+    lockDensityTo1x();        // pins 1× and sets html[data-density-locked="1"]
+    installIPadLockGuards();  // keeps it pinned
+  } else {
+    unlockDensity();          // restores normal behavior off-iPad
+  }
 });
