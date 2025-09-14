@@ -968,3 +968,10 @@ button.secondary:hover {
 	box-sizing: border-box;
 	/* Ensures padding doesn't break the width */
 }
+
+/* ===== iPad lock: hide density controls everywhere ===== */
+html[data-density-locked="1"] .density-controls {
+  	display: none !important;
+  	visibility: hidden !important;
+  	pointer-events: none !important;
+}
