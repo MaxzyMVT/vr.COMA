@@ -6,7 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	const themeCache = new Map(); // groupId -> { light, dark }
 	let savedThemesCache = [];
 	let colorKeyToEdit = null;
-	let originalColorBeforeEdit = null;
+	let lastInnerWidth = null;
+	let baseInnerWidth = null;
 
 	// Default theme to apply on initial load
 	const defaultTheme = {
@@ -42,6 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	const outputSection = document.getElementById("output-section");
 	const outputContent = document.getElementById("output-content");
 	const uiModeToggle = document.getElementById("ui-mode-toggle");
+	const densityControls = document.querySelector(".density-controls");
 
 	// --- Modals ---
 	const modalColorPicker = document.getElementById("modal-color-picker");
@@ -213,10 +215,90 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	}
 
+	function checkZoomAndToggleDensityButtons() {
+    	// Don't run if the baseline hasn't been set yet.
+    	if (!baseInnerWidth) return;
+
+    	const currentWidth = window.innerWidth;
+    	// Calculate scale relative to the user's starting window size.
+    	const currentScale = currentWidth / baseInnerWidth;
+
+    	// --- Define visibility based on the adaptive scale ---
+    	// A scale of 1.1 roughly corresponds to a 90% zoom level
+    	const canShow3x = currentScale >= 1.2;
+    	// A scale of 1.4 roughly corresponds to a 75% zoom level
+    	const canShow5x = currentScale >= 1.6;
+
+    	// --- NEW LOGIC: Hide the bar if only 1x is available ---
+    	if (!canShow3x && !canShow5x) {
+        	densityControls.style.display = "none";
+        	// Ensure layout is reset to 1x if controls are hidden
+        	const btn1x = densityControls.querySelector('[data-density="1"]');
+        	if (btn1x && !btn1x.classList.contains('active')) {
+            	btn1x.click();
+        	}
+        	return; // Exit the function after hiding the bar
+    	}
+
+    	// If we reach this point, the bar should be visible.
+    	densityControls.style.display = "flex";
+
+    	const btn3x = densityControls.querySelector('[data-density="3"]');
+    	const btn5x = densityControls.querySelector('[data-density="5"]');
+    	if (!btn3x || !btn5x) return;
+
+    	// Set individual button visibility
+    	btn3x.style.display = canShow3x ? "" : "none";
+    	btn5x.style.display = canShow5x ? "" : "none";
+
+    	// --- The Auto-Adjustment logic remains the same ---
+    	const activeBtn = densityControls.querySelector("button.active");
+    	if (!activeBtn) return;
+
+    	const activeDensity = parseInt(activeBtn.dataset.density, 10);
+
+    	if (canShow5x && activeDensity < 5) {
+        	btn5x.click();
+    	} else if (canShow3x && activeDensity < 3) {
+        	btn3x.click();
+    	} else if (!canShow5x && activeDensity === 5) {
+        	if (canShow3x) {
+            	btn3x.click();
+        	} else {
+            	densityControls.querySelector('[data-density="1"]').click();
+        	}
+    	} else if (!canShow3x && activeDensity === 3) {
+        	densityControls.querySelector('[data-density="1"]').click();
+    	}
+	}
+
+	function watchViewport() {
+    	const currentWidth = window.innerWidth;
+    	// Only run the logic if the width has actually changed.
+    	if (currentWidth !== lastInnerWidth) {
+        	checkZoomAndToggleDensityButtons();
+        	lastInnerWidth = currentWidth;
+    	}
+   		requestAnimationFrame(watchViewport); // Continue the loop
+	}
+
+
 	// --- Event Listeners ---
 	generateButton.addEventListener("click", handleGenerateTheme);
 	reviseButton.addEventListener("click", handleReviseTheme);
 	searchInput.addEventListener("input", handleSearch);
+
+	densityControls.addEventListener("click", (e) => {
+		const button = e.target.closest("button");
+		if (button) {
+			const density = button.dataset.density;
+			savedThemesList.dataset.density = density;
+
+			// Update the active button state
+			densityControls.querySelector("button.active").classList.remove("active");
+			button.classList.add("active");
+		}
+	});
 
 	// --- REWRITTEN: Event listener for AI-powered theme inversion ---
 	uiModeToggle.addEventListener("click", async () => {
@@ -360,9 +442,14 @@ document.addEventListener("DOMContentLoaded", () => {
 	function initializeApp() {
 		currentTheme = defaultTheme;
 		applyTheme(defaultTheme);
-
 		displayThemeOutput(defaultTheme, outputContent);
 		loadAndDisplayThemes();
+
+		baseInnerWidth = window.innerWidth;
+
+		lastInnerWidth = window.innerWidth; // Set initial value
+		checkZoomAndToggleDensityButtons();   // Run once on load
+		requestAnimationFrame(watchViewport);
 	}
 
 	initializeApp();

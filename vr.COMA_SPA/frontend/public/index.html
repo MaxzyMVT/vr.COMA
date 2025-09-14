@@ -72,18 +72,29 @@
             </div>
 
             <section class="management-section">
-              <h2>Saved Themes</h2>
-            
+                <h2>Saved Themes</h2>
+
             <div class="toolbar-row">
                 <input type="search" id="search-input" class="theme-search" placeholder="Search your themes" />
+                <div class="density-controls">
+                    <svg class="density-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" title="Adjust theme density">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="11" width="7" height="7"></rect>
+                        <rect x="3" y="11" width="7" height="7"></rect>
+                    </svg>
+                    <button data-density="1" class="active" title="Show 1 column">1×</button>
+                    <button data-density="3" title="Show 3 columns">3×</button>
+                    <button data-density="5" title="Show 5 columns">5×</button>
+                </div>
             </div>
-            
-              <div id="saved-themes-list" class="theme-grid"></div>
-            
-              <div id="selection-actions" class="selection-actions hidden">
+
+            <div id="saved-themes-list" class="theme-grid"></div>
+
+            <div id="selection-actions" class="selection-actions hidden">
                 <button id="save-selected">Save</button>
                 <button id="delete-selected" class="secondary">Delete</button>
-              </div>
+            </div>
             </section>
         </div>
 

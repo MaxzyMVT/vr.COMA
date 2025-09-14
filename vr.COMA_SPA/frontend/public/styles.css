@@ -705,8 +705,79 @@ button.secondary:hover {
     margin-left: 0;
 }
 
+/* --- Add these styles for the Density Controls --- */
+.density-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.density-controls span {
+    font-size: 0.9rem;
+    color: var(--secondary-text);
+    margin-right: 0.25rem;
+}
+
+.density-controls button {
+    background-color: var(--container-bg);
+    border: 1px solid var(--border-color);
+    color: var(--secondary-text);
+    padding: 0.25rem 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    border-radius: 6px;
+    flex-grow: 0; /* Prevents button from stretching */
+    min-width: 36px;
+}
+
+.density-controls button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    opacity: 1;
+}
+
+.density-controls button.active {
+    background-color: var(--accent);
+    color: var(--btn-text);
+    border-color: var(--accent);
+}
+
+.density-icon {
+    stroke: var(--secondary-text);
+    margin-right: 0.5rem;
+}
+
+/* --- You can now DELETE this old rule --- */
+.density-controls span {
+    font-size: 0.9rem;
+    color: var(--secondary-text);
+    margin-right: 0.25rem;
+}
+
+/* --- Add these styles for the grid density --- */
+#saved-themes-list[data-density="3"] {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+#saved-themes-list[data-density="5"] {
+    grid-template-columns: repeat(5, 1fr);
+}
+
 /* Apply these styles on screens 900px wide or smaller */
 @media (max-width: 900px) {
+    /* Hide density controls on mobile */
+    .density-controls {
+        display: none;
+    }
+
+    /* Force 1x layout on mobile regardless of setting */
+    #saved-themes-list,
+    #saved-themes-list[data-density="3"],
+    #saved-themes-list[data-density="5"] {
+        grid-template-columns: 1fr;
+    }
+    
     .app-container {
         /* Stack the panels on top of each other instead of side-by-side */
         flex-direction: column;
