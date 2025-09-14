@@ -1,923 +1,958 @@
 /* Using CSS variables for dynamic theming */
 :root {
-    --header-bg: #2c3e50;
-    --secondary-header-bg: #34495e;
-    --header-text: #ffffff;
-    --sub-header-text: #bdc3c7;
-    --main-bg: #ecf0f1;
-    --primary-text: #2c3e50;
-    --secondary-text: #7f8c8d;
-    --accent: #3498db;
-    --btn-bg: #3498db;
-    --btn-text: #ffffff;
-    --container-bg: #ffffff;
-    --border-color: #bdc3c7;
-    --secondary-interactive-bg: #bdc3c7;
-    --secondary-interactive-text: #2c3e50;
+	--header-bg: #2c3e50;
+	--secondary-header-bg: #34495e;
+	--header-text: #ffffff;
+	--sub-header-text: #bdc3c7;
+	--main-bg: #ecf0f1;
+	--primary-text: #2c3e50;
+	--secondary-text: #7f8c8d;
+	--accent: #3498db;
+	--btn-bg: #3498db;
+	--btn-text: #ffffff;
+	--container-bg: #ffffff;
+	--border-color: #bdc3c7;
+	--secondary-interactive-bg: #bdc3c7;
+	--secondary-interactive-text: #2c3e50;
 
-    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+	--font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 /* General Styles */
 body {
-    font-family: var(--font-family);
-    background-color: var(--main-bg);
-    color: var(--primary-text);
-    margin: 0;
-    transition: background-color 0.5s ease, color 0.5s ease;
+	font-family: var(--font-family);
+	background-color: var(--main-bg);
+	color: var(--primary-text);
+	margin: 0;
+	transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 .app-container {
-    display: flex;
-    min-height: 100vh;
+	display: flex;
+	min-height: 100vh;
 }
 
 /* Control Panel (Left Side) */
 .control-panel {
-    width: 450px;
-    padding: 2rem 3rem;
-    background-color: var(--container-bg);
-    border-right: 1px solid var(--border-color);
-    display: flex;
-    flex-direction: column;
-    transition: background-color 0.5s ease, border-color 0.5s ease;
-    flex-shrink: 0;
-    /* Prevents the panel from shrinking */
+	width: 450px;
+	padding: 2rem 3rem;
+	background-color: var(--container-bg);
+	border-right: 1px solid var(--border-color);
+	display: flex;
+	flex-direction: column;
+	transition: background-color 0.5s ease, border-color 0.5s ease;
+	flex-shrink: 0;
+	/* Prevents the panel from shrinking */
 }
 
 .app-header {
-    position: relative;
-    padding: 2rem 0;
-    background: linear-gradient(135deg, 
-        rgba(52, 152, 219, 0.08) 0%, 
-        rgba(44, 62, 80, 0.03) 100%);
-    border-radius: 16px;
-    margin-bottom: 2rem;
-    overflow: hidden;
-    box-shadow: 4px 10px 15px 2px rgba(0, 0, 0, 0.4);
+	position: relative;
+	padding: 2rem 0;
+	background: linear-gradient(135deg,
+		rgba(52, 152, 219, 0.08) 0%,
+		rgba(44, 62, 80, 0.03) 100%);
+	border-radius: 16px;
+	margin-bottom: 2rem;
+	overflow: hidden;
+	box-shadow: 4px 10px 15px 2px rgba(0, 0, 0, 0.4);
 }
 
 .app-header::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, 
-        var(--accent) 0%, 
-        #9b59b6 33%, 
-        #e74c3c 66%, 
-        #f39c12 100%);
-    border-radius: 2px;
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 4px;
+	background: linear-gradient(90deg,
+		var(--accent) 0%,
+		#9b59b6 33%,
+		#e74c3c 66%,
+		#f39c12 100%);
+	border-radius: 2px;
 }
 
 .app-header h1::after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 50%;
-    transform: translateX(-50%) scaleX(0);
-    width: 60px;
-    height: 3px;
-    background: linear-gradient(90deg, var(--accent), #9b59b6);
-    border-radius: 2px;
-    transition: transform 0.3s ease;
+	content: '';
+	position: absolute;
+	bottom: -8px;
+	left: 50%;
+	transform: translateX(-50%) scaleX(0);
+	width: 60px;
+	height: 3px;
+	background: linear-gradient(90deg, var(--accent), #9b59b6);
+	border-radius: 2px;
+	transition: transform 0.3s ease;
 }
 
 .app-header h1 {
-    font-size: 3.5rem;
-    font-weight: 900;
-    margin: 0 0 1rem 0;
-    background: linear-gradient(45deg, var(--accent), #9b59b6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-right: 0; 
-    text-align: center;
-    margin-right: 2px;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    letter-spacing: -0.02em;
-    position: relative; 
-
+	font-size: 3.5rem;
+	font-weight: 900;
+	margin: 0 0 1rem 0;
+	background: linear-gradient(45deg, var(--accent), #9b59b6);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	margin-right: 0;
+	text-align: center;
+	margin-right: 2px;
+	cursor: pointer;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	letter-spacing: -0.02em;
+	position: relative;
 }
-.app-header h1:hover{
-    transform: scale(1.08); 
-    color: var(--accent);
+
+.app-header h1:hover {
+	transform: scale(1.08);
+	color: var(--accent);
 }
 
 .app-header h1:hover::after {
-    transform: translateX(-50%) scaleX(1);
+	transform: translateX(-50%) scaleX(1);
 }
 
 .app-header p {
-    margin: 0;
+	margin: 0;
 }
 
 textarea {
-    width: 100%;
-    height: 100px;
-    padding: 0.75rem;
-    font-family: var(--font-family);
-    font-size: 1rem;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    background-color: var(--main-bg);
-    color: var(--primary-text);
-    resize: vertical;
-    box-sizing: border-box;
-    transition: all 0.3s ease;
+	width: 100%;
+	height: 100px;
+	padding: 0.75rem;
+	font-family: var(--font-family);
+	font-size: 1rem;
+	border: 2px solid var(--border-color);
+	border-radius: 8px;
+	background-color: var(--main-bg);
+	color: var(--primary-text);
+	resize: vertical;
+	box-sizing: border-box;
+	transition: all 0.3s ease;
 }
 
 .button-group {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
+	display: flex;
+	gap: 1rem;
+	margin-top: 1rem;
 }
 
 button {
-    flex-grow: 1;
-    padding: 0.8rem 1rem;
-    font-size: 1rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    background-color: var(--btn-bg);
-    color: var(--btn-text);
-    transition: background-color 0.3s ease, transform 0.1s ease;
+	flex-grow: 1;
+	padding: 0.8rem 1rem;
+	font-size: 1rem;
+	font-weight: 600;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	background-color: var(--btn-bg);
+	color: var(--btn-text);
+	transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
 button:hover {
-    cursor: pointer;
-    opacity: 0.8;
+	cursor: pointer;
+	opacity: 0.8;
 }
 
 button:disabled {
-    background-color: var(--secondary-text);
-    cursor: not-allowed;
+	background-color: var(--secondary-text);
+	cursor: not-allowed;
 }
-
 
 /* Add this new rule for any secondary button */
 button.secondary {
-    background-color: var(--secondary-interactive-bg, var(--border-color));
-    color: var(--secondary-interactive-text, var(--primary-text));
-    border: 1px solid var(--border-color);
-    padding: 0.6rem 1.2rem;
+	background-color: var(--secondary-interactive-bg, var(--border-color));
+	color: var(--secondary-interactive-text, var(--primary-text));
+	border: 1px solid var(--border-color);
+	padding: 0.6rem 1.2rem;
 }
 
 button.secondary:hover {
-    opacity: 0.8;
-    cursor:pointer;
+	opacity: 0.8;
+	cursor: pointer;
 }
 
 /* Add this new style for our secondary preview button */
 .preview-button.secondary {
-    background-color: var(--secondary-interactive-bg, var(--secondary-text));
-    color: var(--secondary-interactive-text, var(--primary-text));
-    padding: 0.6rem 1.2rem;
-    border: none;
-    border-radius: 8px;
-    cursor: default;
+	background-color: var(--secondary-interactive-bg, var(--secondary-text));
+	color: var(--secondary-interactive-text, var(--primary-text));
+	padding: 0.6rem 1.2rem;
+	border: none;
+	border-radius: 8px;
+	cursor: default;
 }
 
 /* Modify the main preview button style to use the new variables */
 .preview-button {
-    background-color: var(--btn-bg);
-    color: var(--btn-text);
-    padding: 0.6rem 1.2rem;
-    border: none;
-    border-radius: 8px;
-    cursor: default;
+	background-color: var(--btn-bg);
+	color: var(--btn-text);
+	padding: 0.6rem 1.2rem;
+	border: none;
+	border-radius: 8px;
+	cursor: default;
 }
 
 .app-header .punchline {
-    font-family: var(--font-family);
-    font-size: 1rem;
-    align-items: center;
-    font-weight: bold;
-    text-align: center;
-    overflow: hidden;
-    /* Keeps the content on a single line */
-    margin: 0 auto;
-    /* Gives that scrolling effect as the typing happens */
-    letter-spacing: 0.1em;
-    /* Adjust as needed */
-    animation-name: slide-left;
-    animation-duration: 1.5s;
-    animation-timing-function: ease-out;
+	font-family: var(--font-family);
+	font-size: 1rem;
+	align-items: center;
+	font-weight: bold;
+	text-align: center;
+	overflow: hidden;
+	/* Keeps the content on a single line */
+	margin: 0 auto;
+	/* Gives that scrolling effect as the typing happens */
+	letter-spacing: 0.1em;
+	/* Adjust as needed */
+	animation-name: slide-left;
+	animation-duration: 1.5s;
+	animation-timing-function: ease-out;
 }
 
 @keyframes slide-left {
-    /* use % to specify the animation at different stages (in this case, 0% and 100%) */
-    0% {
-      transform: translateX(-100px);
-    }
-    100% {
-      /* adjust the value to control how much the text moves */
-      transform: translateX(0);
-    }
-  }
-
+	/* use % to specify the animation at different stages (in this case, 0% and 100%) */
+	0% {
+		transform: translateX(-100px);
+	}
+	100% {
+		/* adjust the value to control how much the text moves */
+		transform: translateX(0);
+	}
+}
 
 .app-header .description {
-    font-size: 1.5rem;
-    text-align: center; 
-    margin: 2.5rem 0 2rem 0;
-    color: var(--secondary-text);
-    opacity: 0.9;
+	font-size: 1.5rem;
+	text-align: center;
+	margin: 2.5rem 0 2rem 0;
+	color: var(--secondary-text);
+	opacity: 0.9;
 }
 
 .brand-letters {
-    font-weight: 800;
-    font-size: 1em;
-    background: linear-gradient(45deg, var(--accent), #9b59b6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    display: inline-block;
-    margin-right: 2px;
+	font-weight: 800;
+	font-size: 1em;
+	background: linear-gradient(45deg, var(--accent), #9b59b6);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	display: inline-block;
+	margin-right: 2px;
 }
 
 .brand-word {
-    display: inline-block;
+	display: inline-block;
 }
 
-
 .app-header .sub-description {
-    font-size: 1rem;
-    text-align: center;     /* Center the text */
-    display: block;         /* Treat it as a block to control its width */
-    max-width: 380px;       /* Set a max-width for better readability */
-    margin: 0 auto;         /* Center the block itself within the header */
-    line-height: 1.6;       /* Improve line spacing */
+	font-size: 1rem;
+	text-align: center;
+	/* Center the text */
+	display: block;
+	/* Treat it as a block to control its width */
+	max-width: 380px;
+	/* Set a max-width for better readability */
+	margin: 0 auto;
+	/* Center the block itself within the header */
+	line-height: 1.6;
+	/* Improve line spacing */
 }
 
 /* Output & Management Sections */
 .output-section,
 .management-section {
-    margin-top: 2rem;
-    border-top: 1px solid var(--border-color);
-    padding-top: 1.5rem;
+	margin-top: 2rem;
+	border-top: 1px solid var(--border-color);
+	padding-top: 1.5rem;
 }
 
 .output-section .placeholder {
-    color: var(--secondary-text);
+	color: var(--secondary-text);
 }
 
 #output-content h3 {
-    margin-top: 0;
+	margin-top: 0;
 }
 
 #output-content p {
-    margin-bottom: 1.5rem;
-    line-height: 1.6;
+	margin-bottom: 1.5rem;
+	line-height: 1.6;
 }
 
 .color-palette {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.8rem;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0.8rem;
 }
 
 .color-chip {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 5px;
-    transition: background-color 0.2s;
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	padding: 0.5rem;
+	border-radius: 5px;
+	transition: background-color 0.2s;
 }
 
 .color-chip:hover {
-    background-color: var(--main-bg);
+	background-color: var(--main-bg);
 }
 
 .color-swatch {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 1px solid var(--border-color);
-    margin-right: 10px;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	border: 1px solid var(--border-color);
+	margin-right: 10px;
 }
 
 .color-info span {
-    font-size: 0.9em;
-    display: block;
+	font-size: 0.9em;
+	display: block;
 }
 
 .color-info .color-name {
-    font-weight: 600;
+	font-weight: 600;
 }
 
 /* Preview Panel (Right Side) */
 .preview-panel {
-    flex-grow: 1;
-    padding: 3rem;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+	flex-grow: 1;
+	padding: 3rem;
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
 }
 
 .theme-preview-container {
-    background-color: var(--container-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 4px 10px 15px 2px rgba(0, 0, 0, 0.4);
-    transition: all 0.5s ease;
+	background-color: var(--container-bg);
+	border: 1px solid var(--border-color);
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: 4px 10px 15px 2px rgba(0, 0, 0, 0.4);
+	transition: all 0.5s ease;
 }
 
 .preview-header {
-    background-image: linear-gradient(to right, var(--header-bg), var(--secondary-header-bg));
-    padding: 1.5rem;
-    transition: background-color 0.5s ease;
+	background-image: linear-gradient(to right, var(--header-bg), var(--secondary-header-bg));
+	padding: 1.5rem;
+	transition: background-color 0.5s ease;
 }
 
 /* Add this new rule for the sub-header in the preview */
 #preview-sub-header {
-    color: var(--sub-header-text);
-    margin: 0.25rem 0 0 0;
-    font-weight: 400;
-    opacity: 0.9;
+	color: var(--sub-header-text);
+	margin: 0.25rem 0 0 0;
+	font-weight: 400;
+	opacity: 0.9;
 }
 
 #preview-theme-name {
-    margin: 0;
-    color: var(--header-text);
+	margin: 0;
+	color: var(--header-text);
 }
 
 .preview-content {
-    padding: 0.5rem 1.5rem 1.5rem 1.5rem; /* Top, Right, Bottom, Left */
+	padding: 0.5rem 1.5rem 1.5rem 1.5rem;
+	/* Top, Right, Bottom, Left */
 }
 
 .sample-text-primary {
-    color: var(--primary-text);
+	color: var(--primary-text);
 }
 
 .sample-text-secondary {
-    color: var(--secondary-text);
+	color: var(--secondary-text);
 }
 
 .spaced-button {
-    margin-top: 10px;
+	margin-top: 10px;
 }
 
 .preview-button {
-    background-color: var(--btn-bg);
-    color: var(--btn-text);
-    padding: 0.6rem 1.2rem;
+	background-color: var(--btn-bg);
+	color: var(--btn-text);
+	padding: 0.6rem 1.2rem;
 }
 
 #search-input {
-    width: 100%;
-    flex: 1;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-    font-family: inherit;
-    color: var(--primary-text);
-    /* --- CHANGED --- Matched background to the left panel's textarea */
-    background-color: var(--main-bg); 
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    box-sizing: border-box;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.5s ease, color 0.5s ease;
+	width: 100%;
+	flex: 1;
+	padding: 0.75rem 1rem;
+	font-size: 1rem;
+	font-family: inherit;
+	color: var(--primary-text);
+	/* --- CHANGED --- Matched background to the left panel's textarea */
+	background-color: var(--main-bg);
+	border: 1px solid var(--border-color);
+	border-radius: 8px;
+	box-sizing: border-box;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.5s ease, color 0.5s ease;
 }
 
 #search-input:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2); /* Use your accent color */
+	outline: none;
+	border-color: var(--accent);
+	box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+	/* Use your accent color */
 }
 
-
 .preview-accent-link {
-    color: var(--accent);
-    text-decoration: none;
-    font-weight: 600;
-    margin-left: 1rem;
+	color: var(--accent);
+	text-decoration: none;
+	font-weight: 600;
+	margin-left: 1rem;
 }
 
 #saved-themes-list {
-    display: grid;
-    gap: 1.25rem;
-    grid-template-columns: 1fr;
+	display: grid;
+	gap: 1.25rem;
+	grid-template-columns: 1fr;
 }
 
 /* Find this existing rule in styles.css */
 .saved-theme-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    box-sizing: border-box; /* <-- ADD THIS LINE */
-    background-color: var(--container-bg);
-    color: var(--primary-text);
-    border: 1px solid var(--border-color);
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    min-width: 0;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	box-sizing: border-box;
+	/* <-- ADD THIS LINE */
+	background-color: var(--container-bg);
+	color: var(--primary-text);
+	border: 1px solid var(--border-color);
+	padding: 0.75rem 1rem;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+	min-width: 0;
 }
 
 /* This adds the hover effect to the entire div */
 .saved-theme-item:hover {
-    background-color: var(--main-bg);
-    transform: translateY(-2px);
-    border-color: var(--accent);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	background-color: var(--main-bg);
+	transform: translateY(-2px);
+	border-color: var(--accent);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* This ensures the theme name and swatches inside the item can also shrink */
 .theme-info {
-    min-width: 0;
+	min-width: 0;
 }
 
 .theme-info span {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    /* Still useful for very long names in a valid layout */
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	/* Still useful for very long names in a valid layout */
 }
 
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    transition: opacity 0.3s ease;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.6);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000;
+	transition: opacity 0.3s ease;
 }
 
 .modal-overlay.hidden {
-    display: none;
+	display: none;
 }
 
 .modal-content {
-    background-color: var(--container-bg);
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-    width: 90%;
-    max-width: 400px;
-    text-align: center;
+	background-color: var(--container-bg);
+	padding: 2rem;
+	border-radius: 12px;
+	box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+	width: 90%;
+	max-width: 400px;
+	text-align: center;
 }
 
 .modal-content h2 {
-    margin-top: 0;
-    color: var(--primary-text);
+	margin-top: 0;
+	color: var(--primary-text);
 }
 
 #modal-input-name {
-    width: 100%;
-    padding: 0.75rem;
-    margin: 1rem 0;
-    font-size: 1rem;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    box-sizing: border-box;
+	width: 100%;
+	padding: 0.75rem;
+	margin: 1rem 0;
+	font-size: 1rem;
+	border-radius: 8px;
+	border: 1px solid var(--border-color);
+	box-sizing: border-box;
 }
 
 .modal-actions {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
+	display: flex;
+	gap: 1rem;
+	margin-top: 1rem;
 }
 
 #modal-save-btn {
-    background-color: var(--accent);
+	background-color: var(--accent);
 }
-
-
-
-
 
 /* --- Icon Button Styles --- */
 .icon-btn {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    padding: 0.4rem;
-    border-radius: 8px;
-    transition: background-color 0.2s ease;
-    border: none;
-    background-color: transparent;
-    margin: 0 0.25rem;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+	padding: 0.4rem;
+	border-radius: 8px;
+	transition: background-color 0.2s ease;
+	border: none;
+	background-color: transparent;
+	margin: 0 0.25rem;
 }
 
 .edit-theme-name-btn {
-    flex-grow: 0;
-    flex-shrink: 0;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    margin: 0;
+	flex-grow: 0;
+	flex-shrink: 0;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	margin: 0;
 }
 
 .icon-btn:hover {
-    background-color: var(--border-color);
+	background-color: var(--border-color);
 }
 
 .icon-btn svg {
-    width: 20px;
-    height: 20px;
-    
-    /* --- CORE CHANGE --- */
-    stroke: var(--secondary-text); 
-    fill: none;
-    stroke-width: 1.9px; /* Define a consistent line thickness */
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    
-    transition: stroke 0.2s ease; /* Transition the stroke color */
+	width: 20px;
+	height: 20px;
+
+	/* --- CORE CHANGE --- */
+	stroke: var(--secondary-text);
+	fill: none;
+	stroke-width: 1.9px;
+	/* Define a consistent line thickness */
+	stroke-linecap: round;
+	stroke-linejoin: round;
+
+	transition: stroke 0.2s ease;
+	/* Transition the stroke color */
 }
 
 /* Also update the hover effect to use stroke */
 .icon-btn:hover svg {
-    stroke: var(--accent);
+	stroke: var(--accent);
 }
 
 /* --- Styles for Inline Name Editing --- */
 .theme-name-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    min-height: 40px;
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	min-height: 40px;
 }
 
 .theme-name-header h3 {
-    margin: 0;
+	margin: 0;
 }
 
 #output-content h3 {
-    margin-top: 0;
-    /* Reset margin */
+	margin-top: 0;
+	/* Reset margin */
 }
 
 /* --- Styles for the new Color Editor Modal --- */
 .color-editor {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    margin: 2rem 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+	margin: 2rem 0;
 }
 
 #modal-color-picker {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
 
-    width: 44px;
-    /* Set a fixed size */
-    height: 44px;
-    padding: 0;
-    border: none;
-    border-radius: 8px;
-    /* Make it a round-cornerd square! */
-    cursor: pointer;
-    background-color: transparent;
-    border: 1px solid var(--border-color);
-    /* Add a border to match the swatches */
+	width: 44px;
+	/* Set a fixed size */
+	height: 44px;
+	padding: 0;
+	border: none;
+	border-radius: 8px;
+	/* Make it a round-cornerd square! */
+	cursor: pointer;
+	background-color: transparent;
+	border: 1px solid var(--border-color);
+	/* Add a border to match the swatches */
 }
 
 /* This targets the internal color part for WebKit browsers (Chrome, Safari, Edge) */
 #modal-color-picker::-webkit-color-swatch {
-    border-radius: 8px;
-    border: 3px solid var(--container-bg);
+	border-radius: 8px;
+	border: 3px solid var(--container-bg);
 }
 
 /* This targets the internal color part for Firefox */
 #modal-color-picker::-moz-color-swatch {
-    border-radius: 8px;
-    border: 3px solid var(--container-bg);
+	border-radius: 8px;
+	border: 3px solid var(--container-bg);
 }
 
 .color-details {
-    display: flex;
-    align-items: center;
-    height: 44px; /* <-- THE ALIGNMENT FIX: Set a fixed height */
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding-left: 0.75rem;
-    box-sizing: border-box;
-    /* Ensures padding doesn't break the height */
+	display: flex;
+	align-items: center;
+	height: 44px;
+	/* <-- THE ALIGNMENT FIX: Set a fixed height */
+	border: 1px solid var(--border-color);
+	border-radius: 8px;
+	padding-left: 0.75rem;
+	box-sizing: border-box;
+	/* Ensures padding doesn't break the height */
 }
 
 #modal-color-hex {
-    border: none;
-    outline: none;
-    font-size: 1.1rem;
-    font-family: monospace;
-    background-color: transparent;
-    width: 100px;
+	border: none;
+	outline: none;
+	font-size: 1.1rem;
+	font-family: monospace;
+	background-color: transparent;
+	width: 100px;
 }
 
 #modal-copy-btn {
-    align-self: stretch;
-    /* Makes the button fill the height of the container */
-    border-radius: 0 7px 7px 0;
-    /* Makes it fit nicely on the right edge */
-    margin: 0;
+	align-self: stretch;
+	/* Makes the button fill the height of the container */
+	border-radius: 0 7px 7px 0;
+	/* Makes it fit nicely on the right edge */
+	margin: 0;
 }
-
-
-
-
-
-
-
-
-
 
 /* Add these styles for the new inline theme name editor */
 .theme-name-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    min-height: 40px;
-    /* Prevents layout shift when replacing h3 with input */
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	min-height: 40px;
+	/* Prevents layout shift when replacing h3 with input */
 }
 
 .theme-name-input {
-    font-size: 1.75rem;
-    /* Matches h3 font-size */
-    font-weight: 600;
-    font-family: var(--font-family);
-    border: none;
-    border-bottom: 2px solid var(--accent);
-    outline: none;
-    background-color: transparent;
-    color: var(--primary-text);
-    padding: 0;
-    width: 100%;
+	font-size: 1.75rem;
+	/* Matches h3 font-size */
+	font-weight: 600;
+	font-family: var(--font-family);
+	border: none;
+	border-bottom: 2px solid var(--accent);
+	outline: none;
+	background-color: transparent;
+	color: var(--primary-text);
+	padding: 0;
+	width: 100%;
 }
+
 /* This new container will group the name and the swatches together */
 .theme-info {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    /* This creates a nice space between the name and the icons */
-    overflow: hidden;
-    /* Prevents long names from breaking the layout */
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	/* This creates a nice space between the name and the icons */
+	overflow: hidden;
+	/* Prevents long names from breaking the layout */
 }
 
 .theme-info span {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 /* This is the container for the row of swatch icons */
 .theme-swatches {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    /* Prevents the swatches from shrinking if the name is long */
+	display: flex;
+	align-items: center;
+	flex-shrink: 0;
+	/* Prevents the swatches from shrinking if the name is long */
 }
 
 /* This is the style for each individual color swatch */
 .theme-swatch {
-    width: 16px;
-    height: 16px;
-    border-radius: 4px;
-    /* Creates the round-cornered square */
-    border: 1px solid var(--outlineSeparators, var(--border-color));
-    /* The outline */
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-    /* A subtle shadow for depth */
-    margin-left: -6px;
-    /* THE KEY: This makes the icons overlap neatly */
+	width: 16px;
+	height: 16px;
+	border-radius: 4px;
+	/* Creates the round-cornered square */
+	border: 1px solid var(--outlineSeparators, var(--border-color));
+	/* The outline */
+	box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+	/* A subtle shadow for depth */
+	margin-left: -6px;
+	/* THE KEY: This makes the icons overlap neatly */
 }
 
 /* This makes sure the first swatch in the list has no negative margin */
 .theme-swatch:first-child {
-    margin-left: 0;
+	margin-left: 0;
 }
 
 /* --- Add these styles for the Density Controls --- */
 .density-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	flex-shrink: 0;
 }
 
 .density-controls span {
-    font-size: 0.9rem;
-    color: var(--secondary-text);
-    margin-right: 0.25rem;
+	font-size: 0.9rem;
+	color: var(--secondary-text);
+	margin-right: 0.25rem;
 }
 
 .density-controls button {
-    background-color: var(--container-bg);
-    border: 1px solid var(--border-color);
-    color: var(--secondary-text);
-    padding: 0.25rem 0.75rem;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    border-radius: 6px;
-    flex-grow: 0; /* Prevents button from stretching */
-    min-width: 36px;
+	background-color: var(--container-bg);
+	border: 1px solid var(--border-color);
+	color: var(--secondary-text);
+	padding: 0.25rem 0.75rem;
+	font-size: 0.9rem;
+	line-height: 1.5;
+	border-radius: 6px;
+	flex-grow: 0;
+	/* Prevents button from stretching */
+	min-width: 36px;
 }
 
 .density-controls button:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    opacity: 1;
+	border-color: var(--accent);
+	color: var(--accent);
+	opacity: 1;
 }
 
 .density-controls button.active {
-    background-color: var(--accent);
-    color: var(--btn-text);
-    border-color: var(--accent);
+	background-color: var(--accent);
+	color: var(--btn-text);
+	border-color: var(--accent);
 }
 
 .density-icon {
-    stroke: var(--secondary-text);
-    margin-right: 0.5rem;
+	stroke: var(--secondary-text);
+	margin-right: 0.5rem;
 }
 
 /* --- You can now DELETE this old rule --- */
 .density-controls span {
-    font-size: 0.9rem;
-    color: var(--secondary-text);
-    margin-right: 0.25rem;
+	font-size: 0.9rem;
+	color: var(--secondary-text);
+	margin-right: 0.25rem;
 }
 
 /* --- Add these styles for the grid density --- */
 #saved-themes-list[data-density="3"] {
-    grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(3, 1fr);
 }
 
 #saved-themes-list[data-density="5"] {
-    grid-template-columns: repeat(5, 1fr);
+	grid-template-columns: repeat(5, 1fr);
 }
 
 /* Apply these styles on screens 900px wide or smaller */
 @media (max-width: 900px) {
-    /* Hide density controls on mobile */
-    .density-controls {
-        display: none;
-    }
+	/* Hide density controls on mobile */
+	.density-controls {
+		display: none;
+	}
 
-    /* Force 1x layout on mobile regardless of setting */
-    #saved-themes-list,
-    #saved-themes-list[data-density="3"],
-    #saved-themes-list[data-density="5"] {
-        grid-template-columns: 1fr;
-    }
-    
-    .app-container {
-        /* Stack the panels on top of each other instead of side-by-side */
-        flex-direction: column;
-    }
+	/* Force 1x layout on mobile regardless of setting */
+	#saved-themes-list,
+	#saved-themes-list[data-density="3"],
+	#saved-themes-list[data-density="5"] {
+		grid-template-columns: 1fr;
+	}
 
-    .control-panel {
-        /* Make the control panel take the full width */
-        width: 100%;
-        box-sizing: border-box;
-        /* Ensures padding is included in the width */
+	.app-container {
+		/* Stack the panels on top of each other instead of side-by-side */
+		flex-direction: column;
+	}
 
-        /* Change the border from right to bottom */
-        border-right: none;
-        border-bottom: 1px solid var(--border-color);
-        padding: 1.5rem;
-        /* Reduce padding for smaller screens */
-    }
+	.control-panel {
+		/* Make the control panel take the full width */
+		width: 100%;
+		box-sizing: border-box;
+		/* Ensures padding is included in the width */
 
-    .preview-panel {
-        padding: 1.5rem;
-        /* Reduce padding for smaller screens */
-    }
+		/* Change the border from right to bottom */
+		border-right: none;
+		border-bottom: 1px solid var(--border-color);
+		padding: 1.5rem;
+		/* Reduce padding for smaller screens */
+	}
 
-    .color-palette {
-        /* Stack color chips in a single column for better readability */
-        grid-template-columns: 1fr;
-    }
+	.preview-panel {
+		padding: 1.5rem;
+		/* Reduce padding for smaller screens */
+	}
 
-    .app-header {
-        padding: 2rem 1rem 1.5rem 1rem; /* Reduce vertical padding */
-        margin-bottom: 1.5rem; 
-    } 
+	.color-palette {
+		/* Stack color chips in a single column for better readability */
+		grid-template-columns: 1fr;
+	}
 
-    .app-header h1 {
-        font-size: 2.25rem;          /* Adjust font size for mobile */
-        margin-bottom: 0.5rem;
-    }
+	.app-header {
+		padding: 2rem 1rem 1.5rem 1rem;
+		/* Reduce vertical padding */
+		margin-bottom: 1.5rem;
+	}
 
-    .punchline {
-        margin-bottom: 1rem;       /* Add space to replace the <br> tags */
-        font-size: 0.9rem;
-    }
+	.app-header h1 {
+		font-size: 2.25rem;
+		/* Adjust font size for mobile */
+		margin-bottom: 0.5rem;
+	}
 
-    .app-header .description {
-        font-size: 1rem;             /* Reduce description font size */
-        margin: 0;                   /* Remove desktop margins */
-    }
+	.punchline {
+		margin-bottom: 1rem;
+		/* Add space to replace the <br> tags */
+		font-size: 0.9rem;
+	}
 
-    .app-header .sub-description {
-        font-size: 0.9rem;           /* Reduce sub-description font size */
-        line-height: 1.5;
-        max-width: 90%;              /* Ensure it fits well within the screen */
-    }
+	.app-header .description {
+		font-size: 1rem;
+		/* Reduce description font size */
+		margin: 0;
+		/* Remove desktop margins */
+	}
 
-    /* Also, add this rule to the description in the DESKTOP section (outside the media query) */
-    /* to maintain the spacing you had from the <br> tags */
-    .app-header .description {
-        font-size: 1.5rem;
-        text-align: center;
-        margin: 2rem 0 2rem 0; /* Add margin-top here */
-        color: var(--secondary-text);
-        opacity: 0.9;
-    }
+	.app-header .sub-description {
+		font-size: 0.9rem;
+		/* Reduce sub-description font size */
+		line-height: 1.5;
+		max-width: 90%;
+		/* Ensure it fits well within the screen */
+	}
 
-    .toolbar-row {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 1rem;
-    }
-    .sample-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem; /* Adds some space between items */
-    }
-    .preview-accent-link {
-        margin-left: 0;
-        margin-top: 0.5rem;
-    }
+	/* Also, add this rule to the description in the DESKTOP section (outside the media query) */
+	/* to maintain the spacing you had from the <br> tags */
+	.app-header .description {
+		font-size: 1.5rem;
+		text-align: center;
+		margin: 2rem 0 2rem 0;
+		/* Add margin-top here */
+		color: var(--secondary-text);
+		opacity: 0.9;
+	}
+
+	.toolbar-row {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 1rem;
+	}
+
+	.sample-buttons {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		/* Adds some space between items */
+	}
+
+	.preview-accent-link {
+		margin-left: 0;
+		margin-top: 0.5rem;
+	}
 }
 
 /* brand row + UI mode toggle */
 .brand-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;   /* was space-between */
-  gap: .5rem;                /* space between logo and icon */
-  margin-bottom: .5rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	/* was space-between */
+	gap: .5rem;
+	/* space between logo and icon */
+	margin-bottom: .5rem;
 }
 
 /* This new rule positions the toggle button */
 .ui-actions {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
+	position: absolute;
+	top: 1rem;
+	right: 1rem;
 }
 .ui-actions .icon-btn svg { stroke: var(--secondary-text); }
 
 /* management toolbar */
-.toolbar-row { 
-    display:flex; 
-    align-items: center; /* This is the key change */
-    gap:1rem; 
-    justify-content:space-between; 
-    margin-bottom:1rem; 
+.toolbar-row {
+	display: flex;
+	align-items: center;
+	/* This is the key change */
+	gap: 1rem;
+	justify-content: space-between;
+	margin-bottom: 1rem;
 }
 
 .theme-group {
-  border:1px solid var(--border-color);
-  border-radius:10px; background:var(--container-bg);
-  padding:.75rem; display:flex; flex-direction:column; gap:.5rem;
-  position:relative; cursor:pointer;
+	border: 1px solid var(--border-color);
+	border-radius: 10px;
+	background: var(--container-bg);
+	padding: .75rem;
+	display: flex;
+	flex-direction: column;
+	gap: .5rem;
+	position: relative;
+	cursor: pointer;
 }
-.theme-group .pair { display:grid; grid-template-columns: 1fr 1fr; gap:.5rem; }
+.theme-group .pair { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
 .theme-variant {
-  border:1px dashed var(--border-color); border-radius:8px; padding:.5rem;
-  display:flex; align-items:center; justify-content:space-between; gap:.5rem;
+	border: 1px dashed var(--border-color);
+	border-radius: 8px;
+	padding: .5rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: .5rem;
 }
-.theme-variant .name { font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.theme-variant .actions { display:flex; gap:.25rem; }
+.theme-variant .name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.theme-variant .actions { display: flex; gap: .25rem; }
 
-.theme-group.selected { outline:2px solid var(--accent); }
+.theme-group.selected { outline: 2px solid var(--accent); }
 .theme-group .tick {
-  position:absolute; top:.4rem; left:.4rem; width:22px; height:22px; border-radius:6px;
-  border:1px solid var(--border-color); background:var(--container-bg);
-  display:flex; align-items:center; justify-content:center; font-size:.85rem;
+	position: absolute;
+	top: .4rem;
+	left: .4rem;
+	width: 22px;
+	height: 22px;
+	border-radius: 6px;
+	border: 1px solid var(--border-color);
+	background: var(--container-bg);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: .85rem;
 }
-.theme-group.selected .tick { background:var(--accent); color:var(--btn-text); }
+.theme-group.selected .tick { background: var(--accent); color: var(--btn-text); }
 
 /* selection actions row */
-.selection-actions { display:flex; gap:.5rem; margin-top:1rem; }
-.selection-actions.hidden { display:none; }
+.selection-actions { display: flex; gap: .5rem; margin-top: 1rem; }
+.selection-actions.hidden { display: none; }
 
 /* describe modal textarea */
-#describe-modal textarea { width:100%; height:120px; }
+#describe-modal textarea { width: 100%; height: 120px; }
 
 /* UI light/dark for the app chrome only */
 :root[data-ui-theme="dark"] {
-  --header-bg:#1f2937; --main-bg:#0f172a; --container-bg:#0b1220;
-  --primary-text:#e5e7eb; --secondary-text:#9ca3af; --border-color:#374151;
-  --btn-bg:#2563eb; --btn-text:#ffffff; --accent:#60a5fa;
+	--header-bg: #1f2937;
+	--main-bg: #0f172a;
+	--container-bg: #0b1220;
+	--primary-text: #e5e7eb;
+	--secondary-text: #9ca3af;
+	--border-color: #374151;
+	--btn-bg: #2563eb;
+	--btn-text: #ffffff;
+	--accent: #60a5fa;
 }
 
 /* Ensure text area of the item can shrink without pushing actions out */
@@ -928,7 +963,8 @@ button.secondary:hover {
 .theme-swatch { margin-left: -5px; }
 
 #save-theme-button {
-    width: 100%;
-    margin-top: 1.5rem;
-    box-sizing: border-box; /* Ensures padding doesn't break the width */
+	width: 100%;
+	margin-top: 1.5rem;
+	box-sizing: border-box;
+	/* Ensures padding doesn't break the width */
 }
