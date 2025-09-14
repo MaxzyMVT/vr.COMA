@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	const outputSection = document.getElementById("output-section");
 	const outputContent = document.getElementById("output-content");
 	const uiModeToggle = document.getElementById("ui-mode-toggle");
+	const densityControls = document.querySelector(".density-controls");
 
 	// --- Modals ---
 	const modalColorPicker = document.getElementById("modal-color-picker");
@@ -213,10 +214,75 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	}
 
+	function checkZoomAndToggleDensityButtons() {
+    	const scale = window.devicePixelRatio;
+
+    	if (scale >= 1) {
+        	densityControls.style.display = "none";
+        	const btn1x = densityControls.querySelector('[data-density="1"]');
+        	if (btn1x && !btn1x.classList.contains('active')) {
+            	btn1x.click();
+        	}
+        	return;
+    	} 
+
+    	densityControls.style.display = "flex";
+
+    	const btn3x = densityControls.querySelector('[data-density="3"]');
+    	const btn5x = densityControls.querySelector('[data-density="5"]');
+    	if (!btn3x || !btn5x) return;
+
+    	// Step 1: Set the visibility of the buttons based on the current scale
+    	btn3x.style.display = scale <= 0.9 ? "" : "none";
+    	btn5x.style.display = scale <= 0.67 ? "" : "none";
+
+    	// --- NEW: UNIFIED AUTO-ADJUSTMENT LOGIC ---
+    	const activeBtn = densityControls.querySelector("button.active");
+    	if (!activeBtn) return; // Safety check
+
+    	const activeDensity = parseInt(activeBtn.dataset.density, 10);
+    	const is5xVisible = btn5x.style.display !== 'none';
+    	const is3xVisible = btn3x.style.display !== 'none';
+
+    	// Priority 1: Auto-upgrade to 5x if it's visible and we're not already there.
+    	if (is5xVisible && activeDensity < 5) {
+        	btn5x.click();
+    	}
+    	// Priority 2: Auto-upgrade to 3x if it's visible and we have a lower density.
+    	else if (is3xVisible && activeDensity < 3) {
+        	btn3x.click();
+    	}
+    	// Priority 3: Auto-downgrade from 5x if it's no longer visible.
+    	else if (!is5xVisible && activeDensity === 5) {
+        	// Fall back to 3x if possible, otherwise go to 1x.
+        	if (is3xVisible) {
+            	btn3x.click();
+        	} else {
+        		densityControls.querySelector('[data-density="1"]').click();
+        	}
+    	} 
+    	// Priority 4: Auto-downgrade from 3x if it's no longer visible.
+    	else if (!is3xVisible && activeDensity === 3) {
+        	densityControls.querySelector('[data-density="1"]').click();
+    	}
+	}
+
 	// --- Event Listeners ---
 	generateButton.addEventListener("click", handleGenerateTheme);
 	reviseButton.addEventListener("click", handleReviseTheme);
 	searchInput.addEventListener("input", handleSearch);
+
+	densityControls.addEventListener("click", (e) => {
+		const button = e.target.closest("button");
+		if (button) {
+			const density = button.dataset.density;
+			savedThemesList.dataset.density = density;
+
+			// Update the active button state
+			densityControls.querySelector("button.active").classList.remove("active");
+			button.classList.add("active");
+		}
+	});
 
 	// --- REWRITTEN: Event listener for AI-powered theme inversion ---
 	uiModeToggle.addEventListener("click", async () => {
@@ -360,9 +426,11 @@ document.addEventListener("DOMContentLoaded", () => {
 	function initializeApp() {
 		currentTheme = defaultTheme;
 		applyTheme(defaultTheme);
-
 		displayThemeOutput(defaultTheme, outputContent);
 		loadAndDisplayThemes();
+		
+		checkZoomAndToggleDensityButtons();
+		window.addEventListener("resize", checkZoomAndToggleDensityButtons);
 	}
 
 	initializeApp();
