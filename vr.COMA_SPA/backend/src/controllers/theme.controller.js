@@ -274,26 +274,65 @@ const invertThemeByAI = (req, res) => {
 	const targetMode = currentTheme.isDark ? "Light (Day)" : "Dark (Night)";
 	const newIsDark = !currentTheme.isDark;
 
-	const inversionPrompt = `You are a theme inverter for a design application. You will be given a JSON object for an existing color theme. Your task is to generate the **${targetMode}** version of this theme.
+	const systemPrompt = `You are a theme inverter for a design application. You will be given a JSON object for an existing color theme. Your task is to generate the **${targetMode}** version of this theme.
 
 	- **Maintain the Mood:** The new theme must keep the same essential mood, style, and core color identity. For example, if the original accent color was green, the new accent should also be a shade of green that fits the new ${targetMode} mode.
 	- **Follow All Rules:** You must follow all the same JSON structure, key names, and accessibility requirements as the original theme generation prompt.
 	- **Do Not Copy:** Do not simply return the same theme. You must generate a new, thoughtfully crafted ${targetMode} palette.
+	- **Do Not Too Strict with Light or Dark:** Just make the colors inverted, but the overall theme mood should match the advice.  
 
-	Here is the theme to invert:
-	${JSON.stringify(currentTheme, null, 2)}
+	REQUIREMENTS:
+	- The root object must contain keys: "themeName", "advice", and "colors".
+	- The "colors" object must contain EXACTLY these 14 keys, in this order:
+	"primaryHeader", "secondaryHeader", "headerText", "subHeaderText", "canvasBackground", "surfaceBackground", "primaryText", "secondaryText", "accent", "outlineSeparators", "primaryInteractive", "primaryInteractiveText", "secondaryInteractive", "secondaryInteractiveText".
 
-	Please generate the **${targetMode}** version.`;
+	THEME NAME:
+	- You can be creative with theme names, adding emojis, emoticons, or special characters is allowed, make it looks nice, well format, and creative.
+	- Theme names should be shorter than 30 Characters.
+	- Be creative: by using the opposite words of an old themeName for a new themeName, but if you couldn't think of the opposite word just add (Light) / (Dark) or (Day) / (Night)
+	- DO NOT USE GRAVE ACCENT in theme names
+
+	COLOR DESCRIPTIONS (for context):
+	- primaryHeader: The main background for key sections like hero banner, should be easily distinct from canvasBackground and surfaceBackground, not necessary be light or dark, should be distinct and match the theme mood in advice.
+	- secondaryHeader: A secondary color for header gradients or accents, this color should be able to blend with primaryHeader for nice gradients.
+	- headerText: The main text color for use on top of the headers.
+	- subHeaderText: A less prominent text color for subtitles on headers.
+	- canvasBackground: The base background color for the entire application.
+	- surfaceBackground: For elements that sit on top of the canvas, like cards or panels.
+	- primaryText: The main text color for use on canvas and surface backgrounds.
+	- secondaryText: A less prominent text color for details or captions.
+	- accent: A vibrant color for grabbing attention, like links or highlights.
+	- outlineSeparators: For borders, outlines, or lines that divide content.
+	- primaryInteractive: The background for main call-to-action buttons (e.g., "Submit").
+	- primaryInteractiveText: Text that sits on top of a primary interactive element.
+	- secondaryInteractive: The background for secondary buttons (e.g., "Cancel").
+	- secondaryInteractiveText: Text that sits on top of a secondary interactive element.
+
+	ACCESSIBILITY:
+	- Ensure WCAG AA readable contrast (ratio >= 4.5:1) for the following pairs:
+	- headerText on primaryHeader
+	- primaryText on surfaceBackground
+	- primaryInteractiveText on primaryInteractive
+	- Ensure good contrast (ratio >= 3:1) for the following pairs:
+	- subHeaderText on primaryHeader
+	- secondaryText on surfaceBackground
+	- secondaryInteractiveText on secondaryInteractive
+	- If a chosen color fails, adjust the text color (prefer #FFFFFF or #000000) to meet the threshold.
+
+	Please make sure of these requirements above.
+
+	REMINDER: Only return the raw JSON object. Do not use markdown like \`\`\`json.
+	`;
+
+	const prompt = `Here is the theme to invert: ${JSON.stringify(
+		currentTheme,
+		null,
+		2
+	)}`;
 
 	const payload = JSON.stringify({
-		contents: [{ parts: [{ text: inversionPrompt }] }],
-		systemInstruction: {
-			parts: [
-				{
-					text: "You are a creative assistant for a design application that generates color themes. Respond with a single, clean JSON object.",
-				},
-			],
-		},
+		contents: [{ parts: [{ text: prompt }] }],
+		systemInstruction: { parts: [{ text: systemPrompt }] },
 		generationConfig: { responseMimeType: "application/json" },
 	});
 
