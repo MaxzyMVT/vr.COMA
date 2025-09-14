@@ -2,12 +2,62 @@ const https = require("https");
 const Theme = require("../models/theme.model");
 const mongoose = require("mongoose");
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-
-// Helper function to escape special characters for use in a regular expression
-function escapeRegex(text) {
-	return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+// Helper function to ensure isDark is always a valid boolean
+function normalizeIsDark(payload) {
+	if (typeof payload.isDark !== "boolean") {
+		const name = payload?.themeName || "";
+		if (/\(Night\)\s*$/i.test(name) || /\(Dark\)\s*$/i.test(name)) {
+			payload.isDark = true;
+		} else {
+			payload.isDark = false;
+		}
+	}
+	payload.isDark = !!payload.isDark; // Coerce to boolean
 }
+
+const saveTheme = async (req, res) => {
+	try {
+		const themeData = { ...req.body };
+		normalizeIsDark(themeData); // Ensure isDark is set
+
+		// --- MODIFICATION START ---
+		// If a theme is being saved without a groupId, it's the start of a new pair.
+		// So, we create a new unique ID for its group.
+		if (!themeData.groupId) {
+			themeData.groupId = new mongoose.Types.ObjectId().toString();
+		}
+		// --- MODIFICATION END ---
+
+		const newTheme = new Theme(themeData);
+		await newTheme.save();
+		return res.status(201).json(newTheme);
+	} catch (err) {
+		if (err?.code === 11000) {
+			return res
+				.status(409)
+				.json({ error: "Theme name already exists", code: "DUPLICATE_NAME" });
+		}
+		return res.status(500).json({ error: "Failed to save theme." });
+	}
+};
+
+const overwriteTheme = async (req, res) => {
+	try {
+		const body = { ...req.body };
+		normalizeIsDark(body);
+		const updated = await Theme.findByIdAndUpdate(req.params.id, body, {
+			new: true,
+			runValidators: true,
+			overwrite: true,
+		});
+		if (!updated) return res.status(404).json({ error: "Not found" });
+		return res.json(updated);
+	} catch (err) {
+		return res.status(500).json({ error: "Failed to overwrite theme." });
+	}
+};
+
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 // --- Logic for Generating a Theme ---
 const generateTheme = (req, res) => {
@@ -176,25 +226,38 @@ const generateTheme = (req, res) => {
 		});
 		apiRes.on("end", () => {
 			try {
-				if (apiRes.statusCode !== 200) {
-					console.error("Gemini API Error:", data);
-					throw new Error("API returned non-200 status");
-				}
 				const responseJson = JSON.parse(data);
-				const rawText = responseJson.candidates[0].content.parts[0].text;
-				const themeData = JSON.parse(rawText);
+
+				const parts = responseJson?.candidates?.[0]?.content?.parts ?? [];
+				const rawText = parts
+					.map((p) => p?.text)
+					.filter(Boolean)
+					.join("\n");
+
+				const themeData = extractJsonObject(rawText);
+
+				inferIsDark(themeData);
+				themeData.isDark = !!themeData.isDark;
+
+				if (!themeData.colors || !themeData.colors.canvasBackground) {
+					throw new Error("Theme missing colors.canvasBackground");
+				}
+
 				res.json(themeData);
-			} catch (error) {
-				console.error("Error parsing Gemini response:", error);
-				console.error("Response from Gemini API:", rawText);
-				res.status(500).json({ error: "Failed to parse theme from API." });
+			} catch (err) {
+				console.error("AI theme parse error:", err?.message || err, {
+					data: String(data).slice(0, 500),
+				});
+				res.status(502).json({
+					error: "Bad AI response",
+					detail: String(err?.message || err),
+				});
 			}
 		});
 	});
 
 	apiRequest.on("error", (error) => {
 		console.error("Error calling Gemini API:", error);
-		alert("There was an error generating the theme. Please try again.");
 		res.status(500).json({ error: "Failed to generate theme from API." });
 	});
 
@@ -202,50 +265,134 @@ const generateTheme = (req, res) => {
 	apiRequest.end();
 };
 
-// --- Logic for CRUD Operations ---
-const saveTheme = async (req, res) => {
-	try {
-		const themeData = req.body;
-		const originalName = themeData.themeName;
-		let newName = originalName;
-		let counter = 2;
-		let saved = false;
-
-		// Keep trying to save until it succeeds
-		while (!saved) {
-			try {
-				themeData.themeName = newName;
-
-				const newTheme = new Theme(themeData);
-				await newTheme.save();
-
-				// If save() succeeds, exit the loop and send the response
-				saved = true;
-				res.status(201).json(newTheme);
-			} catch (error) {
-				// Check if the error is the specific "duplicate key" error (code 11000)
-				if (error.code === 11000) {
-					// If it is, generate a new name and the loop will try again
-					console.log(`Name: ${newName} duplicated, trying a new name...`);
-
-					// Generate a new ObjectId for the new document
-					themeData._id = new mongoose.Types.ObjectId();
-					newName = `${originalName} (${counter})`;
-					counter++;
-				} else {
-					throw error;
-				}
-			}
-		}
-	} catch (error) {
-		console.error("Failed to save theme due to an unexpected error:", error);
-		res.status(500).json({ error: "Failed to save theme." });
+const invertThemeByAI = (req, res) => {
+	const { currentTheme } = req.body;
+	if (!currentTheme) {
+		return res.status(400).json({ error: "Current theme data is required." });
 	}
+
+	const targetMode = currentTheme.isDark ? "Light (Day)" : "Dark (Night)";
+	const newIsDark = !currentTheme.isDark;
+
+	const systemPrompt = `You are a theme inverter for a design application. You will be given a JSON object for an existing color theme. Your task is to generate the **${targetMode}** version of this theme.
+
+	- **Maintain the Mood:** The new theme must keep the same essential mood, style, and core color identity. For example, if the original accent color was green, the new accent should also be a shade of green that fits the new ${targetMode} mode.
+	- **Follow All Rules:** You must follow all the same JSON structure, key names, and accessibility requirements as the original theme generation prompt.
+	- **Do Not Copy:** Do not simply return the same theme. You must generate a new, thoughtfully crafted ${targetMode} palette.
+	- **Do Not Too Strict with Light or Dark:** Just make the colors inverted, but the overall theme mood should match the advice.  
+
+	REQUIREMENTS:
+	- The root object must contain keys: "themeName", "advice", and "colors".
+	- The "colors" object must contain EXACTLY these 14 keys, in this order:
+	"primaryHeader", "secondaryHeader", "headerText", "subHeaderText", "canvasBackground", "surfaceBackground", "primaryText", "secondaryText", "accent", "outlineSeparators", "primaryInteractive", "primaryInteractiveText", "secondaryInteractive", "secondaryInteractiveText".
+
+	THEME NAME:
+	- You can be creative with theme names, adding emojis, emoticons, or special characters is allowed, make it looks nice, well format, and creative.
+	- Theme names should be shorter than 30 Characters.
+	- Be creative: by using the opposite words of an old themeName for a new themeName, but if you couldn't think of the opposite word just add (Light) / (Dark) or (Day) / (Night)
+	- DO NOT USE GRAVE ACCENT in theme names
+
+	COLOR DESCRIPTIONS (for context):
+	- primaryHeader: The main background for key sections like hero banner, should be easily distinct from canvasBackground and surfaceBackground, not necessary be light or dark, should be distinct and match the theme mood in advice.
+	- secondaryHeader: A secondary color for header gradients or accents, this color should be able to blend with primaryHeader for nice gradients.
+	- headerText: The main text color for use on top of the headers.
+	- subHeaderText: A less prominent text color for subtitles on headers.
+	- canvasBackground: The base background color for the entire application.
+	- surfaceBackground: For elements that sit on top of the canvas, like cards or panels.
+	- primaryText: The main text color for use on canvas and surface backgrounds.
+	- secondaryText: A less prominent text color for details or captions.
+	- accent: A vibrant color for grabbing attention, like links or highlights.
+	- outlineSeparators: For borders, outlines, or lines that divide content.
+	- primaryInteractive: The background for main call-to-action buttons (e.g., "Submit").
+	- primaryInteractiveText: Text that sits on top of a primary interactive element.
+	- secondaryInteractive: The background for secondary buttons (e.g., "Cancel").
+	- secondaryInteractiveText: Text that sits on top of a secondary interactive element.
+
+	ACCESSIBILITY:
+	- Ensure WCAG AA readable contrast (ratio >= 4.5:1) for the following pairs:
+	- headerText on primaryHeader
+	- primaryText on surfaceBackground
+	- primaryInteractiveText on primaryInteractive
+	- Ensure good contrast (ratio >= 3:1) for the following pairs:
+	- subHeaderText on primaryHeader
+	- secondaryText on surfaceBackground
+	- secondaryInteractiveText on secondaryInteractive
+	- If a chosen color fails, adjust the text color (prefer #FFFFFF or #000000) to meet the threshold.
+
+	Please make sure of these requirements above.
+
+	REMINDER: Only return the raw JSON object. Do not use markdown like \`\`\`json.
+	`;
+
+	const prompt = `Here is the theme to invert: ${JSON.stringify(
+		currentTheme,
+		null,
+		2
+	)}`;
+
+	const payload = JSON.stringify({
+		contents: [{ parts: [{ text: prompt }] }],
+		systemInstruction: { parts: [{ text: systemPrompt }] },
+		generationConfig: { responseMimeType: "application/json" },
+	});
+
+	const options = {
+		hostname: "generativelanguage.googleapis.com",
+		path: `/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(payload),
+		},
+	};
+
+	const apiRequest = https.request(options, (apiRes) => {
+		let data = "";
+		apiRes.on("data", (chunk) => (data += chunk));
+		apiRes.on("end", () => {
+			try {
+				if (apiRes.statusCode !== 200)
+					throw new Error(`API Error: ${apiRes.statusCode}`);
+				const responseJson = JSON.parse(data);
+				const rawText = responseJson.candidates[0].content.parts[0].text;
+				const themeData = JSON.parse(rawText);
+
+				themeData.isDark = newIsDark;
+
+				// --- MODIFICATION START ---
+				// Ensure the new inverted theme shares the same groupId as the original.
+				themeData.groupId = currentTheme.groupId;
+				// --- MODIFICATION END ---
+
+				res.json(themeData);
+			} catch (error) {
+				console.error("Error parsing inversion response:", error);
+				res
+					.status(500)
+					.json({ error: "Failed to parse inverted theme from API." });
+			}
+		});
+	});
+
+	apiRequest.on("error", (error) =>
+		res.status(500).json({ error: "Failed to generate inverted theme." })
+	);
+	apiRequest.write(payload);
+	apiRequest.end();
+};
+
+const normalizeString = (str) => {
+	return str.replace(/[^a-zA-Z]/g, "").toLowerCase();
 };
 
 const getAllThemes = async (req, res) => {
 	try {
-		const themes = await Theme.find().sort({ themeName: 1 }); // Sort lexographically by themeName
+		const themes = await Theme.find();
+		themes.sort((a, b) => {
+			const nameA = normalizeString(a.themeName);
+			const nameB = normalizeString(b.themeName);
+			return nameA.localeCompare(nameB);
+		}); // Sort lexicographically by themeName (IMPROVED)
 		res.json(themes);
 	} catch (error) {
 		res.status(500).json({ error: "Failed to fetch themes." });
@@ -265,34 +412,46 @@ const deleteTheme = async (req, res) => {
 	}
 };
 
-const overwriteTheme = async (req, res) => {
-	try {
-		// findByIdAndUpdate will find the document and completely replace it with the request body.
-		// { new: true } ensures the updated document is returned.
-		const updatedTheme = await Theme.findByIdAndUpdate(
-			req.params.id,
-			req.body, // The entire new theme object from the frontend
-			{ new: true, runValidators: true, overwrite: true } // overwrite: true is key for PUT
-		);
+function hexToLuminance(hex) {
+	if (typeof hex !== "string") return null;
+	const h = hex.replace("#", "");
+	if (!/^[0-9a-f]{6}$/i.test(h)) return null;
+	const r = parseInt(h.slice(0, 2), 16) / 255;
+	const g = parseInt(h.slice(2, 4), 16) / 255;
+	const b = parseInt(h.slice(4, 6), 16) / 255;
+	const lin = (v) =>
+		v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+	return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+}
 
-		if (!updatedTheme) {
-			return res.status(404).json({ error: "Theme not found" });
-		}
-		res.status(200).json(updatedTheme);
-	} catch (error) {
-		if (error.kind === "ObjectId") {
-			return res.status(400).json({ error: "Invalid theme ID format" });
-		}
-		console.error("Error overwriting theme:", error);
-		res.status(500).json({ error: "Failed to overwrite theme." });
-	}
-};
+function inferIsDark(theme) {
+	if (typeof theme.isDark === "boolean") return;
+	const bg =
+		theme?.colors?.canvasBackground ??
+		theme?.colors?.background ??
+		theme?.background ??
+		null;
+	const L = hexToLuminance(bg);
+	theme.isDark = L !== null ? L < 0.5 : false;
+}
 
-// Export all the functions
+function extractJsonObject(text) {
+	if (typeof text !== "string") throw new Error("No text to parse");
+	const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+	let candidate = fenced ? fenced[1] : text;
+	const start = candidate.indexOf("{");
+	const end = candidate.lastIndexOf("}");
+	if (start === -1 || end === -1 || end <= start)
+		throw new Error("No JSON object found in model output");
+	candidate = candidate.slice(start, end + 1);
+	return JSON.parse(candidate);
+}
+
 module.exports = {
 	generateTheme,
 	saveTheme,
 	getAllThemes,
 	deleteTheme,
 	overwriteTheme,
+	invertThemeByAI,
 };

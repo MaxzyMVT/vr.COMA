@@ -16,10 +16,14 @@ const friendlyNames = {
 	secondaryInteractiveText: "Secondary Interactive Text",
 };
 
-function applyTheme(theme, previewThemeName, previewSubHeader) {
+/**
+ * The single, consolidated function to apply a theme to the entire document.
+ * It sets CSS variables, updates the preview card, and sets the UI mode icon.
+ */
+function applyTheme(theme) {
 	if (!theme || !theme.colors) return;
 	const root = document.documentElement;
-	// Map colors from themeData to CSS variables
+
 	const colorMap = {
 		"--header-bg": theme.colors.primaryHeader,
 		"--secondary-header-bg": theme.colors.secondaryHeader,
@@ -39,18 +43,23 @@ function applyTheme(theme, previewThemeName, previewSubHeader) {
 
 	for (const [variable, color] of Object.entries(colorMap)) {
 		if (color) {
-			// Safety check in case a color is missing
 			root.style.setProperty(variable, color);
 		}
 	}
 
+	// Update the preview card specifically
+	const previewThemeName = document.getElementById("preview-theme-name");
+	const previewSubHeader = document.getElementById("preview-sub-header");
+
 	if (previewThemeName) {
 		previewThemeName.textContent = theme.themeName;
 	}
-
 	if (previewSubHeader) {
 		previewSubHeader.style.color = theme.colors.subHeaderText;
 	}
+
+	// Update the UI mode icon (sun/moon)
+	setUiIcon(!!theme.isDark);
 }
 
 function displayThemeOutput(theme, outputContent) {
@@ -78,30 +87,29 @@ function displayThemeOutput(theme, outputContent) {
 	displayOrder.forEach((key) => {
 		const color = theme.colors[key];
 		if (color) {
-			// Only display if the color exists in the theme data
 			const displayName = friendlyNames[key] || key;
 			colorChipsHTML += `
-                <div class="color-chip" data-key="${key}" title="Edit ${displayName}">
-                    <div class="color-swatch" style="background-color: ${color};"></div>
-                    <div class="color-info">
-                        <span class="color-name">${displayName}</span>
-                        <span>${color}</span>
-                    </div>
-                </div>`;
+				<div class="color-chip" data-key="${key}" title="Edit ${displayName}">
+					<div class="color-swatch" style="background-color: ${color};"></div>
+					<div class="color-info">
+						<span class="color-name">${displayName}</span>
+						<span>${color}</span>
+					</div>
+				</div>`;
 		}
 	});
 
 	outputContent.innerHTML = `
-        <div class="theme-name-header">
-            <h3 id="current-theme-name">${theme.themeName}</h3>
-            <button class="icon-btn edit-theme-name-btn" title="Edit Name">
-                <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-            </button>
-        </div>
-        <p>${theme.advice}</p>
-        <div class="color-palette">${colorChipsHTML}</div>
-        <button id="save-theme-button" class="spaced-button">Save Theme</button>
-    `;
+		<div class="theme-name-header">
+			<h3 id="current-theme-name">${theme.themeName}</h3>
+			<button class="icon-btn edit-theme-name-btn" title="Edit Name">
+				<svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+			</button>
+		</div>
+		<p>${theme.advice}</p>
+		<div class="color-palette">${colorChipsHTML}</div>
+		<button id="save-theme-button" class="spaced-button">Save Theme</button>
+	`;
 }
 
 function displaySavedThemes(themes) {
@@ -129,33 +137,32 @@ function displaySavedThemes(themes) {
 		keyColors.forEach((key) => {
 			const color = theme.colors[key];
 			if (color) {
-				// Only add a swatch if the color exists
 				swatchesHTML += `<div class="theme-swatch" style="background-color: ${color};"></div>`;
 			}
 		});
 		swatchesHTML += "</div>";
 
 		themeItem.innerHTML = `
-            <div class="theme-info">
-                <span>${theme.themeName}</span>
-                ${swatchesHTML}
-            </div>
-            <div class="saved-theme-actions">
-                <button class="icon-btn save-btn" data-id="${theme._id}" title="Overwrite with current theme">
+			<div class="theme-info">
+				<span>${theme.themeName}</span>
+				${swatchesHTML}
+			</div>
+			<div class="saved-theme-actions">
+				<button class="icon-btn save-btn" data-id="${theme._id}" title="Overwrite with current theme">
 					<svg viewBox="0 0 24 24">
-                        <path d="M22.5,22.5H1.5V1.5H18.68L22.5,5.32Z"></path>
-                        <path d="M7.23,1.5h9.55a0,0,0,0,1,0,0V6.27a1,1,0,0,1-1,1H8.18a1,1,0,0,1-1-1V1.5A0,0,0,0,1,7.23,1.5Z"></path>
-                        <rect x="6.27" y="14.86" width="11.45" height="7.64"></rect>
-                        <line x1="9.14" y1="18.68" x2="14.86" y2="18.68"></line>
-                    </svg>
-                </button>
-                <button class="icon-btn delete-btn" data-id="${theme._id}" title="Delete Theme">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M18 6L6 18"></path>
-                        <path d="M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>`;
+						<path d="M22.5,22.5H1.5V1.5H18.68L22.5,5.32Z"></path>
+						<path d="M7.23,1.5h9.55a0,0,0,0,1,0,0V6.27a1,1,0,0,1-1,1H8.18a1,1,0,0,1-1-1V1.5A0,0,0,0,1,7.23,1.5Z"></path>
+						<rect x="6.27" y="14.86" width="11.45" height="7.64"></rect>
+						<line x1="9.14" y1="18.68" x2="14.86" y2="18.68"></line>
+					</svg>
+				</button>
+				<button class="icon-btn delete-btn" data-id="${theme._id}" title="Delete Theme">
+					<svg viewBox="0 0 24 24">
+						<path d="M18 6L6 18"></path>
+						<path d="M6 6l12 12"></path>
+					</svg>
+				</button>
+			</div>`;
 		savedThemesList.appendChild(themeItem);
 	});
 }
@@ -167,7 +174,6 @@ function setLoadingState(isLoading, generateButton, reviseButton) {
 	}
 
 	if (reviseButton) {
-		// We will add more complex logic for this later. For now, just disable it.
 		reviseButton.disabled = isLoading;
 	}
 }
@@ -178,7 +184,7 @@ function showColorEditorModal(colorKey, colorValue) {
 	const colorPicker = document.getElementById("modal-color-picker");
 	const hexInput = document.getElementById("modal-color-hex");
 
-	const displayName = friendlyNames[colorKey] || colorKey;
+	const displayName = friendlyNames[colorKey] || key;
 	nameLabel.textContent = `Edit ${displayName}`;
 
 	colorPicker.value = colorValue;
@@ -231,3 +237,205 @@ function initializeCharacterCounter() {
 
 // Call this function when DOM is loaded
 document.addEventListener('DOMContentLoaded', initializeCharacterCounter);
+
+// --- Theme Inversion Logic ---
+function hexToHsl(hex) {
+	const x = hex.replace("#", "");
+	const n = parseInt(x, 16);
+	const r = ((n >> 16) & 255) / 255,
+		g = ((n >> 8) & 255) / 255,
+		b = (n & 255) / 255;
+	const max = Math.max(r, g, b),
+		min = Math.min(r, g, b);
+	let h,
+		s,
+		l = (max + min) / 2;
+	if (max === min) {
+		h = s = 0;
+	} else {
+		const d = max - min;
+		s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+		switch (max) {
+			case r:
+				h = (g - b) / d + (g < b ? 6 : 0);
+				break;
+			case g:
+				h = (b - r) / d + 2;
+				break;
+			case b:
+				h = (r - g) / d + 4;
+				break;
+		}
+		h /= 6;
+	}
+	return { h, s, l };
+}
+
+function hslToHex(h, s, l) {
+	const hue2rgb = (p, q, t) => {
+		if (t < 0) t += 1;
+		if (t > 1) t -= 1;
+		if (t < 1 / 6) return p + (q - p) * 6 * t;
+		if (t < 1 / 2) return q;
+		if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+		return p;
+	};
+	let r, g, b;
+	if (s === 0) {
+		r = g = b = l;
+	} else {
+		const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+		const p = 2 * l - q;
+		r = hue2rgb(p, q, h + 1 / 3);
+		g = hue2rgb(p, q, h);
+		b = hue2rgb(p, q, h - 1 / 3);
+	}
+	const toHex = (v) =>
+		Math.round(v * 255)
+			.toString(16)
+			.padStart(2, "0");
+	return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toUpperCase();
+}
+
+// Dummy ensureContrast function if it's not defined elsewhere
+// This is a placeholder; your actual implementation might be more complex
+function ensureContrast(fg, bg, ratio) {
+	const bgLightness = hexToHsl(bg).l;
+	const fgLightness = hexToHsl(fg).l;
+	if (bgLightness > 0.5) {
+		// Light background
+		return fgLightness > 0.4 ? "#111111" : fg; // Darken light text
+	} else {
+		// Dark background
+		return fgLightness < 0.6 ? "#EEEEEE" : fg; // Lighten dark text
+	}
+}
+
+// Expose to global scope for main.js
+window.hexToHsl = hexToHsl;
+
+function setUiIcon(isDark) {
+	const svg = document.getElementById("ui-mode-icon");
+	const button = document.getElementById("ui-mode-toggle");
+	if (!svg || !button) return;
+
+	if (isDark) {
+		svg.innerHTML =
+			'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+		button.title = "Switch to Light Mode";
+	} else {
+		svg.innerHTML =
+			'<circle cx="12" cy="12" r="5"></circle><g stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="4"></line><line x1="12" y1="20" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"></line><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="4" y2="12"></line><line x1="20" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"></line><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"></line></g>';
+		button.title = "Switch to Dark Mode";
+	}
+}
+
+/* ------------ iPad 1× lock + global hide for density controls ------------ */
+
+// Robust iPad / iPadOS detection (covers iPadOS that reports as "Mac")
+function isIPad() {
+  const ua = navigator.userAgent || navigator.vendor || "";
+  return /\biPad\b/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+
+// Force the grid to 1× and flip a GLOBAL html flag that CSS listens to
+function lockDensityTo1x() {
+  const grid = document.getElementById("saved-themes-list");
+  if (grid) {
+    grid.removeAttribute("data-density");   // 1× = no attribute
+    grid.dataset.lockDensity = "1";         // local marker (optional)
+  }
+
+  // Global flag → CSS hides all current/future .density-controls instances
+  document.documentElement.setAttribute("data-density-locked", "1");
+
+  // If the buttons are already in DOM, make them inert (harmless redundancy)
+  document.querySelectorAll(".density-controls button").forEach(b => {
+    b.disabled = true;
+    b.classList.remove("active");
+    b.title = "Locked to 1× on iPad";
+  });
+}
+
+// Remove the lock and show controls again (for non-iPad or when leaving lock)
+function unlockDensity() {
+  const grid = document.getElementById("saved-themes-list");
+  if (grid) {
+    delete grid.dataset.lockDensity;
+  }
+  document.documentElement.removeAttribute("data-density-locked");
+
+  document.querySelectorAll(".density-controls button").forEach(b => {
+    b.disabled = false;
+    if (b.dataset?.density) b.title = `${b.dataset.density}×`;
+  });
+}
+
+// Wrap global applyDensity so existing callers keep working safely
+(function wrapApplyDensity() {
+  const orig = window.applyDensity;
+  window.applyDensity = function (n, opts = {}) {
+    const force = !!opts.force;
+    const grid = document.getElementById("saved-themes-list");
+
+    // If iPad locked and not forced, keep 1× and exit
+    if (isIPad() && document.documentElement.getAttribute("data-density-locked") === "1" && !force) {
+      lockDensityTo1x();
+      return;
+    }
+
+    // Delegate to original if present
+    if (typeof orig === "function") return orig.call(this, n, opts);
+
+    // Minimal fallback implementation
+    if (!grid) return;
+    if (n === 1) grid.removeAttribute("data-density");
+    else grid.setAttribute("data-density", String(n));
+    document.querySelectorAll(".density-controls button")
+      .forEach(b => b.classList.toggle("active", Number(b.dataset.density) === n));
+  };
+})();
+
+// Ensure the zoom/density check respects the lock
+(function wrapCheckZoom() {
+  const orig = window.checkZoomAndToggleDensityButtons;
+  window.checkZoomAndToggleDensityButtons = function () {
+    if (isIPad() && document.documentElement.getAttribute("data-density-locked") === "1") {
+      lockDensityTo1x();
+      return; // short-circuit any downstream logic
+    }
+    if (typeof orig === "function") return orig.apply(this, arguments);
+  };
+})();
+
+// Keep the lock through resize/orientation and revert any stray changes
+function installIPadLockGuards() {
+  const grid = document.getElementById("saved-themes-list");
+  const reLock = () => lockDensityTo1x();
+
+  // Re-lock on viewport changes (some code paths may re-run on resize)
+  window.addEventListener("resize", reLock, { passive: true });
+  window.addEventListener("orientationchange", reLock, { passive: true });
+
+  // If any code sets data-density later, immediately remove it
+  if (grid) {
+    const mo = new MutationObserver(muts => {
+      for (const m of muts) {
+        if (m.type === "attributes" && m.attributeName === "data-density") {
+          grid.removeAttribute("data-density");
+        }
+      }
+    });
+    mo.observe(grid, { attributes: true, attributeFilter: ["data-density"] });
+  }
+}
+
+// Boot
+document.addEventListener("DOMContentLoaded", () => {
+  if (isIPad()) {
+    lockDensityTo1x();        // pins 1× and sets html[data-density-locked="1"]
+    installIPadLockGuards();  // keeps it pinned
+  } else {
+    unlockDensity();          // restores normal behavior off-iPad
+  }
+});

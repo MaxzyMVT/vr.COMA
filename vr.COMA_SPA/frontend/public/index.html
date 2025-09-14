@@ -12,17 +12,21 @@
 
     <div class="app-container">
 
-        <!-- LEFT PANEL: CONTROLS & OUTPUT -->
         <div class="control-panel">
-            <header class="app-header">
-                <h1>vr.COMA</h1>
-                <p class="punchline">WAKING UP your creative ideas.</p>
-                <br><br><br>
-                <p class="description"><span class="brand-letters">V</span>ersatile & <span class="brand-letters">R</span>eactive <br><span class="brand-letters">C</span>hromatic <span class="brand-letters">O</span>rchestration & <span class="brand-letters">M</span>ood <span class="brand-letters">A</span>nalyzer <br>
-                <br> &ensp; <span class="sub-description"> Powered by advanced mood analysis, vr.COMA decodes your input—whether it's a feeling, a phrase, or a brand vision—and
-                generates dynamic color themes ready to bring any creative project to life.</span> </p>
-            </header> 
-
+                <header class="app-header">
+                    <div class="ui-actions">
+                        <button id="ui-mode-toggle" class="icon-btn" title="Toggle UI light/dark">
+                            <svg viewBox="0 0 24 24" id="ui-mode-icon"><path d="M12 3a9 9 0 1 0 9 9A7.5 7.5 0 0 1 12 3z"/></svg>
+                        </button>
+                    </div>
+                <div class="brand-row">
+                    <h1>vr.COMA</h1>
+                </div>
+                    <p class="punchline">WAKING UP your creative ideas.</p>
+                   <p class="description" id="brand-full-name"><span class="brand-letters">V</span>ersatile & <span class="brand-letters">R</span>eactive <br><span class="brand-letters">C</span>hromatic <span class="brand-letters">O</span>rchestration & <span class="brand-letters">M</span>ood <span class="brand-letters">A</span>nalyzer <br>
+                    <span class="sub-description"> Powered by advanced mood analysis, vr.COMA decodes your input—whether it's a feeling, a phrase, or a brand vision—and
+                    generates dynamic color themes ready to bring any creative project to life.</span> </p>
+                </header>
             <section class="input-section">
                 <h2>1. Describe Your Theme</h2>
                  <textarea id="text-input"
@@ -39,7 +43,6 @@
                     <button id="revise-button" class="secondary">Revise</button>
                 </div>
             </section>
-
             <section class="output-section" id="output-section">
                 <h2>2. Generated Theme</h2>
                 <div id="output-content">
@@ -48,10 +51,8 @@
             </section>
         </div>
 
-        <!-- RIGHT PANEL: PREVIEW & MANAGEMENT -->
         <div class="preview-panel">
 
-            <!-- The "Gimmick" Preview Area -->
             <div class="theme-preview-container" id="theme-preview">
                 <header class="preview-header">
                     <h3 id="preview-theme-name">Theme Preview</h3>
@@ -71,24 +72,34 @@
 
             <section class="management-section">
                 <h2>Saved Themes</h2>
-                 <div class="search-container">
-                    <input type="search" id="search-input" placeholder="Searching your themes">
-                </div>
 
-                <div id="saved-themes-list">
-                    <!-- Saved themes will be dynamically inserted here -->
+            <div class="toolbar-row">
+                <input type="search" id="search-input" class="theme-search" placeholder="Search your themes" />
+                <div class="density-controls">
+                    <svg class="density-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" title="Adjust theme density">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="11" width="7" height="7"></rect>
+                        <rect x="3" y="11" width="7" height="7"></rect>
+                    </svg>
+                    <button data-density="1" class="active" title="Show 1 column">1×</button>
+                    <button data-density="3" title="Show 3 columns">3×</button>
+                    <button data-density="5" title="Show 5 columns">5×</button>
                 </div>
+            </div>
+
+            <div id="saved-themes-list" class="theme-grid"></div>
+
+            <div id="selection-actions" class="selection-actions hidden">
+                <button id="save-selected">Save</button>
+                <button id="delete-selected" class="secondary">Delete</button>
+            </div>
             </section>
         </div>
 
     </div>
 
-    <script src="scripts/config.js"></script>
-    <script src="scripts/api.js"></script>
-    <script src="scripts/ui.js"></script>
-    <script src="scripts/main.js"></script>
 
-    <!-- Modal for Editing Theme Color -->
     <div class="modal-overlay hidden" id="color-edit-modal">
         <div class="modal-content">
             <h2 id="modal-color-name">Edit Color</h2>
@@ -110,18 +121,23 @@
             </div>
         </div>
     </div>
+    
+    <div class="modal-overlay hidden" id="describe-modal">
+      <div class="modal-content">
+        <h2>Describe Your Theme</h2>
+        <textarea id="describe-textarea" placeholder="e.g., ‘a serene forest at dawn’ or ‘a vibrant 80s arcade’"></textarea>
+        <div class="modal-actions">
+          <button id="describe-cancel" class="secondary">Cancel</button>
+          <button id="describe-apply">Generate</button>
+        </div>
+      </div>
+    </div>
 
+    <script src="scripts/config.js"></script>
+    <script src="scripts/api.js"></script>
+    <script src="scripts/ui.js"></script>
+    <script src="scripts/main.js"></script>
+    
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
