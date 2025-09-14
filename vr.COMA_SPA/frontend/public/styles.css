@@ -203,7 +203,7 @@ button.secondary:hover {
   font-weight: bold;
   text-align: center;
   overflow: hidden;
-  border-right: .15em solid orange;
+  border-right: .15em solid var(--accent);
   white-space: nowrap;
   margin: 0 auto;
   letter-spacing: .15em;
@@ -229,7 +229,7 @@ button.secondary:hover {
 
 
 .app-header .description {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     text-align: center; 
     margin: 0 0 2rem 0;
     color: var(--secondary-text);
@@ -419,6 +419,38 @@ button.secondary:hover {
 /* This adds the hover effect to the entire div */
 .saved-theme-item:hover {
     background-color: var(--main-bg);
+}
+
+/* Character counter styles */
+.character-counter-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 0.5rem;
+    min-height: 1.2rem;
+}
+
+.character-counter {
+    font-size: 0.85rem;
+    color: var(--secondary-text);
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.character-counter.near-limit {
+    color: #f39c12; /* Orange warning color */
+}
+
+.character-counter.at-limit {
+    color: #e74c3c; /* Red limit color */
+    font-weight: 600;
+}
+
+.warning-message {
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin: 0;
+    font-weight: 500;
 }
 
 .modal-overlay {
@@ -654,4 +686,10 @@ button.secondary:hover {
     margin-top: 12px;
     display: inline-block;
 }
+
+.character-counter-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
 }
