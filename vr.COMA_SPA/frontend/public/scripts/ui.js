@@ -89,27 +89,27 @@ function displayThemeOutput(theme, outputContent) {
 		if (color) {
 			const displayName = friendlyNames[key] || key;
 			colorChipsHTML += `
-                <div class="color-chip" data-key="${key}" title="Edit ${displayName}">
-                    <div class="color-swatch" style="background-color: ${color};"></div>
-                    <div class="color-info">
-                        <span class="color-name">${displayName}</span>
-                        <span>${color}</span>
-                    </div>
-                </div>`;
+				<div class="color-chip" data-key="${key}" title="Edit ${displayName}">
+					<div class="color-swatch" style="background-color: ${color};"></div>
+					<div class="color-info">
+						<span class="color-name">${displayName}</span>
+						<span>${color}</span>
+					</div>
+				</div>`;
 		}
 	});
 
 	outputContent.innerHTML = `
-        <div class="theme-name-header">
-            <h3 id="current-theme-name">${theme.themeName}</h3>
-            <button class="icon-btn edit-theme-name-btn" title="Edit Name">
-                <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-            </button>
-        </div>
-        <p>${theme.advice}</p>
-        <div class="color-palette">${colorChipsHTML}</div>
-        <button id="save-theme-button">Save Theme</button>
-    `;
+		<div class="theme-name-header">
+			<h3 id="current-theme-name">${theme.themeName}</h3>
+			<button class="icon-btn edit-theme-name-btn" title="Edit Name">
+				<svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+			</button>
+		</div>
+		<p>${theme.advice}</p>
+		<div class="color-palette">${colorChipsHTML}</div>
+		<button id="save-theme-button">Save Theme</button>
+	`;
 }
 
 function displaySavedThemes(themes) {
@@ -143,26 +143,26 @@ function displaySavedThemes(themes) {
 		swatchesHTML += "</div>";
 
 		themeItem.innerHTML = `
-            <div class="theme-info">
-                <span>${theme.themeName}</span>
-                ${swatchesHTML}
-            </div>
-            <div class="saved-theme-actions">
-                <button class="icon-btn save-btn" data-id="${theme._id}" title="Overwrite with current theme">
+			<div class="theme-info">
+				<span>${theme.themeName}</span>
+				${swatchesHTML}
+			</div>
+			<div class="saved-theme-actions">
+				<button class="icon-btn save-btn" data-id="${theme._id}" title="Overwrite with current theme">
 					<svg viewBox="0 0 24 24">
-                        <path d="M22.5,22.5H1.5V1.5H18.68L22.5,5.32Z"></path>
-                        <path d="M7.23,1.5h9.55a0,0,0,0,1,0,0V6.27a1,1,0,0,1-1,1H8.18a1,1,0,0,1-1-1V1.5A0,0,0,0,1,7.23,1.5Z"></path>
-                        <rect x="6.27" y="14.86" width="11.45" height="7.64"></rect>
-                        <line x1="9.14" y1="18.68" x2="14.86" y2="18.68"></line>
-                    </svg>
-                </button>
-                <button class="icon-btn delete-btn" data-id="${theme._id}" title="Delete Theme">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M18 6L6 18"></path>
-                        <path d="M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>`;
+						<path d="M22.5,22.5H1.5V1.5H18.68L22.5,5.32Z"></path>
+						<path d="M7.23,1.5h9.55a0,0,0,0,1,0,0V6.27a1,1,0,0,1-1,1H8.18a1,1,0,0,1-1-1V1.5A0,0,0,0,1,7.23,1.5Z"></path>
+						<rect x="6.27" y="14.86" width="11.45" height="7.64"></rect>
+						<line x1="9.14" y1="18.68" x2="14.86" y2="18.68"></line>
+					</svg>
+				</button>
+				<button class="icon-btn delete-btn" data-id="${theme._id}" title="Delete Theme">
+					<svg viewBox="0 0 24 24">
+						<path d="M18 6L6 18"></path>
+						<path d="M6 6l12 12"></path>
+					</svg>
+				</button>
+			</div>`;
 		savedThemesList.appendChild(themeItem);
 	});
 }
@@ -289,3 +289,89 @@ function setUiIcon(isDark) {
 		button.title = "Switch to Dark Mode";
 	}
 }
+
+// iPad / iPadOS detection (covers iPadOS that reports as "Mac")
+function isIPad() {
+	const ua = navigator.userAgent || navigator.vendor || "";
+	return /\biPad\b/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+
+// 1) Prefer true viewport zoom via the meta tag (best on iOS Safari)
+function setViewportScale(scale) {
+	let meta = document.querySelector('meta[name="viewport"]');
+	if (!meta) {
+		meta = document.createElement("meta");
+		meta.name = "viewport";
+		document.head.appendChild(meta);
+	}
+
+	// Build a clean content string that pins the scale
+	// Keep width=device-width so layout breakpoints remain correct.
+	const tokens = [
+		"width=device-width",
+		`initial-scale=${scale}`,
+		`minimum-scale=${scale}`,
+		`maximum-scale=${scale}`,
+		"viewport-fit=cover", // safe on iOS; ignores elsewhere
+	];
+	meta.setAttribute("content", tokens.join(", "));
+}
+
+// 2) Fallback: CSS transform scale (for engines that ignore <1 initial-scale)
+function enableCSSScaleFallback(scale) {
+	// Expect a single app root; adjust selector if yours differs
+	let root = document.getElementById("app-root") || document.body;
+
+	// Write a CSS variable once; avoids inlining styles all over
+	document.documentElement.style.setProperty("--ui-scale", String(scale));
+
+	// Idempotent wrapper to avoid compounding transforms on re-entry
+	const WRAP_ID = "__scale_wrap__";
+	if (!document.getElementById(WRAP_ID)) {
+		const wrap = document.createElement("div");
+		wrap.id = WRAP_ID;
+		// Make wrapper take the place of the original root in the DOM
+		root.parentNode.insertBefore(wrap, root);
+		wrap.appendChild(root);
+	}
+
+	// Apply scale on the real root so events/layout remain predictable
+	root.style.transformOrigin = "top left";
+	root.style.transform = "scale(var(--ui-scale))";
+	// Expand width/height so the scaled content still fills the viewport
+	root.style.width = "calc(100% / var(--ui-scale))";
+	root.style.height = "calc(100% / var(--ui-scale))";
+}
+
+// 3) One-call pin to 80% with reapply on orientation/resize (iOS can drop it)
+function pinIPadToSeventyFivePercent() {
+	const SCALE = 0.8;
+
+	try {
+		setViewportScale(SCALE);
+	} catch {}
+
+	// Quick runtime check: if the visual viewport scale isn’t at ~0.75, enable fallback.
+	// iOS exposes visualViewport on Safari 13+.
+	const vv = window.visualViewport;
+	const approx = (x, y) => Math.abs(x - y) < 0.05;
+	if (!vv || !approx(1 / vv.scale, SCALE)) {
+		enableCSSScaleFallback(SCALE);
+	}
+
+	// Re-apply on events where iOS may reset scaling
+	const reapply = () => {
+		try {
+			setViewportScale(SCALE);
+		} catch {}
+		// keep fallback consistent, too
+		enableCSSScaleFallback(SCALE);
+	};
+	window.addEventListener("orientationchange", reapply, { passive: true });
+	window.addEventListener("resize", reapply, { passive: true });
+}
+
+// ---- Call this once after DOM is ready ----
+document.addEventListener("DOMContentLoaded", () => {
+	if (isIPad()) pinIPadToSeventyFivePercent();
+});

@@ -224,9 +224,9 @@ document.addEventListener("DOMContentLoaded", () => {
     	const currentScale = currentWidth / baseInnerWidth;
 
     	// --- Define visibility based on the adaptive scale ---
-    	// A scale of 1.1 roughly corresponds to a 90% zoom level
+    	// A scale of 1.2 roughly corresponds to a 80% zoom level
     	const canShow3x = currentScale >= 1.2;
-    	// A scale of 1.4 roughly corresponds to a 75% zoom level
+    	// A scale of 1.6 roughly corresponds to a 50% zoom level
     	const canShow5x = currentScale >= 1.6;
 
     	// --- NEW LOGIC: Hide the bar if only 1x is available ---
