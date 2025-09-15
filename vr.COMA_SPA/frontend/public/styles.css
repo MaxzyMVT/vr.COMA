@@ -428,7 +428,7 @@ button.secondary:hover {
 
 .character-counter {
     font-size: 0.85rem;
-    color: #7f8c8d;
+    color: #495151;
     font-weight: 500;
     transition: color 0.3s ease;
 	margin-left: auto;
