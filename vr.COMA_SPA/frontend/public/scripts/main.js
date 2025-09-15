@@ -362,6 +362,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			input.type = "text";
 			input.value = currentTheme.themeName;
 			input.className = "theme-name-input";
+			input.maxLength = 30;
 
 			const saveAndExitEditMode = () => {
 				const newName = input.value.trim();
