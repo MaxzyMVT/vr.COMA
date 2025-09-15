@@ -570,7 +570,6 @@ button.secondary:hover {
 	width: 20px;
 	height: 20px;
 
-	/* --- CORE CHANGE --- */
 	stroke: var(--secondary-text);
 	fill: none;
 	stroke-width: 1.9px;
@@ -587,6 +586,7 @@ button.secondary:hover {
 	stroke: var(--accent);
 }
 
+
 /* --- Styles for Inline Name Editing --- */
 .theme-name-header {
 	display: flex;
@@ -601,8 +601,60 @@ button.secondary:hover {
 
 #output-content h3 {
 	margin-top: 0;
-	/* Reset margin */
 }
+
+
+/* --- Styles for Inline Advice Editing --- */
+.advice-container {
+	/* THE FIX: Use a horizontal flexbox layout */
+	display: flex;
+	align-items: flex-end;
+	/* Vertically align items to their bottom edge */
+	gap: 0.5rem;
+	/* Creates a small space between text and button */
+
+	margin-bottom: 1.5rem;
+	line-height: 1.6;
+	min-height: 24px;
+}
+
+.theme-advice-text {
+	margin: 0;
+	/* This makes the text take up all available space, pushing the button to the right */
+	flex-grow: 1;
+	min-width: 0;
+	/* Allows text to wrap correctly */
+
+	white-space: normal;
+	word-break: break-word;
+}
+
+.edit-theme-advice-btn {
+	/* This prevents the button from shrinking */
+	flex-shrink: 0;
+	margin: 0;
+	/* Remove any previous margins */
+}
+
+/* Style for the textarea when in edit mode */
+.advice-textarea-input {
+	width: 100%;
+	height: 120px;
+	/* Give it some decent height */
+	padding: 0.75rem;
+	font-family: var(--font-family);
+	font-size: 1rem;
+	border: 1px solid var(--border-color);
+	border-radius: 8px;
+	background-color: var(--main-bg);
+	color: var(--primary-text);
+	resize: vertical;
+	box-sizing: border-box;
+}
+
+
+
+
 
 /* --- Styles for the new Color Editor Modal --- */
 .color-editor {

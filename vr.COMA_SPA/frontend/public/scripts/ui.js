@@ -106,7 +106,14 @@ function displayThemeOutput(theme, outputContent) {
 				<svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
 			</button>
 		</div>
-		<p>${theme.advice}</p>
+
+		<div class="advice-container">
+			<p class="theme-advice-text">${theme.advice}</p>
+			<button class="icon-btn edit-theme-advice-btn" title="Edit Advice">
+				<svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+			</button>
+		</div>
+
 		<div class="color-palette">${colorChipsHTML}</div>
 		<button id="save-theme-button" class="spaced-button">Save Theme</button>
 	`;
@@ -175,7 +182,7 @@ function setUIInteractive(isInteractive, elements) {
 		uiModeToggle,
 		textInput,
 		titleHeader,
-		searchInput, 
+		searchInput,
 	} = elements;
 
 	// Combine static elements with dynamically queried elements.
@@ -205,7 +212,7 @@ function setUIInteractive(isInteractive, elements) {
 			el.classList.toggle("interaction-disabled", !isInteractive);
 		}
 	});
-	
+
 	// Update button text and titles specifically for generation
 	if (generateButton && uiModeToggle) {
 		if (!isInteractive) {
@@ -217,7 +224,6 @@ function setUIInteractive(isInteractive, elements) {
 		}
 	}
 }
-
 
 function showColorEditorModal(colorKey, colorValue) {
 	const modal = document.getElementById("color-edit-modal");
@@ -240,45 +246,45 @@ function hideColorEditorModal() {
 }
 
 function initializeCharacterCounter() {
-    const textInput = document.getElementById('text-input');
-    const characterCounter = document.getElementById('character-counter');
-    const warningMessage = document.getElementById('warning-message');
-    
-    function updateCharacterCounter() {
-        const currentLength = textInput.value.length;
-        const maxLength = 1000;
-        
-        // Update counter text
-        characterCounter.textContent = `${currentLength}/${maxLength} characters`;
-        
-        // Update counter color based on usage
-        if (currentLength >= maxLength) {
-            characterCounter.classList.add('at-limit');
-            warningMessage.style.display = 'block';
-        } else if (currentLength >= maxLength * 0.9) { // 90% of limit
-            characterCounter.classList.add('near-limit');
-            characterCounter.classList.remove('at-limit');
-            warningMessage.style.display = 'none';
-        } else {
-            characterCounter.classList.remove('near-limit', 'at-limit');
-            warningMessage.style.display = 'none';
-        }
-    }
-    
-    // Add event listeners for real-time updates
-    textInput.addEventListener('input', updateCharacterCounter);
-    textInput.addEventListener('paste', function() {
-        // Use setTimeout to ensure the pasted content is processed
-        setTimeout(updateCharacterCounter, 0);
-    });
-    
-    // Initialize counter on page load
-    updateCharacterCounter();
+	const textInput = document.getElementById("text-input");
+	const characterCounter = document.getElementById("character-counter");
+	const warningMessage = document.getElementById("warning-message");
+
+	function updateCharacterCounter() {
+		const currentLength = textInput.value.length;
+		const maxLength = 1000;
+
+		// Update counter text
+		characterCounter.textContent = `${currentLength}/${maxLength} characters`;
+
+		// Update counter color based on usage
+		if (currentLength >= maxLength) {
+			characterCounter.classList.add("at-limit");
+			warningMessage.style.display = "block";
+		} else if (currentLength >= maxLength * 0.9) {
+			// 90% of limit
+			characterCounter.classList.add("near-limit");
+			characterCounter.classList.remove("at-limit");
+			warningMessage.style.display = "none";
+		} else {
+			characterCounter.classList.remove("near-limit", "at-limit");
+			warningMessage.style.display = "none";
+		}
+	}
+
+	// Add event listeners for real-time updates
+	textInput.addEventListener("input", updateCharacterCounter);
+	textInput.addEventListener("paste", function () {
+		// Use setTimeout to ensure the pasted content is processed
+		setTimeout(updateCharacterCounter, 0);
+	});
+
+	// Initialize counter on page load
+	updateCharacterCounter();
 }
 
-
 // Call this function when DOM is loaded
-document.addEventListener('DOMContentLoaded', initializeCharacterCounter);
+document.addEventListener("DOMContentLoaded", initializeCharacterCounter);
 
 // --- Theme Inversion Logic ---
 function hexToHsl(hex) {
@@ -376,108 +382,121 @@ function setUiIcon(isDark) {
 
 // Robust iPad / iPadOS detection (covers iPadOS that reports as "Mac")
 function isIPad() {
-  const ua = navigator.userAgent || navigator.vendor || "";
-  return /\biPad\b/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+	const ua = navigator.userAgent || navigator.vendor || "";
+	return (
+		/\biPad\b/i.test(ua) ||
+		(navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+	);
 }
 
 // Force the grid to 1× and flip a GLOBAL html flag that CSS listens to
 function lockDensityTo1x() {
-  const grid = document.getElementById("saved-themes-list");
-  if (grid) {
-    grid.removeAttribute("data-density");   // 1× = no attribute
-    grid.dataset.lockDensity = "1";         // local marker (optional)
-  }
+	const grid = document.getElementById("saved-themes-list");
+	if (grid) {
+		grid.removeAttribute("data-density"); // 1× = no attribute
+		grid.dataset.lockDensity = "1"; // local marker (optional)
+	}
 
-  // Global flag → CSS hides all current/future .density-controls instances
-  document.documentElement.setAttribute("data-density-locked", "1");
+	// Global flag → CSS hides all current/future .density-controls instances
+	document.documentElement.setAttribute("data-density-locked", "1");
 
-  // If the buttons are already in DOM, make them inert (harmless redundancy)
-  document.querySelectorAll(".density-controls button").forEach(b => {
-    b.disabled = true;
-    b.classList.remove("active");
-    b.title = "Locked to 1× on iPad";
-  });
+	// If the buttons are already in DOM, make them inert (harmless redundancy)
+	document.querySelectorAll(".density-controls button").forEach((b) => {
+		b.disabled = true;
+		b.classList.remove("active");
+		b.title = "Locked to 1× on iPad";
+	});
 }
 
 // Remove the lock and show controls again (for non-iPad or when leaving lock)
 function unlockDensity() {
-  const grid = document.getElementById("saved-themes-list");
-  if (grid) {
-    delete grid.dataset.lockDensity;
-  }
-  document.documentElement.removeAttribute("data-density-locked");
+	const grid = document.getElementById("saved-themes-list");
+	if (grid) {
+		delete grid.dataset.lockDensity;
+	}
+	document.documentElement.removeAttribute("data-density-locked");
 
-  document.querySelectorAll(".density-controls button").forEach(b => {
-    b.disabled = false;
-    if (b.dataset?.density) b.title = `${b.dataset.density}×`;
-  });
+	document.querySelectorAll(".density-controls button").forEach((b) => {
+		b.disabled = false;
+		if (b.dataset?.density) b.title = `${b.dataset.density}×`;
+	});
 }
 
 // Wrap global applyDensity so existing callers keep working safely
 (function wrapApplyDensity() {
-  const orig = window.applyDensity;
-  window.applyDensity = function (n, opts = {}) {
-    const force = !!opts.force;
-    const grid = document.getElementById("saved-themes-list");
+	const orig = window.applyDensity;
+	window.applyDensity = function (n, opts = {}) {
+		const force = !!opts.force;
+		const grid = document.getElementById("saved-themes-list");
 
-    // If iPad locked and not forced, keep 1× and exit
-    if (isIPad() && document.documentElement.getAttribute("data-density-locked") === "1" && !force) {
-      lockDensityTo1x();
-      return;
-    }
+		// If iPad locked and not forced, keep 1× and exit
+		if (
+			isIPad() &&
+			document.documentElement.getAttribute("data-density-locked") === "1" &&
+			!force
+		) {
+			lockDensityTo1x();
+			return;
+		}
 
-    // Delegate to original if present
-    if (typeof orig === "function") return orig.call(this, n, opts);
+		// Delegate to original if present
+		if (typeof orig === "function") return orig.call(this, n, opts);
 
-    // Minimal fallback implementation
-    if (!grid) return;
-    if (n === 1) grid.removeAttribute("data-density");
-    else grid.setAttribute("data-density", String(n));
-    document.querySelectorAll(".density-controls button")
-      .forEach(b => b.classList.toggle("active", Number(b.dataset.density) === n));
-  };
+		// Minimal fallback implementation
+		if (!grid) return;
+		if (n === 1) grid.removeAttribute("data-density");
+		else grid.setAttribute("data-density", String(n));
+		document
+			.querySelectorAll(".density-controls button")
+			.forEach((b) =>
+				b.classList.toggle("active", Number(b.dataset.density) === n)
+			);
+	};
 })();
 
 // Ensure the zoom/density check respects the lock
 (function wrapCheckZoom() {
-  const orig = window.checkZoomAndToggleDensityButtons;
-  window.checkZoomAndToggleDensityButtons = function () {
-    if (isIPad() && document.documentElement.getAttribute("data-density-locked") === "1") {
-      lockDensityTo1x();
-      return; // short-circuit any downstream logic
-    }
-    if (typeof orig === "function") return orig.apply(this, arguments);
-  };
+	const orig = window.checkZoomAndToggleDensityButtons;
+	window.checkZoomAndToggleDensityButtons = function () {
+		if (
+			isIPad() &&
+			document.documentElement.getAttribute("data-density-locked") === "1"
+		) {
+			lockDensityTo1x();
+			return; // short-circuit any downstream logic
+		}
+		if (typeof orig === "function") return orig.apply(this, arguments);
+	};
 })();
 
 // Keep the lock through resize/orientation and revert any stray changes
 function installIPadLockGuards() {
-  const grid = document.getElementById("saved-themes-list");
-  const reLock = () => lockDensityTo1x();
+	const grid = document.getElementById("saved-themes-list");
+	const reLock = () => lockDensityTo1x();
 
-  // Re-lock on viewport changes (some code paths may re-run on resize)
-  window.addEventListener("resize", reLock, { passive: true });
-  window.addEventListener("orientationchange", reLock, { passive: true });
+	// Re-lock on viewport changes (some code paths may re-run on resize)
+	window.addEventListener("resize", reLock, { passive: true });
+	window.addEventListener("orientationchange", reLock, { passive: true });
 
-  // If any code sets data-density later, immediately remove it
-  if (grid) {
-    const mo = new MutationObserver(muts => {
-      for (const m of muts) {
-        if (m.type === "attributes" && m.attributeName === "data-density") {
-          grid.removeAttribute("data-density");
-        }
-      }
-    });
-    mo.observe(grid, { attributes: true, attributeFilter: ["data-density"] });
-  }
+	// If any code sets data-density later, immediately remove it
+	if (grid) {
+		const mo = new MutationObserver((muts) => {
+			for (const m of muts) {
+				if (m.type === "attributes" && m.attributeName === "data-density") {
+					grid.removeAttribute("data-density");
+				}
+			}
+		});
+		mo.observe(grid, { attributes: true, attributeFilter: ["data-density"] });
+	}
 }
 
 // Boot
 document.addEventListener("DOMContentLoaded", () => {
-  if (isIPad()) {
-    lockDensityTo1x();        // pins 1× and sets html[data-density-locked="1"]
-    installIPadLockGuards();  // keeps it pinned
-  } else {
-    unlockDensity();          // restores normal behavior off-iPad
-  }
+	if (isIPad()) {
+		lockDensityTo1x(); // pins 1× and sets html[data-density-locked="1"]
+		installIPadLockGuards(); // keeps it pinned
+	} else {
+		unlockDensity(); // restores normal behavior off-iPad
+	}
 });

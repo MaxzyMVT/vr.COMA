@@ -356,6 +356,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (event.target.id === "save-theme-button") {
 			handleSaveTheme();
 		}
+
+		// Edit theme name button
 		const editNameBtn = event.target.closest(".edit-theme-name-btn");
 		if (editNameBtn) {
 			const h3 = document.getElementById("current-theme-name");
@@ -389,6 +391,38 @@ document.addEventListener("DOMContentLoaded", () => {
 			input.focus();
 		}
 
+		// Edit theme description button
+		const editAdviceBtn = event.target.closest(".edit-theme-advice-btn");
+		if (editAdviceBtn) {
+			const p = editAdviceBtn.previousElementSibling;
+			const container = p.parentElement;
+
+			const textarea = document.createElement("textarea");
+			textarea.value = currentTheme.advice;
+			textarea.className = "advice-textarea-input";
+			textarea.maxLength = 800;
+
+			const saveAndExitEditMode = () => {
+				currentTheme.advice = textarea.value.trim();
+				displayThemeOutput(currentTheme, outputContent);
+			};
+
+			textarea.addEventListener("blur", saveAndExitEditMode); // Save when user clicks away
+			textarea.addEventListener("keydown", (e) => {
+				if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+					// Use Ctrl+Enter (or Cmd+Enter) to save, since Enter should create a new line
+					saveAndExitEditMode();
+				} else if (e.key === "Escape") {
+					displayThemeOutput(currentTheme, outputContent);
+				}
+			});
+
+			container.innerHTML = "";
+			container.appendChild(textarea);
+			textarea.focus(); // Immediately focus the textarea for typing
+		}
+
+		// Color Chips
 		const colorChip = event.target.closest(".color-chip");
 		if (colorChip) {
 			colorKeyToEdit = colorChip.dataset.key;
