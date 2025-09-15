@@ -185,14 +185,12 @@ button.secondary:hover {
 
 /* Add this new style for our secondary preview button */
 .preview-button.secondary {
-
     background-color: var(--secondary-interactive-bg, var(--secondary-text));
     color: var(--secondary-interactive-text, var(--primary-text));
     padding: 0.6rem 1.2rem;
     border: none;
     border-radius: 8px;
     cursor: default;
-    margin-left: 10px;
 }
 
 /* Modify the main preview button style to use the new variables */
@@ -414,7 +412,9 @@ button.secondary:hover {
 	color: var(--accent);
 	text-decoration: none;
 	font-weight: 600;
-	margin-left: 1rem;
+	display: inline-block;
+  	margin-top: 12px;
+  	white-space: nowrap;  
 }
 
 /* Character counter styles */
