@@ -406,51 +406,6 @@ button.secondary:hover {
 	margin-left: 1rem;
 }
 
-#saved-themes-list {
-	display: grid;
-	gap: 1.25rem;
-	grid-template-columns: 1fr;
-}
-
-/* Find this existing rule in styles.css */
-.saved-theme-item {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	width: 100%;
-	box-sizing: border-box;
-	/* <-- ADD THIS LINE */
-	background-color: var(--container-bg);
-	color: var(--primary-text);
-	border: 1px solid var(--border-color);
-	padding: 0.75rem 1rem;
-	border-radius: 8px;
-	cursor: pointer;
-	transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-	min-width: 0;
-}
-
-/* This adds the hover effect to the entire div */
-.saved-theme-item:hover {
-	background-color: var(--main-bg);
-	transform: translateY(-2px);
-	border-color: var(--accent);
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-/* This ensures the theme name and swatches inside the item can also shrink */
-.theme-info {
-	min-width: 0;
-}
-
-.theme-info span {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	/* Still useful for very long names in a valid layout */
-}
-
 /* Character counter styles */
 .character-counter-container {
     display: flex;
@@ -692,21 +647,65 @@ button.secondary:hover {
 	width: 100%;
 }
 
-/* This new container will group the name and the swatches together */
+
+#saved-themes-list {
+	display: grid;
+	gap: 1.25rem;
+	grid-template-columns: 1fr;
+}
+
+/* Find this existing rule in styles.css */
+.saved-theme-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	box-sizing: border-box;
+	/* <-- ADD THIS LINE */
+	background-color: var(--container-bg);
+	color: var(--primary-text);
+	border: 1px solid var(--border-color);
+	padding: 0.75rem 1rem;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+	min-width: 0;
+}
+
+/* This adds the hover effect to the entire div */
+.saved-theme-item:hover {
+	background-color: var(--main-bg);
+	transform: translateY(-2px);
+	border-color: var(--accent);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
 .theme-info {
 	display: flex;
 	align-items: center;
 	gap: 0.75rem;
-	/* This creates a nice space between the name and the icons */
 	overflow: hidden;
-	/* Prevents long names from breaking the layout */
+
+	flex-grow: 1;
+	/* Tell this container to GROW and take all available horizontal space */
+	min-width: 0;
+	/* A critical flexbox property that allows shrinking and wrapping */
 }
 
 .theme-info span {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	/* Allow text to wrap naturally to multiple lines */
+	white-space: normal;
+	/* Force long words without spaces (like URLs) to break to prevent overflow */
+	word-break: break-word;
 }
+
+.saved-theme-actions {
+	display: flex;
+	/* Tell this container NOT to shrink when the theme name grows */
+	flex-shrink: 0;
+}
+
 
 /* This is the container for the row of swatch icons */
 .theme-swatches {
@@ -1045,10 +1044,6 @@ button.secondary:hover {
 	--btn-text: #ffffff;
 	--accent: #60a5fa;
 }
-
-/* Ensure text area of the item can shrink without pushing actions out */
-.theme-info { min-width: 0; }
-.theme-info span { min-width: 0; }
 
 /* Optional: compact the swatch overlap slightly so it still looks neat in 3x/5x */
 .theme-swatch { margin-left: -5px; }
