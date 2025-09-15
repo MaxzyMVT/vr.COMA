@@ -183,6 +183,19 @@ button.secondary:hover {
 	cursor: pointer;
 }
 
+
+/* Modify the main preview button style to use the new variables */
+.preview-button {
+	background-color: var(--btn-bg);
+	color: var(--btn-text);
+	padding: 0.6rem 1.2rem;
+	border: none;
+	border-radius: 8px;
+	margin-top: 15px;
+	margin-right: 15px;
+	cursor: pointer;
+}
+
 /* Add this new style for our secondary preview button */
 .preview-button.secondary {
 	background-color: var(--secondary-interactive-bg, var(--secondary-text));
@@ -193,17 +206,6 @@ button.secondary:hover {
 	cursor: default;
 }
 
-/* Modify the main preview button style to use the new variables */
-.preview-button {
-	background-color: var(--btn-bg);
-	color: var(--btn-text);
-	padding: 0.6rem 1.2rem;
-	border: none;
-	border-radius: 8px;
-	margin-top: 15px;
-	margin-right: 8px;
-	cursor: pointer;
-}
 
 .app-header .punchline {
 	font-family: var(--font-family);
@@ -420,7 +422,7 @@ button.secondary:hover {
 	text-decoration: none;
 	font-weight: 600;
 	display: inline-block;
-	margin-top: 12px;
+	margin-top: 18px;
 	white-space: nowrap;
 }
 
