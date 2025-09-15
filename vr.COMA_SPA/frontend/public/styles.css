@@ -662,6 +662,7 @@ button.secondary:hover {
 	font-family: monospace;
 	background-color: transparent;
 	width: 100px;
+	color: var(--primary-text);
 }
 
 #modal-copy-btn {
