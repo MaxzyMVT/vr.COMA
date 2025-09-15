@@ -466,14 +466,13 @@ button:disabled,
 	border: none;
 	border-radius: 8px;
 	margin-top: 15px;
-	margin-right: 8px;
+	margin-right: 15px;
 	cursor: default;
 }
 
 .preview-button.secondary {
 	background-color: var(--secondary-interactive-bg, var(--secondary-text));
 	color: var(--secondary-interactive-text, var(--primary-text));
-	margin-left: 10px;
 }
 
 .preview-accent-link {
@@ -694,11 +693,13 @@ button:disabled,
 	align-items: center;
 	cursor: pointer;
 	padding: 0.4rem;
-	border-radius: 50%;
+	border-radius: 8px;
 	transition: background-color 0.2s ease;
 	border: none;
 	background-color: transparent;
 	margin: 0 0.25rem;
+	flex-grow: 0;
+	flex-shrink: 0;
 }
 
 .edit-theme-name-btn {
@@ -706,8 +707,6 @@ button:disabled,
 	height: 32px;
 	padding: 0;
 	margin: 0;
-	border-radius: 8px;
-	flex-shrink: 0;
 }
 
 .icon-btn:hover {
