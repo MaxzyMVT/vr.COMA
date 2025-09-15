@@ -205,7 +205,7 @@ button.secondary:hover {
   overflow: hidden;
   border-right: .15em solid var(--accent);
   white-space: nowrap;
-  margin: 0 auto;
+  margin: 0 auto 1.5rem;
   letter-spacing: .15em;
 
   animation: typing 3.5s steps(40, end) forwards, hide-cursor 0.5s ease-out 3.5s forwards;
@@ -224,17 +224,12 @@ button.secondary:hover {
 
 /* Cursor blink */
 
-
-
-
-
 .app-header .description {
     font-size: 1.2rem;
     text-align: center; 
-    margin: 0 0 2rem 0;
+    margin: 0 0 3rem 0;
     color: var(--secondary-text);
     opacity: 0.9;
-
 }
 
 .brand-letters {
@@ -260,7 +255,7 @@ button.secondary:hover {
 	/* Treat it as a block to control its width */
 	max-width: 380px;
 	/* Set a max-width for better readability */
-	margin: 0 auto;
+	margin: 1.5rem auto 0;
 	/* Center the block itself within the header */
 	line-height: 1.6;
 	/* Improve line spacing */
