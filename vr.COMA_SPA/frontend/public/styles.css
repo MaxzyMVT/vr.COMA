@@ -428,13 +428,16 @@ button.secondary:hover {
 
 .character-counter {
     font-size: 0.85rem;
-    color: var(--secondary-text);
+    color: #7f8c8d;
     font-weight: 500;
     transition: color 0.3s ease;
+	margin-left: auto;
+	padding-left: 1rem;
+	flex-shrink: 0;
 }
 
 .character-counter.near-limit {
-    color: #f39c12; /* Orange warning color */
+    color: #c87c03; /* Orange warning color */
 }
 
 .character-counter.at-limit {
@@ -447,6 +450,40 @@ button.secondary:hover {
     font-size: 0.85rem;
     margin: 0;
     font-weight: 500;
+	padding: 0.5rem 0.75rem;
+	border-radius: 6px;
+	background-color: rgba(231, 76, 60, 0.1);
+	border: 1px solid rgba(231, 76, 60, 0.4);
+	color: #c0392b;
+}
+
+.message-box {
+	padding: 0.5rem 0.75rem;
+	border-radius: 6px;
+	margin-top: 0.5rem;
+
+	/* THE FIX: Semi-transparent white background and separator border */
+	background-color: rgba(255, 255, 255, 0.7);
+	border: 1px solid var(--border-color);
+
+	/* This makes the items inside align nicely */
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	min-height: 1.2rem;
+}
+
+/* This modifier class adds the red warning colors */
+.message-box.warning {
+	background-color: rgba(231, 76, 60, 0.1);
+	border-color: rgba(231, 76, 60, 0.4);
+}
+
+/* This styles the text specifically for warnings */
+.warning-text {
+	color: #c0392b;
+	font-size: 0.85rem;
+	font-weight: 500;
 }
 
 .modal-overlay {

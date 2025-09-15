@@ -40,10 +40,11 @@
                     maxlength="1000"></textarea>
                 
                 <!-- Character counter -->
-                <div class="character-counter-container">
-                    <span id="character-counter" class="character-counter">0/1000 characters</span>
+                <div id="character-counter-container" class="message-box">
+                    <p id="warning-message" class="warning-text" style="display: none;">⚠️ Maximum character limit reached</p>
+                    <span id="character-counter" class="character-counter">0/1000</span>
                 </div>
-                <p id="warning-message" class="warning-message" style="display: none;">⚠️ Maximum character limit reached (1000 characters max)</p>
+
                 <div class="button-group">
                     <button id="generate-button">Generate</button>
                     <button id="revise-button" class="secondary">Revise</button>

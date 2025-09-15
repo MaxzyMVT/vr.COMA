@@ -146,8 +146,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			displaySavedThemes(themes);
 		} catch (error) {
 			console.error("Failed to load and display themes:", error);
-			savedThemesList.innerHTML =
-				'<p style="color: red;">Could not load saved themes.</p>';
+			savedThemesList.innerHTML = `
+            <div class="message-box warning">
+                <p class="warning-text">Could not load saved themes.</p>
+            </div>`;
 		}
 	}
 
