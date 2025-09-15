@@ -418,7 +418,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const themeId = loadBtn.dataset.id;
 			const themeToLoad = savedThemesCache.find((t) => t._id === themeId);
 			if (themeToLoad) {
-				currentTheme = themeToLoad;
+				currentTheme = currentTheme = JSON.parse(JSON.stringify(themeToLoad));
 				applyTheme(themeToLoad);
 				displayThemeOutput(themeToLoad, outputContent);
 			}
