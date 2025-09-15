@@ -77,6 +77,12 @@ const generateTheme = (req, res) => {
 	- Theme names should be shorter than 30 Characters.
 	- DO NOT USE GRAVE ACCENT in theme names
 
+	ADVICE:
+	- Provide a brief paragraph of advice on where this theme would be best used, the mood it conveys, and any notable design choices.
+	- Advice length should be between 250-500 characters and not exceed 800 characters.
+	- The advice should help users understand the context and feeling of the theme.
+	- Make sure the advice matches the colors you chose.
+
 	COLOR DESCRIPTIONS (for context):
 	- primaryHeader: The main background for key sections like hero banner, should be easily distinct from canvasBackground and surfaceBackground.
 	- secondaryHeader: A secondary color for header gradients or accents, this color should be able to blend with primaryHeader for nice gradients.
