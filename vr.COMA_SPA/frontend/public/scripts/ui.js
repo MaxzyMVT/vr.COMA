@@ -195,7 +195,7 @@ function setUIInteractive(isInteractive, elements) {
 		titleHeader,
 		searchInput,
 		...document.querySelectorAll(
-			"#save-theme-button, .edit-theme-name-btn, .color-chip, .load-btn, .save-btn, .delete-btn"
+			"#save-theme-button, .edit-theme-name-btn, .color-chip, .load-btn, .save-btn, .delete-btn, .edit-theme-advice-btn"
 		),
 	];
 
