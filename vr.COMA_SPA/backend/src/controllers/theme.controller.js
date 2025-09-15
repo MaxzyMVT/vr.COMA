@@ -391,8 +391,11 @@ const getAllThemes = async (req, res) => {
 		themes.sort((a, b) => {
 			const nameA = normalizeString(a.themeName);
 			const nameB = normalizeString(b.themeName);
+			if (nameA === "" && nameB === "")
+				return a.themeName.localeCompare(b.themeName);
+			if ((nameA === "") ^ (nameB === "")) return 1;
 			return nameA.localeCompare(nameB);
-		}); // Sort lexicographically by themeName (IMPROVED)
+		}); // Sort lexicographically by themeName (IMPROVED: check special characters)
 		res.json(themes);
 	} catch (error) {
 		res.status(500).json({ error: "Failed to fetch themes." });
