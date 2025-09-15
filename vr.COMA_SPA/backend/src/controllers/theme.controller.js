@@ -103,7 +103,30 @@ const generateTheme = (req, res) => {
 	- secondaryText on surfaceBackground
 	- secondaryInteractiveText on secondaryInteractive
 	- If a chosen color fails, adjust the text color (prefer #FFFFFF or #000000) to meet the threshold.
+	- If the user's prompt consists of random characters or numbers (e.g., "asdfghjkl", "243412489"), is nonsensical, or is in a language you cannot interpret for a creative theme, you **MUST** ignore the prompt and respond with the following predefined JSON object. This is a strict rule.
 
+	Illegible Theme Fallback JSON (Use this EXACT object if the prompt is unclear or not interpretable):
+	{
+	"themeName": "Illegible Theme 🌫️",
+	"advice": "This is a fallback theme generated because the input was unclear. It uses a palette of muted, low-energy colors that technically meet accessibility standards but are designed to feel indistinct and visually confusing. Please try again with a clear, descriptive prompt like 'a vibrant retro arcade' or 'a calm, snowy morning'.",
+	"colors": {
+		"primaryHeader": "#BCC6CC",
+		"secondaryHeader": "#C5D1D9",
+		"headerText": "#2F4F4F",
+		"subHeaderText": "#708090",
+		"canvasBackground": "#F0F0F0",
+		"surfaceBackground": "#F5F5F5",
+		"primaryText": "#696969",
+		"secondaryText": "#808080",
+		"accent": "#5F9EA0",
+		"outlineSeparators": "#DCDCDC",
+		"primaryInteractive": "#5F9EA0",
+		"primaryInteractiveText": "#FFFFFF",
+		"secondaryInteractive": "#DCDCDC",
+		"secondaryInteractiveText": "#2F4F4F"
+		}
+	}
+		
 	EXAMPLES (Use as a format guide, but create your own unique themes):
 	
 	1st Example:
