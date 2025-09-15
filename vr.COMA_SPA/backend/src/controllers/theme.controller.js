@@ -77,6 +77,12 @@ const generateTheme = (req, res) => {
 	- Theme names should be shorter than 30 Characters.
 	- DO NOT USE GRAVE ACCENT in theme names
 
+	ADVICE:
+	- Provide a brief paragraph of advice on where this theme would be best used, the mood it conveys, and any notable design choices.
+	- Advice length should be between 250-500 characters and not exceed 800 characters.
+	- The advice should help users understand the context and feeling of the theme.
+	- Make sure the advice matches the colors you chose.
+
 	COLOR DESCRIPTIONS (for context):
 	- primaryHeader: The main background for key sections like hero banner, should be easily distinct from canvasBackground and surfaceBackground.
 	- secondaryHeader: A secondary color for header gradients or accents, this color should be able to blend with primaryHeader for nice gradients.
@@ -105,27 +111,92 @@ const generateTheme = (req, res) => {
 	- If a chosen color fails, adjust the text color (prefer #FFFFFF or #000000) to meet the threshold.
 	- If the user's prompt consists of random characters or numbers (e.g., "asdfghjkl", "243412489"), is nonsensical, or is in a language you cannot interpret for a creative theme, you **MUST** ignore the prompt and respond with the following predefined JSON object. This is a strict rule.
 
-	Illegible Theme Fallback JSON (Use this EXACT object if the prompt is unclear or not interpretable):
-	{
-	"themeName": "Illegible Theme 🌫️",
-	"advice": "This is a fallback theme generated because the input was unclear. It uses a palette of muted, low-energy colors that technically meet accessibility standards but are designed to feel indistinct and visually confusing. Please try again with a clear, descriptive prompt like 'a vibrant retro arcade' or 'a calm, snowy morning'.",
-	"colors": {
-		"primaryHeader": "#BCC6CC",
-		"secondaryHeader": "#C5D1D9",
-		"headerText": "#2F4F4F",
-		"subHeaderText": "#708090",
-		"canvasBackground": "#F0F0F0",
-		"surfaceBackground": "#F5F5F5",
-		"primaryText": "#696969",
-		"secondaryText": "#808080",
-		"accent": "#5F9EA0",
-		"outlineSeparators": "#DCDCDC",
-		"primaryInteractive": "#5F9EA0",
-		"primaryInteractiveText": "#FFFFFF",
-		"secondaryInteractive": "#DCDCDC",
-		"secondaryInteractiveText": "#2F4F4F"
-		}
-	}
+	Before generating a theme, you MUST follow this interpretation process in order. Only proceed to the next step if the current one does not apply.
+
+	**Step 1: Is the prompt a direct, descriptive request?**
+	This is the most common type of prompt (e.g., "a serene forest at dawn," "vibrant 80s arcade"). If the prompt is a clear description of a scene, mood, or aesthetic, create a theme based on it directly.
+
+	**Step 2: If not, is the prompt an abstract concept, a cultural reference, or a proper noun?**
+	Before you decide a prompt is nonsensical, you MUST consider if it has an implied aesthetic, mood, or color palette from culture, fiction, or real-world entities. This includes:
+	*   **Famous People:** Interpret their public persona, common attire, or associated branding.
+	*   **Titles of Movies, Songs, or Books:** Evoke the mood, setting, and key colors of the work.
+	*   **Fictional Concepts (Spells, Places):** Use the established aesthetic from the source material.
+	*   **Abstract Emotions or Ideas:** (e.g., "Melancholy," "Ambition").
+
+	**Examples of Creative Interpretation (Follow this model):**
+
+   	**Prompt:** "Donald Trump"
+    *   **Your Reasoning:** This is a famous political figure. The associated aesthetic is often formal and patriotic. Key colors are navy blue (suits), white (shirts), red (ties), and gold (branding). The theme should feel powerful, formal, and executive.
+    *   **Your Output:**
+        {
+          "themeName": "The Executive",
+          "advice": "A powerful and formal theme inspired by classic political and corporate aesthetics. The deep navy and crisp white create a professional foundation, while the bold red accent commands attention for key actions. Ideal for business, finance, or news applications.",
+          "colors": {
+            "primaryHeader": "#00204E",
+            "secondaryHeader": "#001A3D",
+            "headerText": "#FFFFFF",
+            "subHeaderText": "#E1E1E1",
+            "canvasBackground": "#F8F9FA",
+            "surfaceBackground": "#FFFFFF",
+            "primaryText": "#212529",
+            "secondaryText": "#495057",
+            "accent": "#B31942",
+            "outlineSeparators": "#DEE2E6",
+            "primaryInteractive": "#B31942",
+            "primaryInteractiveText": "#FFFFFF",
+            "secondaryInteractive": "#E9ECEF",
+            "secondaryInteractiveText": "#212529"
+          }
+        }
+
+   	**Prompt:** "Avada Kedavra"
+    *   **Your Reasoning:** This is a well-known magic spell from Harry Potter, the "Killing Curse." Its signature color is a blast of blinding, sickly green light. The mood is dark, malevolent, and magical. The theme must be dark and feature a vibrant, toxic green.
+    *   **Your Output:**
+        {
+          "themeName": "Curse Green",
+          "advice": "A dark and sinister theme inspired by forbidden magic. The deep charcoal backgrounds create a menacing atmosphere, while the shockingly vibrant green accent is used for dangerous, high-impact actions. Ideal for gaming, fantasy, or any project with a dark, magical edge.",
+          "colors": {
+            "primaryHeader": "#1A1A1A",
+            "secondaryHeader": "#0D0221",
+            "headerText": "#FFFFFF",
+            "subHeaderText": "#50C878",
+            "canvasBackground": "#121212",
+            "surfaceBackground": "#1E1E1E",
+            "primaryText": "#EAEAEA",
+            "secondaryText": "#888888",
+            "accent": "#00FF66",
+            "outlineSeparators": "#333333",
+            "primaryInteractive": "#00FF66",
+            "primaryInteractiveText": "#000000",
+            "secondaryInteractive": "#333333",
+            "secondaryInteractiveText": "#EAEAEA"
+          }
+        }
+
+	**Step 3: If all interpretation fails, use the Illegible Theme Fallback.**
+	This is your **last resort**. Only use this if the prompt is a truly random string of characters (e.g., "asdfghjk"), a keyboard smash (e.g., "adfhadfh"), a random series of numbers, or has absolutely no discernible meaning or cultural context that you can interpret.
+
+   	**Illegible Theme Fallback JSON (Use this EXACT object if prompt is uninterpretable):**
+    {
+      "themeName": "Illegible Theme 🌫️",
+      "advice": "This is a fallback theme generated because the input was unclear. It uses a palette of muted, low-energy colors that technically meet accessibility standards but are designed to feel indistinct and visually confusing. Please try again with a clear, descriptive prompt like 'a vibrant retro arcade' or 'a calm, snowy morning'.",
+      "colors": {
+        "primaryHeader": "#BCC6CC",
+        "secondaryHeader": "#C5D1D9",
+        "headerText": "#2F4F4F",
+        "subHeaderText": "#708090",
+        "canvasBackground": "#F0F0F0",
+        "surfaceBackground": "#F5F5F5",
+        "primaryText": "#696969",
+        "secondaryText": "#808080",
+        "accent": "#5F9EA0",
+        "outlineSeparators": "#DCDCDC",
+        "primaryInteractive": "#5F9EA0",
+        "primaryInteractiveText": "#FFFFFF",
+        "secondaryInteractive": "#DCDCDC",
+        "secondaryInteractiveText": "#2F4F4F"
+      }
+    }
 		
 	EXAMPLES (Use as a format guide, but create your own unique themes):
 	
