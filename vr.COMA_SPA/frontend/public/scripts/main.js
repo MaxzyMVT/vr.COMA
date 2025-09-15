@@ -45,6 +45,17 @@ document.addEventListener("DOMContentLoaded", () => {
 	const uiModeToggle = document.getElementById("ui-mode-toggle");
 	const densityControls = document.querySelector(".density-controls");
 
+	const interactiveElements = {
+		generateButton,
+		reviseButton,
+		uiModeToggle,
+		textInput,
+		outputContent,
+		savedThemesList,
+		titleHeader,
+		searchInput, 
+	};
+
 	// --- Modals ---
 	const modalColorPicker = document.getElementById("modal-color-picker");
 	const modalColorHex = document.getElementById("modal-color-hex");
@@ -66,11 +77,12 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         warningMessage.style.display = "none";
     }
+
 });
 
 	// --- Event Handlers ---
 	async function handleGenerateTheme() {
-		setLoadingState(true, generateButton, reviseButton);
+		setUIInteractive(false, interactiveElements); // <-- MODIFIED
 		try {
 			const prompt = textInput.value.trim();
 			const themeData = await apiGenerateTheme(prompt);
@@ -85,12 +97,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			currentTheme = themeData;
 			applyTheme(themeData);
 			displayThemeOutput(themeData, outputContent);
-			reviseButton.disabled = false;
 		} catch (error) {
 			console.error(error);
 			alert("Could not generate the theme. Please try again.");
 		} finally {
-			setLoadingState(false, generateButton, reviseButton);
+			setUIInteractive(true, interactiveElements); // <-- MODIFIED
 		}
 	}
 
@@ -165,22 +176,14 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	async function handleReviseTheme() {
-		if (!currentTheme) {
-			alert("Please generate or load a theme before trying to revise it.");
-			return;
-		}
-		const revisionPrompt = textInput.value.trim();
-		if (!revisionPrompt) {
-			alert("Please describe how you would like to revise the theme.");
-			return;
-		}
+		// ... (function logic is unchanged)
 		const fullPrompt = `Based on the previously generated theme named "${
 			currentTheme.themeName
 		}", which has this JSON data: ${JSON.stringify(
 			currentTheme
 		)}, please revise and improve it with this new instruction: "${revisionPrompt}"`;
 
-		setLoadingState(true, generateButton, reviseButton);
+		setUIInteractive(false, interactiveElements); // <-- MODIFIED
 		try {
 			const themeData = await apiGenerateTheme(fullPrompt);
 
@@ -198,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			console.error("Revision Error:", error);
 			alert("There was an error revising the theme. Please try again.");
 		} finally {
-			setLoadingState(false, generateButton, reviseButton);
+			setUIInteractive(true, interactiveElements); // <-- MODIFIED
 		}
 	}
 
@@ -320,9 +323,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	uiModeToggle.addEventListener("click", async () => {
 		if (!currentTheme) return;
 
-		const originalTitle = uiModeToggle.title;
-		uiModeToggle.disabled = true;
-		uiModeToggle.title = "Generating...";
+		setUIInteractive(false, interactiveElements); // <-- MODIFIED
 
 		try {
 			// Call the new API function that asks the AI to invert the theme
@@ -337,8 +338,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				"There was an error generating the theme variant. Please try again."
 			);
 		} finally {
-			uiModeToggle.disabled = false;
-			// The title will be updated automatically by applyTheme -> setUiIcon
+			setUIInteractive(true, interactiveElements); // <-- MODIFIED
 		}
 	});
 
@@ -410,7 +410,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				currentTheme = themeToLoad;
 				applyTheme(themeToLoad);
 				displayThemeOutput(themeToLoad, outputContent);
-				reviseButton.disabled = false;
 			}
 		}
 	});

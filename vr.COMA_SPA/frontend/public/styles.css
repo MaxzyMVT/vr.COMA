@@ -32,6 +32,17 @@ body {
 	min-height: 100vh;
 }
 
+.interaction-disabled {
+	pointer-events: none;
+}
+
+/* This applies the disabled visual style (opacity) and cursor to all relevant elements */
+button:disabled,
+.interaction-disabled {
+	opacity: 0.5;
+	cursor: not-allowed !important;
+}
+
 /* Control Panel (Left Side) */
 .control-panel {
 	width: 450px;

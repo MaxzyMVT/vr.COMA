@@ -167,16 +167,57 @@ function displaySavedThemes(themes) {
 	});
 }
 
-function setLoadingState(isLoading, generateButton, reviseButton) {
-	if (generateButton) {
-		generateButton.disabled = isLoading;
-		generateButton.textContent = isLoading ? "Generating..." : "Generate";
-	}
+function setUIInteractive(isInteractive, elements) {
+	// Destructure the static elements that are always present
+	const {
+		generateButton,
+		reviseButton,
+		uiModeToggle,
+		textInput,
+		titleHeader,
+		searchInput, 
+	} = elements;
 
-	if (reviseButton) {
-		reviseButton.disabled = isLoading;
+	// Combine static elements with dynamically queried elements.
+	// This query runs every time to catch elements that are added/removed from the DOM.
+	const allInteractiveElements = [
+		generateButton,
+		reviseButton,
+		uiModeToggle,
+		textInput,
+		titleHeader,
+		searchInput,
+		...document.querySelectorAll(
+			"#save-theme-button, .edit-theme-name-btn, .color-chip, .load-btn, .save-btn, .delete-btn"
+		),
+	];
+
+	allInteractiveElements.forEach((el) => {
+		if (!el) return;
+
+		const tagName = el.tagName.toUpperCase();
+
+		// Use the 'disabled' property for semantic form elements
+		if (tagName === "BUTTON" || tagName === "TEXTAREA" || tagName === "INPUT") {
+			el.disabled = !isInteractive;
+		} else {
+			// For all other elements (like DIVs, H1s), toggle a CSS class
+			el.classList.toggle("interaction-disabled", !isInteractive);
+		}
+	});
+	
+	// Update button text and titles specifically for generation
+	if (generateButton && uiModeToggle) {
+		if (!isInteractive) {
+			generateButton.textContent = "Generating...";
+			uiModeToggle.title = "Generating...";
+		} else {
+			generateButton.textContent = "Generate";
+			// The title for uiModeToggle will be correctly reset by applyTheme
+		}
 	}
 }
+
 
 function showColorEditorModal(colorKey, colorValue) {
 	const modal = document.getElementById("color-edit-modal");
@@ -234,6 +275,7 @@ function initializeCharacterCounter() {
     // Initialize counter on page load
     updateCharacterCounter();
 }
+
 
 // Call this function when DOM is loaded
 document.addEventListener('DOMContentLoaded', initializeCharacterCounter);
