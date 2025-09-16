@@ -391,35 +391,69 @@ document.addEventListener("DOMContentLoaded", () => {
 			input.focus();
 		}
 
-		// Edit theme description button
-		const editAdviceBtn = event.target.closest(".edit-theme-advice-btn");
+		// --- UPDATED: Edit/Add theme description button ---
+		const editAdviceBtn = event.target.closest(
+			".edit-theme-advice-btn, .inline-edit-advice-btn, .add-advice-btn"
+		);
 		if (editAdviceBtn) {
-			const p = editAdviceBtn.previousElementSibling;
-			const container = p.parentElement;
+			// Get the parent container directly. This works for both the icon and the full-width button.
+			const container = editAdviceBtn.parentElement;
+
+			const editorWrapper = document.createElement("div");
+			editorWrapper.className = "advice-editor-wrapper";
 
 			const textarea = document.createElement("textarea");
-			textarea.value = currentTheme.advice;
+			// Use currentTheme.advice, which will be empty if the "add" button was clicked.
+			textarea.value = currentTheme.advice || "";
 			textarea.className = "advice-textarea-input";
 			textarea.maxLength = 800;
+
+			const counterContainer = document.createElement("div");
+			counterContainer.className = "character-counter-container";
+
+			const counter = document.createElement("span");
+			counter.className = "character-counter";
+
+			const maxLengthAdvice = 800;
+
+			function updateAdviceCounter() {
+				const currentLength = textarea.value.length;
+				counter.textContent = `${currentLength}/${maxLengthAdvice}`;
+
+				counter.classList.remove("near-limit", "at-limit");
+				if (currentLength >= maxLengthAdvice) {
+					counter.classList.add("at-limit");
+				} else if (currentLength >= maxLengthAdvice * 0.9) {
+					counter.classList.add("near-limit");
+				}
+			}
+
+			textarea.addEventListener("input", updateAdviceCounter);
 
 			const saveAndExitEditMode = () => {
 				currentTheme.advice = textarea.value.trim();
 				displayThemeOutput(currentTheme, outputContent);
 			};
 
-			textarea.addEventListener("blur", saveAndExitEditMode); // Save when user clicks away
+			textarea.addEventListener("blur", saveAndExitEditMode);
 			textarea.addEventListener("keydown", (e) => {
 				if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
-					// Use Ctrl+Enter (or Cmd+Enter) to save, since Enter should create a new line
 					saveAndExitEditMode();
 				} else if (e.key === "Escape") {
 					displayThemeOutput(currentTheme, outputContent);
 				}
 			});
 
+			counterContainer.appendChild(counter);
+			editorWrapper.appendChild(textarea);
+			editorWrapper.appendChild(counterContainer);
+
+			// Replace the button (or text+button) with the editor
 			container.innerHTML = "";
-			container.appendChild(textarea);
-			textarea.focus(); // Immediately focus the textarea for typing
+			container.appendChild(editorWrapper);
+
+			updateAdviceCounter(); // Initialize counter
+			textarea.focus();
 		}
 
 		// Color Chips

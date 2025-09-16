@@ -617,41 +617,42 @@ button.secondary:hover {
 
 /* --- Styles for Inline Advice Editing --- */
 .advice-container {
-	/* THE FIX: Use a horizontal flexbox layout */
 	display: flex;
-	align-items: flex-end;
-	/* Vertically align items to their bottom edge */
+	align-items: flex-start; /* Align icon with the first line of text */
 	gap: 0.5rem;
-	/* Creates a small space between text and button */
-
 	margin-bottom: 1.5rem;
 	line-height: 1.6;
-	min-height: 24px;
+	min-height: 48px;
 }
 
 .theme-advice-text {
 	margin: 0;
-	/* This makes the text take up all available space, pushing the button to the right */
-	flex-grow: 1;
 	min-width: 0;
-	/* Allows text to wrap correctly */
-
 	white-space: normal;
 	word-break: break-word;
+	/* flex-grow is now handled by the .multi-line class */
+}
+
+/* This class is added by JS for multi-line text to push the icon to the right */
+.advice-container.multi-line .theme-advice-text {
+    flex-grow: 1;
 }
 
 .edit-theme-advice-btn {
-	/* This prevents the button from shrinking */
 	flex-shrink: 0;
 	margin: 0;
-	/* Remove any previous margins */
+}
+
+.advice-editor-wrapper {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
 }
 
 /* Style for the textarea when in edit mode */
 .advice-textarea-input {
 	width: 100%;
 	height: 120px;
-	/* Give it some decent height */
 	padding: 0.75rem;
 	font-family: var(--font-family);
 	font-size: 1rem;
@@ -663,8 +664,33 @@ button.secondary:hover {
 	box-sizing: border-box;
 }
 
+/* --- Styles for the "Add description" button --- */
+.add-advice-btn {
+	width: 100%;
+	flex-grow: 1;
+	background-color: transparent;
+	border: 2px dashed var(--border-color);
+	color: var(--secondary-text);
+	border-radius: 8px;
+	padding: 0.75rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	font-weight: 500;
+	transition: all 0.2s ease;
+}
 
+.add-advice-btn:hover {
+	border-color: var(--accent);
+	color: var(--accent);
+	background-color: var(--main-bg);
+}
 
+.add-advice-btn svg {
+	stroke: currentColor;
+	transition: stroke 0.2s ease;
+}
 
 
 /* --- Styles for the new Color Editor Modal --- */
@@ -1212,3 +1238,24 @@ html[data-density-locked="1"] .density-controls {
 	visibility: hidden !important;
 	pointer-events: none !important;
 }
+
+/* Let the inline button float without affecting layout */
+.advice-container { position: relative; }  /* already has flex; keep it */
+
+.inline-edit-advice-btn {
+  	position: absolute;
+  	/* anchor to the first line’s baseline-ish, adjust as needed */
+  	top: 0.2em;
+  	/* place it just after the rendered text block */
+  	left: calc(0px + var(--_advice-text-width, 0px));
+  	padding: 0 .25rem;
+  	border: none;
+  	background: transparent;
+  	cursor: pointer;
+  	display: none; /* default hidden; shown only in single-line mode */
+}
+
+/* Keep current icon button for multi-line; hide it for single-line */
+.advice-container.single-line .edit-theme-advice-btn { display: none; }
+.advice-container.single-line .inline-edit-advice-btn { display: inline-flex; }
+.advice-container.multi-line .inline-edit-advice-btn { display: none; }

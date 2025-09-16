@@ -99,6 +99,32 @@ function displayThemeOutput(theme, outputContent) {
 		}
 	});
 
+	let adviceHTML = "";
+	if (theme.advice && theme.advice.trim() !== "") {
+		adviceHTML = `
+    <div class="advice-container">
+      <p class="theme-advice-text">${theme.advice}</p>
+      <button class="icon-btn inline-edit-advice-btn" title="Edit Advice (inline)">
+        <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+      </button>
+      <button class="icon-btn edit-theme-advice-btn" title="Edit Advice">
+        <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+      </button>
+    </div>
+  `;
+	} else {
+		adviceHTML = `
+    <div class="advice-container">
+      <button class="add-advice-btn" title="Add a description for this theme">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 5v14m-7-7h14"></path>
+        </svg>
+        <span>Add description</span>
+      </button>
+    </div>
+  `;
+	}
+
 	outputContent.innerHTML = `
 		<div class="theme-name-header">
 			<h3 id="current-theme-name">${theme.themeName}</h3>
@@ -106,17 +132,43 @@ function displayThemeOutput(theme, outputContent) {
 				<svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
 			</button>
 		</div>
-
-		<div class="advice-container">
-			<p class="theme-advice-text">${theme.advice}</p>
-			<button class="icon-btn edit-theme-advice-btn" title="Edit Advice">
-				<svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-			</button>
-		</div>
-
+		${adviceHTML}
 		<div class="color-palette">${colorChipsHTML}</div>
 		<button id="save-theme-button" class="spaced-button">Save Theme</button>
 	`;
+
+	// --- NEW: Post-render check for single vs. multi-line advice ---
+	const adviceContainer = outputContent.querySelector(".advice-container");
+	const adviceText = outputContent.querySelector(".theme-advice-text");
+
+	if (adviceContainer && adviceText) {
+		const cs = window.getComputedStyle(adviceText);
+		const lineHeight = parseFloat(cs.lineHeight);
+		const textRect = adviceText.getBoundingClientRect();
+		const textHeight = textRect.height;
+
+		// single vs multi
+		if (textHeight > lineHeight + 1) {
+			adviceContainer.classList.add("multi-line");
+		} else {
+			adviceContainer.classList.add("single-line");
+		}
+
+		// Width of the first rendered line:
+		// create a Range spanning the first line and measure it
+		const range = document.createRange();
+		range.selectNodeContents(adviceText);
+
+		// Heuristic: measure width of the first line using the container's inline size
+		// by temporarily constraining range to the first client rect
+		const rects = range.getClientRects();
+		if (rects.length) {
+			const firstLineWidth = rects[0].width;
+			adviceContainer.style.setProperty("--_advice-text-width", `${firstLineWidth}px`);
+		} else {
+			adviceContainer.style.setProperty("--_advice-text-width", `0px`);
+		}
+	}
 }
 
 function displaySavedThemes(themes) {
@@ -195,7 +247,7 @@ function setUIInteractive(isInteractive, elements) {
 		titleHeader,
 		searchInput,
 		...document.querySelectorAll(
-			"#save-theme-button, .edit-theme-name-btn, .color-chip, .load-btn, .save-btn, .delete-btn, .edit-theme-advice-btn"
+			"#save-theme-button, .edit-theme-name-btn, .color-chip, .load-btn, .save-btn, .delete-btn, .edit-theme-advice-btn, .add-advice-btn"
 		),
 	];
 
@@ -274,7 +326,7 @@ function initializeCharacterCounter() {
 
 	// Add event listeners for real-time updates
 	textInput.addEventListener("input", updateCharacterCounter);
-	textInput.addEventListener("paste", function () {
+	textInput.addEventListener("paste", function() {
 		// Use setTimeout to ensure the pasted content is processed
 		setTimeout(updateCharacterCounter, 0);
 	});
@@ -316,7 +368,11 @@ function hexToHsl(hex) {
 		}
 		h /= 6;
 	}
-	return { h, s, l };
+	return {
+		h,
+		s,
+		l
+	};
 }
 
 function hslToHex(h, s, l) {
@@ -340,8 +396,8 @@ function hslToHex(h, s, l) {
 	}
 	const toHex = (v) =>
 		Math.round(v * 255)
-			.toString(16)
-			.padStart(2, "0");
+		.toString(16)
+		.padStart(2, "0");
 	return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toUpperCase();
 }
 
@@ -425,7 +481,7 @@ function unlockDensity() {
 // Wrap global applyDensity so existing callers keep working safely
 (function wrapApplyDensity() {
 	const orig = window.applyDensity;
-	window.applyDensity = function (n, opts = {}) {
+	window.applyDensity = function(n, opts = {}) {
 		const force = !!opts.force;
 		const grid = document.getElementById("saved-themes-list");
 
@@ -457,7 +513,7 @@ function unlockDensity() {
 // Ensure the zoom/density check respects the lock
 (function wrapCheckZoom() {
 	const orig = window.checkZoomAndToggleDensityButtons;
-	window.checkZoomAndToggleDensityButtons = function () {
+	window.checkZoomAndToggleDensityButtons = function() {
 		if (
 			isIPad() &&
 			document.documentElement.getAttribute("data-density-locked") === "1"
@@ -475,8 +531,12 @@ function installIPadLockGuards() {
 	const reLock = () => lockDensityTo1x();
 
 	// Re-lock on viewport changes (some code paths may re-run on resize)
-	window.addEventListener("resize", reLock, { passive: true });
-	window.addEventListener("orientationchange", reLock, { passive: true });
+	window.addEventListener("resize", reLock, {
+		passive: true
+	});
+	window.addEventListener("orientationchange", reLock, {
+		passive: true
+	});
 
 	// If any code sets data-density later, immediately remove it
 	if (grid) {
@@ -487,7 +547,10 @@ function installIPadLockGuards() {
 				}
 			}
 		});
-		mo.observe(grid, { attributes: true, attributeFilter: ["data-density"] });
+		mo.observe(grid, {
+			attributes: true,
+			attributeFilter: ["data-density"]
+		});
 	}
 }
 
