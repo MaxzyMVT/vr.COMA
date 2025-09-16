@@ -16,6 +16,12 @@
 	--secondary-interactive-text: #2c3e50;
 
 	--font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+	/* Fallbacks for dynamic warning colors */
+	--warning-text-color: #c87c03;
+	--limit-text-color: #e74c3c;
+	--limit-bg-color: rgba(231, 76, 60, 0.1);
+	--limit-border-color: rgba(231, 76, 60, 0.4);
 }
 
 /* General Styles */
@@ -128,7 +134,8 @@ button:disabled,
 
 textarea {
 	width: 100%;
-	height: 100px;
+	min-height: 7rem; /* Sets a default height of ~4 lines */
+	line-height: 1.5; /* Ensures consistent line height for sizing */
 	padding: 0.75rem;
 	font-family: var(--font-family);
 	font-size: 1rem;
@@ -136,7 +143,8 @@ textarea {
 	border-radius: 8px;
 	background-color: var(--main-bg);
 	color: var(--primary-text);
-	resize: vertical;
+	resize: none;
+	overflow-y: hidden;
 	box-sizing: border-box;
 	transition: all 0.3s ease;
 }
@@ -291,6 +299,13 @@ button.secondary:hover {
 	color: var(--secondary-text);
 }
 
+.input-section h2,
+.output-section h2,
+.management-section h2 {
+	margin-top: 0;
+	margin-bottom: 1rem;
+}
+
 #output-content h3 {
 	margin-top: 0;
 }
@@ -437,7 +452,7 @@ button.secondary:hover {
 
 .character-counter {
 	font-size: 0.85rem;
-	color: #495151;
+	color: var(--secondary-text);
 	font-weight: 500;
 	transition: color 0.3s ease;
 	margin-left: auto;
@@ -446,26 +461,23 @@ button.secondary:hover {
 }
 
 .character-counter.near-limit {
-	color: #c87c03;
-	/* Orange warning color */
+	color: var(--warning-text-color);
 }
 
 .character-counter.at-limit {
-	color: #e74c3c;
-	/* Red limit color */
+	color: var(--limit-text-color);
 	font-weight: 600;
 }
 
 .warning-message {
-	color: #e74c3c;
 	font-size: 0.85rem;
 	margin: 0;
 	font-weight: 500;
 	padding: 0.5rem 0.75rem;
 	border-radius: 6px;
-	background-color: rgba(231, 76, 60, 0.1);
-	border: 1px solid rgba(231, 76, 60, 0.4);
-	color: #c0392b;
+	color: var(--limit-text-color);
+	background-color: var(--limit-bg-color);
+	border: 1px solid var(--limit-border-color);
 }
 
 .message-box {
@@ -474,7 +486,7 @@ button.secondary:hover {
 	margin-top: 0.5rem;
 
 	/* THE FIX: Semi-transparent white background and separator border */
-	background-color: rgba(255, 255, 255, 0.7);
+	background-color: transparent;
 	border: 1px solid var(--border-color);
 
 	/* This makes the items inside align nicely */
@@ -486,15 +498,15 @@ button.secondary:hover {
 
 /* This modifier class adds the red warning colors */
 .message-box.warning {
-	background-color: rgba(231, 76, 60, 0.1);
-	border-color: rgba(231, 76, 60, 0.4);
+	background-color: var(--limit-bg-color);
+	border-color: var(--limit-border-color);
 }
 
 /* This styles the text specifically for warnings */
 .warning-text {
-	color: #c0392b;
 	font-size: 0.85rem;
 	font-weight: 500;
+	color: var(--limit-text-color);
 }
 
 .modal-overlay {
@@ -604,6 +616,7 @@ button.secondary:hover {
 	align-items: center;
 	gap: 0.75rem;
 	min-height: 40px;
+	margin-bottom: 0.75rem;
 }
 
 .theme-name-header h3 {
@@ -652,7 +665,8 @@ button.secondary:hover {
 /* Style for the textarea when in edit mode */
 .advice-textarea-input {
 	width: 100%;
-	height: 120px;
+	min-height: 7rem; /* Sets a default height of ~4 lines */
+	line-height: 1.5; /* Ensures consistent line height for sizing */
 	padding: 0.75rem;
 	font-family: var(--font-family);
 	font-size: 1rem;
@@ -660,7 +674,8 @@ button.secondary:hover {
 	border-radius: 8px;
 	background-color: var(--main-bg);
 	color: var(--primary-text);
-	resize: vertical;
+	resize: none;
+	overflow-y: hidden;
 	box-sizing: border-box;
 }
 

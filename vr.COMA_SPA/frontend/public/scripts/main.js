@@ -216,6 +216,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	}
 
+	function autoGrowTextarea(element) {
+		element.style.height = "auto"; // Reset height to recalculate
+		element.style.height = element.scrollHeight + "px"; // Set to content height
+	}
+
 	async function handleOverwriteTheme(themeId, silent = false) {
 		if (!currentTheme) {
 			alert(
@@ -416,6 +421,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const maxLengthAdvice = 800;
 
+			textarea.addEventListener("input", () => autoGrowTextarea(textarea));
+			setTimeout(() => autoGrowTextarea(textarea), 0); // Set initial size
+
 			function updateAdviceCounter() {
 				const currentLength = textarea.value.length;
 				counter.textContent = `${currentLength}/${maxLengthAdvice}`;
@@ -538,6 +546,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		applyTheme(defaultTheme);
 		displayThemeOutput(defaultTheme, outputContent);
 		loadAndDisplayThemes();
+
+		textInput.addEventListener("input", () => autoGrowTextarea(textInput));
+		autoGrowTextarea(textInput); // Set initial size correctly on load
 
 		baseInnerWidth = window.innerWidth;
 

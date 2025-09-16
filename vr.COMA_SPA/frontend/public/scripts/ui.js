@@ -16,6 +16,14 @@ const friendlyNames = {
 	secondaryInteractiveText: "Secondary Interactive Text",
 };
 
+function hexToRgba(hex, alpha) {
+	if (!/^#[0-9a-f]{6}$/i.test(hex)) return hex; // Return if not a valid hex
+	const r = parseInt(hex.slice(1, 3), 16);
+	const g = parseInt(hex.slice(3, 5), 16);
+	const b = parseInt(hex.slice(5, 7), 16);
+	return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 /**
  * The single, consolidated function to apply a theme to the entire document.
  * It sets CSS variables, updates the preview card, and sets the UI mode icon.
@@ -46,6 +54,25 @@ function applyTheme(theme) {
 			root.style.setProperty(variable, color);
 		}
 	}
+
+	// --- NEW: Dynamically generate warning colors from the theme's accent ---
+	const accentColor = theme.colors.accent;
+	if (accentColor) {
+		const { h, s, l } = hexToHsl(accentColor);
+		// Ensure saturation and lightness are high enough for readable text
+		const textSaturation = Math.max(0.75, s);
+		const textLightness = l > 0.75 ? 0.6 : l < 0.25 ? 0.5 : l;
+
+		// Set Hue to orange (~40deg) and red (~0deg)
+		const warningColor = hslToHex(0.11, textSaturation, textLightness);
+		const limitColor = hslToHex(0, textSaturation, textLightness);
+
+		root.style.setProperty("--warning-text-color", warningColor);
+		root.style.setProperty("--limit-text-color", limitColor);
+		root.style.setProperty("--limit-bg-color", hexToRgba(limitColor, 0.1));
+		root.style.setProperty("--limit-border-color", hexToRgba(limitColor, 0.4));
+	}
+	// --- End of new logic ---
 
 	// Update the preview card specifically
 	const previewThemeName = document.getElementById("preview-theme-name");
