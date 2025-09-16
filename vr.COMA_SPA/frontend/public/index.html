@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vr.COMA - WAKING UP your creative ideas.</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <div class="control-panel">
+                <header class="app-header">
+                    <div class="ui-actions">
+                        <button id="ui-mode-toggle" class="icon-btn" title="Toggle UI light/dark">
+                            <svg viewBox="0 0 24 24" id="ui-mode-icon"><path d="M12 3a9 9 0 1 0 9 9A7.5 7.5 0 0 1 12 3z"/></svg>
+                        </button>
+                    </div>
+                <div class="brand-row">
+                    <h1>vr.COMA</h1>
+                </div>
+                    <p class="punchline">WAKING UP your creative ideas.</p>
+                    <p class="description" id="brand-full-name">
+                        <span class="brand-word"><span class="brand-letters">V</span>ersatile</span> &amp;
+                        <span class="brand-word"><span class="brand-letters">R</span>eactive</span><br>
+                        <span class="brand-word"><span class="brand-letters">C</span>hromatic</span>
+                        <span class="brand-word"><span class="brand-letters">O</span>rchestration</span> &amp;
+                        <span class="brand-word"><span class="brand-letters">M</span>ood</span>
+                        <span class="brand-word"><span class="brand-letters">A</span>nalyzer</span><br>
+                    <span class="sub-description"> Powered by advanced mood analysis, vr.COMA decodes your input—whether it's a feeling, a phrase, or a brand vision—and
+                    generates dynamic color themes ready to bring any creative project to life.</span> </p>
+                </header>
+            <section class="input-section">
+                <h2>1. Describe Your Theme</h2>
+                 <textarea id="text-input"
+                    placeholder="e.g., 'a serene forest at dawn' or 'a vibrant 80s arcade'"
+                    maxlength="1000"></textarea>
+                
+                <!-- Character counter -->
+                <div id="character-counter-container" class="message-box">
+                    <p id="warning-message" class="warning-text" style="display: none;">⚠️ Maximum character limit reached</p>
+                    <span id="character-counter" class="character-counter">0/1000</span>
+                </div>
+
+                <div class="button-group">
+                    <button id="generate-button">Generate</button>
+                    <button id="revise-button" class="secondary">Revise</button>
+                </div>
+            </section>
+            <section class="output-section" id="output-section">
+                <h2>2. Generated Theme</h2>
+                <div id="output-content">
+                    <p class="placeholder">Your generated theme details will appear here...</p>
+                </div>
+            </section>
+        </div>
+
+        <div class="preview-panel">
+
+            <div class="theme-preview-container" id="theme-preview">
+                <header class="preview-header">
+                    <h3 id="preview-theme-name">Theme Preview</h3>
+                    <p id="preview-sub-header">With a customizable sub-header</p>
+                </header>
+                <div class="preview-content">
+                    <h4>Sample Content</h4>
+                    <p class="sample-text-primary">This is the primary text color. It should be easily readable.</p>
+                    <p class="sample-text-secondary">This secondary text is for less important details.</p>
+                    <div class="sample-buttons">
+                        <button class="preview-button">Primary Action</button>
+                        <button class="preview-button secondary">Secondary Action</button>
+                        <a href="#" class="preview-accent-link">Accent Link</a>
+                    </div>
+                </div>
+            </div>
+
+            <section class="management-section">
+                <h2>Saved Themes</h2>
+
+            <div class="toolbar-row">
+                <input type="search" id="search-input" class="theme-search" placeholder="Search your themes" />
+                <div class="density-controls">
+                    <svg class="density-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" title="Adjust theme density">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="11" width="7" height="7"></rect>
+                        <rect x="3" y="11" width="7" height="7"></rect>
+                    </svg>
+                    <button data-density="1" class="active" title="Show 1 column">1×</button>
+                    <button data-density="3" title="Show 3 columns">3×</button>
+                    <button data-density="5" title="Show 5 columns">5×</button>
+                </div>
+            </div>
+
+            <div id="saved-themes-list" class="theme-grid"></div>
+
+            </section>
+        </div>
+
+    </div>
+
+
+    <div class="modal-overlay hidden" id="color-edit-modal">
+        <div class="modal-content">
+            <h2 id="modal-color-name">Edit Color</h2>
+            <div class="color-editor">
+                <input type="color" id="modal-color-picker">
+                <div class="color-details">
+                    <input type="text" id="modal-color-hex" placeholder="#ffffff">
+                    <button class="icon-btn" id="modal-copy-btn" title="Copy Hex">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button id="modal-color-cancel-btn" class="secondary">Cancel</button>
+                <button id="modal-color-close-btn">Done</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay hidden" id="describe-modal">
+      <div class="modal-content">
+        <h2>Describe Your Theme</h2>
+        <textarea id="describe-textarea" placeholder="e.g., ‘a serene forest at dawn’ or ‘a vibrant 80s arcade’"></textarea>
+        <div class="modal-actions">
+          <button id="describe-cancel" class="secondary">Cancel</button>
+          <button id="describe-apply">Generate</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="scripts/config.js"></script>
+    <script src="scripts/api.js"></script>
+    <script src="scripts/ui.js"></script>
+    <script src="scripts/main.js"></script>
+    
+</body>
+
+</html>

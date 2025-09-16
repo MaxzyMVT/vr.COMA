@@ -1,24 +1,23 @@
 # vr.COMA
 
-
 **Presented By**:
 
-6833034821	Chalermrach Thongkhaw<br/>
-6833200621	Piriyakorn Suphakitcharoen<br/>
-6833027421	Chakkrawut Onphuttha<br/>
-6833054321	Yarnnaphart Chamnongsooth<br/>
-6833227621	Methasit Phanawongwat<br/>
-6833071021	Napat Putsorn<br/>
+6833034821 Chalermrach Thongkhaw<br/>
+6833200621 Piriyakorn Suphakitcharoen<br/>
+6833027421 Chakkrawut Onphuttha<br/>
+6833054321 Yarnnaphart Chamnongsooth<br/>
+6833227621 Methasit Phanawongwat<br/>
+6833071021 Napat Putsorn<br/>
 
 <br/><br/>
 **Introduction to Computer Engineering and Digital Technology**<br/>
-2110222  Semester 1/2025<br/>
+2110222 Semester 1/2025<br/>
 Bachelor of Engineering in Computer Engineering and Digital Technology,<br/>
 Department of Computer Engineering,<br/>
 Faculty of Engineering, Chulalongkorn University<br/><br/>
 
-
 ## About the Project
+
 **vr.COMA (Versatile & Reactive Chromatic Orchestration & Mood Analyzer)** is a single-page web application that leverages a Large Language Model to generate complete color palettes from natural language prompts. The application's interface is fully reactive, instantly adopting the generated theme for an immersive, real-time preview. Designed for developers and designers, users can save, manage, and revise themes, making it a versatile tool for any project requiring a cohesive visual identity.
 
 1.  **Input a Description:** The user starts by typing a descriptive prompt into a text box. This could be anything from "a serene forest in the early morning" to "a vibrant and energetic cityscape at night."<br/>
