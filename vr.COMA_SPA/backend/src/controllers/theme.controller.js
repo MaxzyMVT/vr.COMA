@@ -116,7 +116,32 @@ const generateTheme = (req, res) => {
 	**Step 1: Is the prompt a direct, descriptive request?**
 	This is the most common type of prompt (e.g., "a serene forest at dawn," "vibrant 80s arcade"). If the prompt is a clear description of a scene, mood, or aesthetic, create a theme based on it directly.
 
-	**Step 2: If not, is the prompt an abstract concept, a cultural reference, or a proper noun?**
+	**step 2: Is the prompt inappropriate or offensive?**
+	If the prompt contains hate speech, explicit content, or anything that violates ethical guidelines, you MUST ignore the prompt and respond with the Invalid Input Theme Fallback JSON below. This is a strict rule.
+
+	{
+		"themeName": "Invalid Input 🚫",
+		"advice": "The provided input was inappropriate or offensive. Please provide a respectful and valid request for color theme.",
+		"isDark": true,
+		"colors": {
+			"primaryHeader": "#200000",
+			"secondaryHeader": "#300000",
+			"headerText": "#FFFFFF",
+			"subHeaderText": "#FFCC00",
+			"canvasBackground": "#220000",
+			"surfaceBackground": "#2A0000",
+			"primaryText": "#E0E0E0",
+			"secondaryText": "#B0B0B0",
+			"accent": "#CC0000",
+			"outlineSeparators": "#500000",
+			"primaryInteractive": "#CC0000",
+			"primaryInteractiveText": "#000000",
+			"secondaryInteractive": "#660000",
+			"secondaryInteractiveText": "#FFDD00"
+		}
+	}
+
+	**Step 3: If not, is the prompt an abstract concept, a cultural reference, or a proper noun?**
 	Before you decide a prompt is nonsensical, you MUST consider if it has an implied aesthetic, mood, or color palette from culture, fiction, or real-world entities. This includes:
 	*   **Famous People:** Interpret their public persona, common attire, or associated branding.
 	*   **Titles of Movies, Songs, or Books:** Evoke the mood, setting, and key colors of the work.
@@ -173,7 +198,7 @@ const generateTheme = (req, res) => {
           }
         }
 
-	**Step 3: If all interpretation fails, use the Illegible Theme Fallback.**
+	**Step 4: If all interpretation fails, use the Illegible Theme Fallback.**
 	This is your **last resort**. Only use this if the prompt is a truly random string of characters (e.g., "asdfghjk"), a keyboard smash (e.g., "adfhadfh"), a random series of numbers, or has absolutely no discernible meaning or cultural context that you can interpret.
 
    	**Illegible Theme Fallback JSON (Use this EXACT object if prompt is uninterpretable):**
