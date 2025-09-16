@@ -25,3 +25,5 @@ Faculty of Engineering, Chulalongkorn University<br/><br/>
 3.  **Receive Advice:** Along with the color palette, the LLM will provide advice and a rationale for why these colors work well together and how they might be used effectively in different contexts.<br/>
 4.  **Revise and Refine:** If the user is not fully satisfied, they can revise their input - for example, by adding "with a touch of lavender" - to regenerate and adjust the theme.<br/>
 5.  **Save and Manage:** Users can save their favorite generated themes to their personal collection. They can then view, update the names or descriptions of, or delete these saved themes at any time.<br/><br/>
+
+Link to vr.COMA: https://vrcoma.khaoaot.com/<br/><br/>
