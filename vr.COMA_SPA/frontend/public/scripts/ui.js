@@ -55,26 +55,44 @@ function applyTheme(theme) {
 		}
 	}
 
-	// --- NEW: Dynamically generate warning colors from the theme's accent ---
+	// --- FINAL: Generate warning colors with a targeted "edge case" check ---
 	const accentColor = theme.colors.accent;
-	if (accentColor) {
-		const { h, s, l } = hexToHsl(accentColor);
-		// Ensure saturation and lightness are high enough for readable text
-		const textSaturation = Math.max(0.75, s);
-		const textLightness = l > 0.75 ? 0.6 : l < 0.25 ? 0.5 : l;
+	const containerBgColor = theme.colors.surfaceBackground;
 
-		// Set Hue to orange (~40deg) and red (~0deg)
-		const warningColor = hslToHex(0.11, textSaturation, textLightness);
-		const limitColor = hslToHex(0, textSaturation, textLightness);
+	if (accentColor && containerBgColor) {
+		// 1. Always calculate the DEFAULT colors based on the theme's accent first.
+		const { s: accentSat, l: accentLight } = hexToHsl(accentColor);
+		const defaultSaturation = Math.max(0.75, accentSat);
+		const defaultLightness = accentLight > 0.75 ? 0.6 : accentLight < 0.25 ? 0.5 : accentLight;
 
+		let warningColor = hslToHex(0.11, defaultSaturation, defaultLightness); // Default Yellow/Orange
+		let limitColor = hslToHex(0, defaultSaturation, defaultLightness);     // Default Red
+
+		// 2. Check if the BACKGROUND COLOR is the specific edge case.
+		const { s: bgSat, l: bgLight } = hexToHsl(containerBgColor);
+
+		// An "edge case" is a background that is both highly saturated and has mid-range lightness,
+		// which is known to clash with the default red/yellow text.
+		const isProblematicBackground = bgLight > 0.4 && bgLight < 0.65 && bgSat > 0.5;
+
+		// 3. ONLY apply the high-contrast fallback for these true edge cases.
+		if (isProblematicBackground) {
+			const fallbackLightness = bgLight < 0.6 ? 0.95 : 0.15; // Use very light/dark text
+			const fallbackSaturation = Math.max(0.85, accentSat);
+
+			warningColor = hslToHex(0.11, fallbackSaturation, fallbackLightness);
+			limitColor = hslToHex(0, fallbackSaturation, fallbackLightness);
+		}
+
+		// 4. Apply the final, correct colors to the UI.
 		root.style.setProperty("--warning-text-color", warningColor);
 		root.style.setProperty("--limit-text-color", limitColor);
-		root.style.setProperty("--limit-bg-color", hexToRgba(limitColor, 0.1));
+		root.style.setProperty("--limit-bg-color", hexToRgba(limitColor, 0.15));
 		root.style.setProperty("--limit-border-color", hexToRgba(limitColor, 0.4));
 	}
 	// --- End of new logic ---
 
-	// Update the preview card specifically
+	// Update the preview card and UI icon as before
 	const previewThemeName = document.getElementById("preview-theme-name");
 	const previewSubHeader = document.getElementById("preview-sub-header");
 
@@ -84,8 +102,6 @@ function applyTheme(theme) {
 	if (previewSubHeader) {
 		previewSubHeader.style.color = theme.colors.subHeaderText;
 	}
-
-	// Update the UI mode icon (sun/moon)
 	setUiIcon(!!theme.isDark);
 }
 
