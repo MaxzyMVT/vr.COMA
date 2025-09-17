@@ -110,15 +110,16 @@ document.addEventListener("DOMContentLoaded", () => {
 			return;
 		}
 
-		// --- FIX: Check for existing name and prompt to overwrite ---
+		const { _id, ...payload } = currentTheme;
+
 		const existingTheme = savedThemesCache.find(
-			(t) => t.themeName === currentTheme.themeName
+			(t) => t.themeName === payload.themeName
 		);
 
 		if (existingTheme) {
 			if (
 				confirm(
-					`A theme named "${currentTheme.themeName}" already exists. Do you want to overwrite it?`
+					`A theme named "${payload.themeName}" already exists. Do you want to overwrite it?`
 				)
 			) {
 				// User wants to overwrite, so call the overwrite handler
@@ -130,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		// --- End of Fix ---
 
 		try {
-			await apiSaveTheme(currentTheme);
+			await apiSaveTheme(payload);
 			alert(`Theme "${currentTheme.themeName}" was saved successfully!`);
 			await loadAndDisplayThemes();
 		} catch (error) {
@@ -553,17 +554,17 @@ document.addEventListener("DOMContentLoaded", () => {
 		baseInnerWidth = window.innerWidth;
 
 		lastInnerWidth = window.innerWidth; // Set initial value
-		
+
 		// Recalibrate the base width after orientation changes to prevent false zoom detection.
-    	window.addEventListener('orientationchange', () => {
-        	// A short delay allows the browser to report the correct new width.
-        	setTimeout(() => {
-            	baseInnerWidth = window.innerWidth;
-            	lastInnerWidth = window.innerWidth; // Also reset the last known width
-            	checkZoomAndToggleDensityButtons(); // Re-run the check immediately
-        	}, 100); 
-    	});
-		
+		window.addEventListener("orientationchange", () => {
+			// A short delay allows the browser to report the correct new width.
+			setTimeout(() => {
+				baseInnerWidth = window.innerWidth;
+				lastInnerWidth = window.innerWidth; // Also reset the last known width
+				checkZoomAndToggleDensityButtons(); // Re-run the check immediately
+			}, 100);
+		});
+
 		checkZoomAndToggleDensityButtons(); // Run once on load
 		requestAnimationFrame(watchViewport);
 	}
