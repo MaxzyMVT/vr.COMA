@@ -20,6 +20,10 @@ const saveTheme = async (req, res) => {
 		const themeData = { ...req.body };
 		normalizeIsDark(themeData); // Ensure isDark is set
 
+		if (!themeData.advice) {
+			themeData.advice = "No advice provided.";
+		}
+
 		// --- MODIFICATION START ---
 		// If a theme is being saved without a groupId, it's the start of a new pair.
 		// So, we create a new unique ID for its group.
