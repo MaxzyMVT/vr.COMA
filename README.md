@@ -1,5 +1,9 @@
 # vr.COMA
 
+<p align="center">
+  <img src="header.png" alt="vr.COMA — Versatile & Reactive Chromatic Orchestration & Mood Analyzer" width="860">
+</p>
+
 **Presented By**:
 
 6833034821 Chalermrach Thongkhaw<br/>
